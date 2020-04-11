@@ -1,0 +1,24 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "@types/*",
+      "packages/*"
+    ],
+    "nohoist": [
+      "jest"
+    ]
+  },
+  "devDependencies": {
+    "prettier": "^2.0.4"
+  },
+  "scripts": {
+    "client": "yarn workspace client",
+    "server": "yarn workspace server",
+    "reset-modules": "rm -rf node_modules/ yarn.lock packages/*/node_modules",
+    "reset-yarn": "yarn cache clean",
+    "reset": "yarn reset-modules && yarn reset-yarn",
+    "format": "prettier --write 'packages/**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
+  }
+}
