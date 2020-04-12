@@ -16,6 +16,10 @@ app.use(async (ctx) => {
 //   const booking = getBooking("1");
 // });
 
+routes.get("/healthz", (ctx) => {
+  ctx.body = { ok: true };
+});
+
 app.use(routes);
 
 app.listen(8000);

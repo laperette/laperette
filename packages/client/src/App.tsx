@@ -8,9 +8,7 @@ const App = () => {
 
   useEffect(() => {
     const getHelloWorld = async () => {
-      const response = await axios.get(
-        `http://${process.env.REACT_APP_SERVER_URL!}`,
-      );
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL!);
       setData(response.data);
     };
     getHelloWorld();
