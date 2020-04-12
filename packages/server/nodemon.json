@@ -1,0 +1,12 @@
+{
+  "verbose": false,
+  "debug": false,
+  "exec": "ts-node -r tsconfig-paths/register ./src/index.ts",
+  "ignore": ["node_modules"],
+  "events": {
+    "restart": ""
+  },
+  "watch": ["./src"],
+  "ext": "ts",
+  "inspect": true
+}
