@@ -8,7 +8,9 @@ const App = () => {
 
   useEffect(() => {
     const getHelloWorld = async () => {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL!);
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/healthz`,
+      );
       setData(response.data);
     };
     getHelloWorld();
@@ -21,7 +23,7 @@ const App = () => {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        {data ? data : "loading..."}
+        {data ? JSON.stringify(data) : "loading..."}
         <a
           className="App-link"
           href="https://reactjs.org"
