@@ -58,4 +58,7 @@ sketch
 .history
 
 # End of https://www.gitignore.io/api/react,macos,visualstudiocode
+
 .env
+dist
+build
