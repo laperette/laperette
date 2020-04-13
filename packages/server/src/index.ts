@@ -2,19 +2,17 @@ import * as Koa from "koa";
 import * as Router from "koa-router";
 import * as cors from "@koa/cors";
 
-import { getBooking } from "./db";
+import { getBookingById } from "./db";
 
 const app = new Koa();
 const router = new Router();
 
 app.use(cors({ origin: "*" }));
-app.use(async (ctx) => {
-  ctx.body = "Hello World";
-});
 
-// router.get("/booking", () => {
-//   const booking = getBooking("1");
-// });
+router.get("/booking", async (ctx) => {
+  const booking = await getBookingById("1");
+  ctx.body = booking;
+});
 
 router.get("/healthz", (ctx) => {
   ctx.body = { ok: true };
@@ -22,4 +20,7 @@ router.get("/healthz", (ctx) => {
 
 app.use(router.routes());
 
-app.listen(process.env.PORT || 8000);
+const port = process.env.PORT || 8000;
+app.listen(port, () => {
+  console.log(`Server started. Listening on port ${port}`);
+});

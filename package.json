@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "engines": {
+    "node": "12.16.2"
+  },
   "workspaces": {
     "packages": [
       "@types/*",
@@ -20,6 +23,6 @@
     "reset-yarn": "yarn cache clean",
     "reset": "yarn reset-modules && yarn reset-yarn",
     "format": "prettier --write 'packages/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "start": "yarn server start"
+    "start": "yarn server start:prod"
   }
 }

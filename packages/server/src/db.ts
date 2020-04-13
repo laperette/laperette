@@ -21,6 +21,5 @@ const config = {
 
 const db = Knex(config);
 
-export const getBooking = async (bookingId: string) => {
-  await db.table("appointments").where("booking_id", bookingId);
-};
+export const getBookingById = async (bookingId: string) =>
+  db.table("appointments").where("booking_id", bookingId);
