@@ -24,6 +24,7 @@
     "reset": "yarn reset-modules && yarn reset-yarn",
     "format": "prettier --write 'packages/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "build": "yarn server build",
-    "start": "yarn server start:prod"
+    "start": "yarn server start:prod",
+    "heroku-postbuild": "./scripts/heroku.build"
   }
 }
