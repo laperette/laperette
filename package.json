@@ -23,6 +23,6 @@
     "reset-yarn": "yarn cache clean",
     "reset": "yarn reset-modules && yarn reset-yarn",
     "format": "prettier --write 'packages/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "heroku-postbuild": "./scripts/heroku.build"
+    "heroku-postbuild": "chmod +x ./scripts/heroku.build && ./scripts/heroku.build"
   }
 }
