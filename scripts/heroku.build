@@ -17,7 +17,7 @@ fi
   if [ "$BUILD_ENV" = "client" ]; then
     yarn client build
   elif [ "$BUILD_ENV" = "server" ]; then
-    yarn server build
+    yarn server build && yarn server migrate
   else
     echo "Error: no build config for BUILD_ENV value '$BUILD_ENV'"
     exit 1
