@@ -1,0 +1,51 @@
+name: Deploy laperette app to heroku
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+
+jobs:
+  deploy_client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create .netrc file to login to heroku
+        run: |+
+          cat >~/.netrc <<EOF
+          machine api.heroku.com
+            login $HEROKU_EMAIL
+            password $HEROKU_API_KEY
+          machine git.heroku.com
+            login $HEROKU_EMAIL
+            password $HEROKU_API_KEY
+          EOF
+      - name: Setup heroku-client remote
+        run: heroku git:remote -a $(basename $GITHUB_REPOSITORY)-client -r heroku-client
+      - name: Push client to heroku
+        run: |
+          git push heroku-client master --force
+
+  deploy_server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create .netrc file to login to heroku
+        run: |+
+          cat >~/.netrc <<EOF
+          machine api.heroku.com
+            login $HEROKU_EMAIL
+            password $HEROKU_API_KEY
+          machine git.heroku.com
+            login $HEROKU_EMAIL
+            password $HEROKU_API_KEY
+          EOF
+      - name: Setup heroku-server remote
+        run: heroku git:remote -a $(basename $GITHUB_REPOSITORY)-client -r heroku-server
+      - name: Push server to heroku
+        run: |
+          git push heroku-server master --force

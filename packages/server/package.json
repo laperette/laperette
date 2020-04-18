@@ -11,9 +11,9 @@
     "pg": "^8.0.2"
   },
   "scripts": {
-    "start": "nodemon --config nodemon.json",
+    "start-dev": "nodemon --config nodemon.json",
     "build": "tsc",
-    "start:prod": "node ./dist/index.js"
+    "start": "node ./dist/src/index.js"
   },
   "devDependencies": {
     "@types/koa": "^2.11.3",
