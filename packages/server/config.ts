@@ -1,8 +1,7 @@
 require("dotenv").config();
+require("dotenv").config({ path: "./.env.local" });
 
 export const config = {
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DB_NAME,
-}
+  DATABASE_CLIENT: "postgres",
+  DATABASE_URL: process.env.DATABASE_URL,
+};

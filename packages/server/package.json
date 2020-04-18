@@ -13,7 +13,9 @@
   "scripts": {
     "start-dev": "nodemon --config nodemon.json",
     "build": "tsc",
-    "start": "node ./dist/src/index.js"
+    "start": "node ./dist/src/index.js",
+    "migrate:make": "knex migrate:make -x ts",
+    "migrate": "knex migrate:latest"
   },
   "devDependencies": {
     "@types/koa": "^2.11.3",

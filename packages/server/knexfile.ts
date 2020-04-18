@@ -1,13 +1,8 @@
-import { config } from './config'
+import { config } from "./config";
 
 module.exports = {
-  client: "postgres",
-  connection: {
-    host: config.host,
-    user: config.user,
-    password: config.password,
-    database: config.database,
-  },
+  client: config.DATABASE_CLIENT,
+  connection: config.DATABASE_URL,
   pool: {
     min: 2,
     max: 20,
