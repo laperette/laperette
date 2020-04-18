@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  HEROKU_KEY: ${{ secrets.HEROKU_API_KEY }}
   HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
 
 jobs:
@@ -19,13 +19,18 @@ jobs:
           cat >~/.netrc <<EOF
           machine api.heroku.com
             login $HEROKU_EMAIL
-            password $HEROKU_API_KEY
+            password $HEROKU_KEY
           machine git.heroku.com
             login $HEROKU_EMAIL
-            password $HEROKU_API_KEY
+            password $HEROKU_KEY
           EOF
+      - name: Login to heroku
+        run: heroku login
       - name: Setup heroku-client remote
         run: heroku git:remote -a $(basename $GITHUB_REPOSITORY)-client -r heroku-client
+      - name: Deepen shallow repo
+        run: |
+          git fetch --all --unshallow
       - name: Push client to heroku
         run: |
           git push heroku-client master --force
@@ -39,13 +44,18 @@ jobs:
           cat >~/.netrc <<EOF
           machine api.heroku.com
             login $HEROKU_EMAIL
-            password $HEROKU_API_KEY
+            password $HEROKU_KEY
           machine git.heroku.com
             login $HEROKU_EMAIL
-            password $HEROKU_API_KEY
+            password $HEROKU_KEY
           EOF
+      - name: Login to heroku
+        run: heroku login
       - name: Setup heroku-server remote
-        run: heroku git:remote -a $(basename $GITHUB_REPOSITORY)-client -r heroku-server
+        run: heroku git:remote -a $(basename $GITHUB_REPOSITORY)-server -r heroku-server
+      - name: Deepen shallow repo
+        run: |
+          git fetch --all --unshallow
       - name: Push server to heroku
         run: |
           git push heroku-server master --force
