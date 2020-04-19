@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
+import { Calendar } from "./Calendar/Calendar";
 
 const App = () => {
   const [data, setData] = useState(null);
@@ -24,14 +25,7 @@ const App = () => {
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
         {data ? JSON.stringify(data) : "loading..."}
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Calendar />
       </header>
     </div>
   );
