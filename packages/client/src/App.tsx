@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import logo from "./logo.svg";
-import "./App.css";
 import { Calendar } from "./Calendar/Calendar";
 
 const App = () => {
@@ -18,15 +16,9 @@ const App = () => {
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        {data ? JSON.stringify(data) : "loading..."}
-        <Calendar />
-      </header>
+    <div>
+      {data ? JSON.stringify(data) : "loading..."}
+      <Calendar />
     </div>
   );
 };

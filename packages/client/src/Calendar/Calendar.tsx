@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  getMonth,
-  getYear,
-  startOfMonth,
   getDay,
   getDaysInMonth,
+  getMonth,
+  getYear,
   setMonth,
+  startOfMonth,
 } from "date-fns";
-import { fr } from "date-fns/locale";
 
 const WEEK_DAYS_NAMES = [
   "Lundi",
@@ -34,16 +33,11 @@ const MONTHS_NAMES = [
   "Décembre",
 ];
 
-export const Calendar = () => {
-  const today = new Date();
-  const [currentMonthNumber, setCurrentMonthNumber] = useState(getMonth(today));
-  const [currentYear, setCurrentYear] = useState(getYear(today));
-  const currentMonthName = MONTHS_NAMES[currentMonthNumber];
+export const useCalendarActions = ({ date }: { date: Date }) => {
+  const [currentMonthNumber, setCurrentMonthNumber] = useState(getMonth(date));
+  const [currentYear, setCurrentYear] = useState(getYear(date));
 
-  const weekDays = WEEK_DAYS_NAMES.map((day) => {
-    return <th key={day}>{day}</th>;
-  });
-  const handlePreviousMonthClicked = () => {
+  const decrementMonth = () => {
     if (currentMonthNumber === 0) {
       setCurrentMonthNumber(11);
       setCurrentYear(currentYear - 1);
@@ -52,7 +46,7 @@ export const Calendar = () => {
     }
   };
 
-  const handleNextMonthClicked = () => {
+  const incrementMonth = () => {
     if (currentMonthNumber === 11) {
       setCurrentMonthNumber(0);
       setCurrentYear(currentYear + 1);
@@ -60,6 +54,28 @@ export const Calendar = () => {
       setCurrentMonthNumber(currentMonthNumber + 1);
     }
   };
+
+  return {
+    currentMonthNumber,
+    currentYear,
+    decrementMonth,
+    incrementMonth,
+  };
+};
+
+export const Calendar = () => {
+  const today = new Date();
+  const {
+    currentMonthNumber,
+    currentYear,
+    decrementMonth,
+    incrementMonth,
+  } = useCalendarActions({ date: today });
+  const currentMonthName = MONTHS_NAMES[currentMonthNumber];
+
+  const weekDays = WEEK_DAYS_NAMES.map((day) => {
+    return <th key={day}>{day}</th>;
+  });
 
   const monthDate = setMonth(today, currentMonthNumber);
   const firstDayOfMonth = startOfMonth(monthDate);
@@ -91,9 +107,9 @@ export const Calendar = () => {
     <table>
       <thead>
         {currentYear}
-        <button onClick={handlePreviousMonthClicked}>Previous</button>
+        <button onClick={decrementMonth}>Previous</button>
         {currentMonthName}
-        <button onClick={handleNextMonthClicked}>Next</button>
+        <button onClick={incrementMonth}>Next</button>
         <tr>{weekDays}</tr>
       </thead>
       <tbody>
