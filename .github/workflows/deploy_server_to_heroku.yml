@@ -1,0 +1,43 @@
+name: Deploy laperette server app to heroku
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  HEROKU_KEY: ${{ secrets.HEROKU_API_KEY }}
+  HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+
+jobs:
+  deploy_server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create .netrc file to login to heroku
+        run: |+
+          cat >~/.netrc <<EOF
+          machine api.heroku.com
+            login $HEROKU_EMAIL
+            password $HEROKU_KEY
+          machine git.heroku.com
+            login $HEROKU_EMAIL
+            password $HEROKU_KEY
+          EOF
+
+      - name: Login to heroku
+        run: heroku login
+
+      - name: Setup heroku-server remote
+        run: |
+          heroku git:remote -a laperette-server -r heroku-server
+
+      - name: Deepen shallow repo
+        run: |
+          git fetch --all --prune --unshallow
+
+      - name: Push server to heroku
+        run: |
+          git push heroku-server master --force
