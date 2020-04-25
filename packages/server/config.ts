@@ -1,4 +1,3 @@
-require("dotenv").config();
 require("dotenv").config({ path: "./.env.local" });
 
 export const config = {
