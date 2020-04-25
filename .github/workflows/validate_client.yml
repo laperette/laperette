@@ -1,0 +1,22 @@
+name: Validate client
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "packages/client/**"
+  push:
+    branches:
+      - master
+    paths:
+      - "packages/client/**"
+
+jobs:
+  test:
+    name: Test the client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn install
+      - run: yarn client test
