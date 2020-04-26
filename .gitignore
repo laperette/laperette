@@ -62,3 +62,4 @@ sketch
 .env
 dist
 build
+.env.local

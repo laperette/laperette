@@ -14,7 +14,12 @@ export const createOneAccount = async (
   await knex("accounts").insert({ firstName, lastName, email });
 };
 
-export const getOneAccount = async (accountId: string) => {
+export const getAccountById = async (accountId: string) => {
   const account = await knex("accounts").where({ id: accountId });
+  return account[0];
+};
+
+export const getAccountByEmail = async (accountEmail: string) => {
+  const account = await knex("accounts").where({ email: accountEmail });
   return account[0];
 };

@@ -1,5 +1,5 @@
 import { Context } from "koa";
-import { createOneAccount, getOneAccount } from "../db/accounts";
+import { createOneAccount, getAccountById } from "../db/accounts";
 
 export const createAccount = async (ctx: Context) => {
   try {
@@ -13,7 +13,7 @@ export const createAccount = async (ctx: Context) => {
 export const getAccount = async (ctx: Context) => {
   try {
     const { accountId } = ctx.params;
-    await getOneAccount(accountId);
+    await getAccountById(accountId);
   } catch (error) {
     console.log(error);
   }
