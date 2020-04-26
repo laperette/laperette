@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@koa/cors": "2",
+    "date-fns": "^2.12.0",
     "dotenv": "^8.2.0",
     "knex": "^0.20.13",
     "koa": "^2.11.0",
@@ -15,7 +16,8 @@
     "build": "tsc",
     "start": "node ./dist/src/index.js",
     "migrate:make": "knex migrate:make -x ts",
-    "migrate": "knex migrate:latest"
+    "migrate": "knex migrate:latest",
+    "seed": "ts-node src/scripts/seed"
   },
   "devDependencies": {
     "@types/koa": "^2.11.3",
