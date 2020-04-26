@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "@koa/cors": "2",
     "date-fns": "^2.12.0",
+    "@types/koa-bodyparser": "^4.3.0",
     "dotenv": "^8.2.0",
     "knex": "^0.20.13",
     "koa": "^2.11.0",
+    "koa-bodyparser": "^4.3.0",
     "koa-router": "^8.0.8",
     "pg": "^8.0.2"
   },
@@ -17,7 +20,8 @@
     "start": "node ./dist/src/index.js",
     "migrate:make": "knex migrate:make -x ts",
     "migrate": "knex migrate:latest",
-    "seed": "ts-node src/scripts/seed"
+    "seed": "ts-node src/scripts/seed",
+    "rollback": "knex migrate:rollback"
   },
   "devDependencies": {
     "@types/koa": "^2.11.3",
