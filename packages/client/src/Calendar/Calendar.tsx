@@ -10,6 +10,7 @@ import {
   getDate,
   isWithinInterval,
   parseISO,
+  setYear,
 } from "date-fns";
 import styled from "styled-components";
 
@@ -96,16 +97,18 @@ export const Calendar = ({
     );
   });
 
-  const monthDate = setMonth(today, currentMonthNumber);
+  const monthDate = setYear(setMonth(today, currentMonthNumber), currentYear);
   const daysInMonth = [];
   for (let d = 1; d <= getDaysInMonth(monthDate); d++) {
     const day = setDate(monthDate, d);
-    const booking = bookings.find((booking) =>
-      isWithinInterval(day, {
+    const booking = bookings.find((booking) => {
+      console.log(booking, day);
+
+      return isWithinInterval(day, {
         start: parseISO(booking.start_date),
         end: parseISO(booking.end_date),
-      }),
-    );
+      });
+    });
     daysInMonth.push(<Day key={d} day={day} booking={booking} />);
   }
 
@@ -126,7 +129,7 @@ export const Calendar = ({
 const Container = styled.div`
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(7, auto);
+  grid-template-columns: repeat(7, 1fr);
   grid-template-rows: 24px 24px repeat(6, auto);
   grid-template-areas:
     "header header header header header header header"
