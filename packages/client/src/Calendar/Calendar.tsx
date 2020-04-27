@@ -102,8 +102,6 @@ export const Calendar = ({
   for (let d = 1; d <= getDaysInMonth(monthDate); d++) {
     const day = setDate(monthDate, d);
     const booking = bookings.find((booking) => {
-      console.log(booking, day);
-
       return isWithinInterval(day, {
         start: parseISO(booking.start_date),
         end: parseISO(booking.end_date),
