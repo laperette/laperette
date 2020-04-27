@@ -1,5 +1,9 @@
 import * as jwt from "jsonwebtoken";
-import { config } from "../config";
+import { config } from "../../config";
+import { addDays } from "date-fns";
+import { knex } from "../db/db";
+import { saveOneToken } from "../db/tokens";
+import { Context } from "koa";
 
 export const createToken = (
   email: string,
@@ -30,4 +34,18 @@ export const createToken = (
       },
     ),
   );
+};
+
+export const saveToken = async (token, accountId) => {
+  const expiresAt: Date = addDays(new Date(), 2);
+
+  await saveOneToken(accountId, token, expiresAt);
+};
+
+export const extractToken = (ctx: Context): string | null => {
+  const { headers } = ctx;
+  if (headers && headers.authorization) {
+    return headers.authorization.replace("Bearer ", "");
+  }
+  return null;
 };

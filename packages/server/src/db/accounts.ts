@@ -1,17 +1,15 @@
 import { knex } from "./db";
 
-interface Account {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
 export const createOneAccount = async (
   firstName: string,
   lastName: string,
   email: string,
 ) => {
-  await knex("accounts").insert({ firstName, lastName, email });
+  await knex("accounts").insert({
+    first_name: firstName,
+    last_name: lastName,
+    email,
+  });
 };
 
 export const getAccountById = async (accountId: string) => {

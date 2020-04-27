@@ -1,30 +1,21 @@
 import { getAccountByEmail } from "../db/accounts";
 import { Context } from "koa";
-import { createToken } from "../utils";
+import { createToken, saveToken } from "../utils/auth";
 
 export const login = async (ctx: Context) => {
   const { email } = ctx.request.body;
-  const member = await getAccountByEmail(email);
-  console.log(member);
+  const account = await getAccountByEmail(email);
 
-  if (!member) {
+  if (!account) {
     ctx.status = 401;
     ctx.body = "Wrong credentials";
     return;
   }
 
-  const { id, createdAt } = member;
+  const { id, createdAt } = account;
   const token = await createToken(id, email, createdAt);
-
+  await saveToken(token, id);
   ctx.body = {
     token,
   };
-};
-
-export const extractToken = (ctx: Context): string | null => {
-  const { headers } = ctx;
-  if (headers && headers.authorization) {
-    return headers.authorization.replace("Bearer ", "");
-  }
-  return null;
 };

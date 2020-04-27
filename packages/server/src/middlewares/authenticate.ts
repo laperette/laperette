@@ -1,4 +1,4 @@
-import { extractToken } from "../controllers/auth";
+import { extractToken } from "../utils/auth";
 
 export const authenticate = () => async (ctx, next) => {
   const token = extractToken(ctx);

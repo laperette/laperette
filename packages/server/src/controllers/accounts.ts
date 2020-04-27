@@ -5,6 +5,10 @@ export const createAccount = async (ctx: Context) => {
   try {
     const { firstName, lastName, email } = ctx.request.body;
     await createOneAccount(firstName, lastName, email);
+    ctx.body = {
+      status: "ok",
+    };
+    ctx.status = 201;
   } catch (error) {
     console.log(error);
   }
@@ -13,7 +17,9 @@ export const createAccount = async (ctx: Context) => {
 export const getAccount = async (ctx: Context) => {
   try {
     const { accountId } = ctx.params;
-    await getAccountById(accountId);
+    const account = await getAccountById(accountId);
+    ctx.body = { account };
+    ctx.status = 200;
   } catch (error) {
     console.log(error);
   }
