@@ -13,7 +13,8 @@ export const config = {
   database_client: "postgres",
   database_url: process.env.DATABASE_URL,
   token: {
-    token_secret: process.env.TOKEN_SECRET,
-    expiresIn: process.env.JWT_EXPIRY,
+    expiresIn: parseInt(process.env.TOKEN_EXPIRY, 10),
+    length: parseInt(process.env.TOKEN_LENGTH, 10),
+    alphabet: process.env.TOKEN_ALPHABET,
   },
 };

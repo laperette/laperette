@@ -1,9 +1,6 @@
 import { Context } from "koa";
 import { accountSchema } from "../validation";
-export const validateCreateAccountBody = async (
-  ctx: Context,
-  next: () => void,
-) => {
+export const validateCreateAccountBody = (ctx: Context, next: () => void) => {
   const { error } = accountSchema.validate(ctx.request.body);
 
   if (error) {
@@ -11,5 +8,5 @@ export const validateCreateAccountBody = async (
     ctx.body = "Missing parameters";
     return;
   }
-  await next();
+  return next();
 };

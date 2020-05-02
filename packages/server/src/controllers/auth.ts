@@ -1,6 +1,6 @@
 import { getAccountByEmail } from "../db/accounts";
 import { Context } from "koa";
-import { createToken, saveToken } from "../utils/auth";
+import { createUserSession } from "../utils/auth";
 
 export const login = async (ctx: Context) => {
   const { email } = ctx.request.body;
@@ -12,10 +12,11 @@ export const login = async (ctx: Context) => {
     return;
   }
 
-  const { id, createdAt } = account;
-  const token = await createToken(id, email, createdAt);
-  await saveToken(token, id);
+  const { id } = account;
+
+  const sessionId = await createUserSession(id);
+
   ctx.body = {
-    token,
+    sessionId,
   };
 };

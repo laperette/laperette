@@ -1,51 +1,47 @@
-import * as jwt from "jsonwebtoken";
 import { config } from "../../config";
 import { addDays } from "date-fns";
-import { knex } from "../db/db";
-import { saveOneToken } from "../db/tokens";
+import { saveUserSession, getActiveUserSessions } from "../db/sessions";
 import { Context } from "koa";
+import { v4 as uuidv4 } from "uuid";
 
-export const createToken = (
-  email: string,
-  accountId: string,
-  createdAt: Date,
-) => {
-  const jwtOptions = {
-    expiresIn: config.token.expiresIn,
-  };
+export const createUserSession = async (accountId: string) => {
+  const token = uuidv4();
 
-  const jwtPayload = {
-    email,
-    accountId,
-    createdAt,
-  };
+  const expiryDate = addDays(new Date(), config.token.expiresIn);
 
-  return new Promise<string>((resolve, reject) =>
-    jwt.sign(
-      jwtPayload,
-      config.token.token_secret,
-      jwtOptions,
-      (err, token) => {
-        if (err) {
-          console.log("Unexpected error when attempting to sign JWT", err);
-          return reject(err);
-        }
-        return resolve(token);
-      },
-    ),
-  );
+  await saveUserSession(accountId, token, expiryDate);
+
+  return token;
 };
 
-export const saveToken = async (token, accountId) => {
-  const expiresAt: Date = addDays(new Date(), 2);
-
-  await saveOneToken(accountId, token, expiresAt);
-};
-
-export const extractToken = (ctx: Context): string | null => {
+export const extractSessionId = (ctx: Context): string | null => {
   const { headers } = ctx;
-  if (headers && headers.authorization) {
-    return headers.authorization.replace("Bearer ", "");
+  if (!headers || !headers.authorization) {
+    return null;
   }
-  return null;
+
+  console.log(headers.authorization.replace);
+  const sessionId = headers.authorization.replace("Bearer ", "");
+
+  return sessionId;
+};
+
+export const verifySession = async (sessionToken: string) => {
+  const session = await getActiveUserSessions(sessionToken);
+
+  console.log({ session });
+
+  // return session
+  //   .map(({ user, session }) => {
+  //     return {
+  //       user: rowToRecord(user),
+  //       sub: user.auth0_id,
+  //       iat: asUnixSecondsTimestamp(session.created_at),
+  //       exp: asUnixSecondsTimestamp(session.expires_at),
+  //       iss: "bulb.co.uk",
+  //     };
+  //   })
+  //   .getOrElse(null);
+
+  // await getActiveSessionToek;
 };
