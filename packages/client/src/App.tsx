@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Calendar, Booking } from "./Calendar/Calendar";
-import styled, { createGlobalStyle } from "styled-components";
+import { Grommet, Text, Header, Main, Box, Grid, Anchor } from "grommet";
+import { Home, Sync } from "grommet-icons";
 
-const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-      "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-  }
-`;
+import { Calendar, Booking } from "./Calendar/Calendar";
+import { theme } from "./theme";
 
 const App = () => {
   const [bookings, setBookings] = useState<ReadonlyArray<Booking> | null>(null);
@@ -33,18 +20,45 @@ const App = () => {
   }, []);
 
   return (
-    <>
-      <GlobalStyle />
-      <Container>
-        {bookings === null ? "loading..." : <Calendar bookings={bookings} />}
-      </Container>
-    </>
+    <Grommet theme={theme}>
+      <Box height="100vh" background="light-1">
+        <Grid
+          areas={[["header"], ["main"]]}
+          fill
+          gap={undefined}
+          rows={["xxsmall", "1fr"]}
+          columns={["1fr"]}
+        >
+          <Header
+            alignContent="center"
+            background="brand"
+            gridArea="header"
+            pad={{ horizontal: "medium" }}
+          >
+            <Box direction="row">
+              <Anchor href="/">
+                <Home />
+                <Text margin={{ left: "small" }} size="large">
+                  Laperette
+                </Text>
+              </Anchor>
+            </Box>
+          </Header>
+          <Main gridArea="main" background="light-1" pad="medium">
+            {bookings === null ? (
+              <Box fill justify="center" align="center">
+                <Text size="xxlarge">
+                  <Sync /> loading...
+                </Text>
+              </Box>
+            ) : (
+              <Calendar bookings={bookings} />
+            )}
+          </Main>
+        </Grid>
+      </Box>
+    </Grommet>
   );
 };
-
-const Container = styled.div`
-  height: 100vh;
-  padding: 24px;
-`;
 
 export default App;

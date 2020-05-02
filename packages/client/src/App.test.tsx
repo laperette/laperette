@@ -15,14 +15,10 @@ describe("App", () => {
     mockedAxios.get.mockClear();
   });
 
-  it("should display loading while fetching the bookings", () => {
+  it("should display a loader while fetching the bookings, and then, the calendar", async () => {
     mockCall();
     const { getByText } = render(<App />);
     expect(getByText(/loading.../i)).toBeInTheDocument();
-  });
-  it("should display the calendar when fetching the bookings is done", async () => {
-    mockCall();
-    const { getByText } = render(<App />);
     await wait();
     expect(getByText(/lundi/i)).toBeInTheDocument();
   });
