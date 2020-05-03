@@ -1,10 +1,10 @@
 import { config } from "../../config";
 import { addDays } from "date-fns";
-import { saveUserSession, getActiveUserSessions } from "../db/sessions";
+import { saveUserSession, getActiveUserSession } from "../db/sessions";
 import { Context } from "koa";
 import { v4 as uuidv4 } from "uuid";
 
-export const createUserSession = async (accountId: string) => {
+export const createUserSession = async (accountId: string): Promise<string> => {
   const token = uuidv4();
 
   const expiryDate = addDays(new Date(), config.token.expiresIn);
@@ -15,33 +15,19 @@ export const createUserSession = async (accountId: string) => {
 };
 
 export const extractSessionId = (ctx: Context): string | null => {
-  const { headers } = ctx;
-  if (!headers || !headers.authorization) {
+  const sessionCookie = ctx.cookies.get("laperette_session");
+
+  if (!sessionCookie) {
     return null;
   }
 
-  console.log(headers.authorization.replace);
-  const sessionId = headers.authorization.replace("Bearer ", "");
-
-  return sessionId;
+  return sessionCookie;
 };
 
-export const verifySession = async (sessionToken: string) => {
-  const session = await getActiveUserSessions(sessionToken);
+export const verifySession = async (
+  sessionCookie: string,
+): Promise<boolean> => {
+  const activeSession = await getActiveUserSession(sessionCookie);
 
-  console.log({ session });
-
-  // return session
-  //   .map(({ user, session }) => {
-  //     return {
-  //       user: rowToRecord(user),
-  //       sub: user.auth0_id,
-  //       iat: asUnixSecondsTimestamp(session.created_at),
-  //       exp: asUnixSecondsTimestamp(session.expires_at),
-  //       iss: "bulb.co.uk",
-  //     };
-  //   })
-  //   .getOrElse(null);
-
-  // await getActiveSessionToek;
+  return !!activeSession.length;
 };

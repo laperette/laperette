@@ -12,7 +12,7 @@ export const saveUserSession = async (
   });
 };
 
-export const getActiveUserSessions = async (sessionId) => {
+export const getActiveUserSession = async (sessionId) => {
   return await knex("sessions")
     .where({
       session_id: sessionId,
@@ -27,6 +27,7 @@ export const invalidateSessionById = async (sessionId) => {
   });
 };
 
+// To be done, leaving here not to forget
 // export const invalidateSessionByUser = async (sessionId) => {
 //   await knex("sessions").del().where({
 //     session_id: sessionId,

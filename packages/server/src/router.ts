@@ -14,7 +14,7 @@ router.get("/healthz", (ctx) => {
 
 router.get("/bookings", authenticate, getBookings);
 
-router.get("/bookings/:bookingId", getBooking);
+router.get("/bookings/:bookingId", authenticate, getBooking);
 
 router.post("/accounts", validateCreateAccountBody, createAccount);
 
