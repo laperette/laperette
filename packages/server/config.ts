@@ -9,7 +9,7 @@ interface Config {
   };
 }
 
-export const config = {
+export const config: Config = {
   database_client: "postgres",
   database_url: process.env.DATABASE_URL,
   token: {
