@@ -18,6 +18,6 @@ router.get("/bookings/:bookingId", authenticate, getBooking);
 
 router.post("/accounts", validateCreateAccountBody, createAccount);
 
-router.get("/accounts/:accountId", getAccount);
+router.get("/accounts/:accountId", authenticate , getAccount);
 
 router.post("/login", login);
