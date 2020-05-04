@@ -1,11 +1,6 @@
-import * as Knex from "knex";
-import { config } from "../config";
-import { Booking } from "./domain";
+import { Booking } from "../domain/Booking";
 
-export const knex = Knex({
-  client: config.DATABASE_CLIENT,
-  connection: config.DATABASE_URL,
-});
+import { knex } from "./db";
 
 export const getAllBookings = async () => {
   const bookings = await knex<ReadonlyArray<Booking>>("bookings").select();
