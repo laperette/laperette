@@ -2,7 +2,7 @@ import * as Router from "koa-router";
 
 import { getBooking, getBookings } from "./controllers/bookings";
 import { createAccount, getAccount } from "./controllers/accounts";
-import { validateCreateAccountBody } from "./middlewares/validate";
+import { validateCreateAccountData } from "./middlewares/validate";
 import { login } from "./controllers/auth";
 import { authenticate } from "./middlewares/authenticate";
 
@@ -16,8 +16,8 @@ router.get("/bookings", authenticate, getBookings);
 
 router.get("/bookings/:bookingId", authenticate, getBooking);
 
-router.post("/accounts", validateCreateAccountBody, createAccount);
+router.post("/accounts", validateCreateAccountData, createAccount);
 
-router.get("/accounts/:accountId", authenticate , getAccount);
+router.get("/accounts/:accountId", authenticate, getAccount);
 
 router.post("/login", login);

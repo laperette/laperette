@@ -4,8 +4,8 @@ interface Config {
   database_client: string;
   database_url: string;
   token: {
-    token_secret: string;
     expiresIn: number;
+    length: number;
   };
 }
 
