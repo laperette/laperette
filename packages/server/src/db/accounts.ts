@@ -4,11 +4,13 @@ export const createOneAccount = async (
   firstName: string,
   lastName: string,
   email: string,
+  password: string,
 ) => {
   await knex("accounts").insert({
     first_name: firstName,
     last_name: lastName,
     email,
+    password,
   });
 };
 

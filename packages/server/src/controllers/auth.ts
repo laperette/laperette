@@ -1,25 +1,16 @@
 import { getAccountByEmail } from "../db/accounts";
 import { Context } from "koa";
-import { createUserSession } from "../utils/auth";
 import {
   invalidateSessionById,
   getSessionsByUser,
   getSessionsById,
 } from "../db/sessions";
+import { createAccountSession } from "../utils/auth";
 
 export const login = async (ctx: Context) => {
-  const { email } = ctx.request.body;
-  const account = await getAccountByEmail(email);
+  const { accountId } = ctx.state;
 
-  if (!account) {
-    ctx.status = 401;
-    ctx.body = "Wrong credentials";
-    return;
-  }
-
-  const { id } = account;
-
-  const sessionId = await createUserSession(id);
+  const sessionId = await createAccountSession(accountId);
 
   ctx.status = 200;
   ctx.body = {
