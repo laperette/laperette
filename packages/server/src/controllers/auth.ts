@@ -1,16 +1,20 @@
 import { getAccountByEmail } from "../db/accounts";
 import { Context } from "koa";
+<<<<<<< HEAD
 import {
   invalidateSessionById,
   getSessionsByUser,
   getSessionsById,
 } from "../db/sessions";
+=======
+>>>>>>> Created middleware to validate credentials + Added password hashing and insertion into DB
 import { createAccountSession } from "../utils/auth";
 
 export const login = async (ctx: Context) => {
   const { accountId } = ctx.state;
 
   const sessionId = await createAccountSession(accountId);
+<<<<<<< HEAD
 
   ctx.status = 200;
   ctx.body = {
@@ -33,6 +37,8 @@ export const revokeAccountSessionById = async (ctx: Context) => {
 
   ctx.status = 204;
 };
+=======
+>>>>>>> Created middleware to validate credentials + Added password hashing and insertion into DB
 
 export const listAccountSessions = async (ctx: Context) => {
   const { accountId } = ctx.params;

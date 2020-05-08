@@ -1,6 +1,10 @@
 import { config } from "../../config";
 import { addDays } from "date-fns";
 import { saveAccountSession, getActiveAccountSession } from "../db/sessions";
+<<<<<<< HEAD
+=======
+import { Context } from "koa";
+>>>>>>> Created middleware to validate credentials + Added password hashing and insertion into DB
 import { v4 as uuidv4 } from "uuid";
 import { hash, compare } from "bcrypt";
 
