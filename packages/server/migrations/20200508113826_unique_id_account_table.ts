@@ -1,8 +1,9 @@
 import * as Knex from "knex";
 
 export async function up(knex: Knex): Promise<any> {
+  await knex.schema.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
   return knex.schema.alterTable("accounts", (table) => {
-    table.uuid("account_id").unique();
+    table.uuid("account_id").defaultTo(knex.raw("uuid_generate_v4()"));
   });
 }
 

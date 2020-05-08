@@ -5,7 +5,6 @@ interface Config {
   database_url: string;
   token: {
     expiresIn: number;
-    length: number;
   };
 }
 
