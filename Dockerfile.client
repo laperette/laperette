@@ -1,0 +1,16 @@
+FROM node:12-alpine
+
+WORKDIR /app
+
+COPY ./packages/client ./packages/client
+COPY ./package.json .
+COPY ./yarn.lock .
+
+RUN yarn install
+RUN yarn client build
+
+EXPOSE 3000
+
+ENV PORT=3000
+
+CMD ["yarn","client","start"]
