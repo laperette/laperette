@@ -1,6 +1,6 @@
 import { Booking } from "../domain";
 import { addDays } from "date-fns";
-import { knex } from "../db";
+import { knex } from "../db/db";
 
 const seedDatabase = async () => {
   const today = new Date();
