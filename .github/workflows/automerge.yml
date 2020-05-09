@@ -6,11 +6,13 @@ on:
       - master
     paths-ignore:
       - "packages/**"
+      - "package.json"
   push:
     branches:
       - master
     paths-ignore:
       - "packages/**"
+      - "package.json"
 
 jobs:
   dummy-test-client:

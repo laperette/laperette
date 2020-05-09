@@ -6,11 +6,13 @@ on:
       - master
     paths:
       - "packages/client/**"
+      - "package.json"
   push:
     branches:
       - master
     paths:
       - "packages/client/**"
+      - "package.json"
 
 jobs:
   dummy-build-server:
