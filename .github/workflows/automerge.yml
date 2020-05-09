@@ -1,0 +1,25 @@
+name: Automerge
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "packages/**"
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "packages/**"
+
+jobs:
+  dummy-test-client:
+    name: Test the client
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 0
+  dummy-build-server:
+    name: Build the server
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 0
