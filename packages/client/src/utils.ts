@@ -1,3 +1,4 @@
-export const zeros = (length: number) => Array.from(Array(length)).map(() => 0);
+import range from "lodash/range";
+
 export const repeat = (length: number, ret: string) =>
-  zeros(length).map(() => ret);
+  range(length).map(() => ret);

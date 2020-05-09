@@ -2,9 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Grommet, Text, Header, Main, Box, Grid, Anchor } from "grommet";
 import { Home, Sync } from "grommet-icons";
+import { parseISO } from "date-fns";
 
 import { Calendar, Booking } from "./Calendar/Calendar";
 import { theme } from "./theme";
+
+const serializeBooking = (rawBooking: Record<string, any>): Booking => ({
+  interval: {
+    start: parseISO(rawBooking.start_date),
+    end: parseISO(rawBooking.end_date),
+  },
+  name: rawBooking.name,
+});
 
 const App = () => {
   const [bookings, setBookings] = useState<ReadonlyArray<Booking> | null>(null);
@@ -14,7 +23,7 @@ const App = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/bookings`,
       );
-      setBookings(response.data);
+      setBookings(response.data.map(serializeBooking));
     };
     getBookings();
   }, []);
