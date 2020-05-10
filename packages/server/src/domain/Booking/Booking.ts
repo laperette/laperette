@@ -1,20 +1,20 @@
 type BookingConstructorArgs = {
-  end_date: Date;
-  name: string;
-  start_date: Date;
-  surname: string;
+  endDate: Date;
+  firstName: string;
+  startDate: Date;
+  lastName: string;
 };
 
 export class Booking {
-  readonly end_date: Date;
-  readonly name: string;
-  readonly start_date: Date;
-  readonly surname: string;
+  readonly endDate: Date;
+  readonly firstName: string;
+  readonly startDate: Date;
+  readonly lastName: string;
 
   constructor(args: BookingConstructorArgs) {
-    this.end_date = args.end_date;
-    this.name = args.name;
-    this.start_date = args.start_date;
-    this.surname = args.surname;
+    this.endDate = args.endDate;
+    this.firstName = args.firstName;
+    this.startDate = args.startDate;
+    this.lastName = args.lastName;
   }
 }
