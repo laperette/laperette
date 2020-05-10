@@ -8,7 +8,7 @@ export const validateCreateAccountData = async (
   const { error } = accountSchema.validate(ctx.request.body);
 
   if (error) {
-    ctx.status = 403;
+    ctx.status = 400;
     ctx.message = "Missing parameters";
     return;
   }
@@ -18,7 +18,7 @@ export const validateCreateAccountData = async (
   const alreadyExist = !!(await getAccountByEmail(email));
 
   if (alreadyExist) {
-    ctx.status = 401;
+    ctx.status = 409;
     ctx.message = "Account already exist";
     return;
   }
