@@ -9,4 +9,5 @@ export const accountSchema = Joi.object({
       tlds: { allow: ["com", "fr"] },
     })
     .required(),
+  password: Joi.string().alphanum().min(6).max(30).required(),
 });

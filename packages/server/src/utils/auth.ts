@@ -1,15 +1,17 @@
 import { config } from "../../config";
 import { addDays } from "date-fns";
-import { saveUserSession, getActiveUserSession } from "../db/sessions";
-import { Context } from "koa";
+import { saveAccountSession, getActiveAccountSession } from "../db/sessions";
 import { v4 as uuidv4 } from "uuid";
+import { hash, compare } from "bcrypt";
 
-export const createUserSession = async (accountId: string): Promise<string> => {
+export const createAccountSession = async (
+  accountId: string,
+): Promise<string> => {
   const token = uuidv4();
 
   const expiryDate = addDays(new Date(), config.token.expiresIn);
 
-  await saveUserSession(accountId, token, expiryDate);
+  await saveAccountSession(accountId, token, expiryDate);
 
   return token;
 };
@@ -17,7 +19,24 @@ export const createUserSession = async (accountId: string): Promise<string> => {
 export const verifySession = async (
   sessionCookie: string,
 ): Promise<boolean> => {
-  const activeSession = await getActiveUserSession(sessionCookie);
+  const activeSession = await getActiveAccountSession(sessionCookie);
 
   return !!activeSession.length;
+};
+
+export const hashPassword = async (password: string): Promise<string> => {
+  const hashedPassword = await hash(password, 12);
+
+  return hashedPassword;
+};
+
+export const verifyPassword = async (
+  account,
+  password: string,
+): Promise<string> => {
+  const storedPassword = account.password;
+
+  const isValidPassword = await compare(password, storedPassword);
+
+  return isValidPassword;
 };

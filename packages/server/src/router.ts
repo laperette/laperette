@@ -8,7 +8,7 @@ import {
   revokeAccountSessionById,
   listAccountSessions,
 } from "./controllers/auth";
-import { authenticate } from "./middlewares/authenticate";
+import { authenticate, validateCredentials } from "./middlewares/authenticate";
 
 export const router = new Router();
 
@@ -28,4 +28,4 @@ router.get("/accounts/:accountId/sessions", authenticate, listAccountSessions);
 
 router.delete("/accounts/:sessionId", authenticate, revokeAccountSessionById);
 
-router.post("/login", login);
+router.post("/login", validateCredentials, login);

@@ -1,6 +1,6 @@
 import { knex } from "./db";
 
-export const saveUserSession = async (
+export const saveAccountSession = async (
   accountId: string,
   token: string,
   expiryDate: Date,
@@ -11,8 +11,7 @@ export const saveUserSession = async (
     expires_at: expiryDate,
   });
 };
-
-export const getActiveUserSession = async (sessionId: string) => {
+export const getActiveAccountSession = async (sessionId) => {
   return await knex("sessions")
     .where({
       session_id: sessionId,
@@ -46,3 +45,10 @@ export const getSessionsById = async (sessionId) => {
   });
   return session;
 };
+
+// To be done, leaving here not to forget
+// export const invalidateSessionByAccount = async (sessionId) => {
+//   await knex("sessions").del().where({
+//     session_id: sessionId,
+//   });
+// };

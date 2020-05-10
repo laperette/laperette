@@ -1,5 +1,16 @@
-import { verifySession } from "../utils/auth";
+import { verifySession, verifyPassword } from "../utils/auth";
 import { Context } from "koa";
+import { getAccountByEmail } from "../db/accounts";
+
+const extractSessionId = (ctx: Context): string | null => {
+  const sessionCookie = ctx.cookies.get("laperette_session");
+
+  if (!sessionCookie) {
+    return null;
+  }
+
+  return sessionCookie;
+};
 
 export const authenticate = async (ctx: Context, next: () => void) => {
   const sessionId = extractSessionId(ctx);
@@ -20,12 +31,31 @@ export const authenticate = async (ctx: Context, next: () => void) => {
   return next();
 };
 
-export const extractSessionId = (ctx: Context): string | null => {
-  const sessionCookie = ctx.cookies.get("laperette_session");
+export const validateCredentials = async (ctx: Context, next: () => void) => {
+  const { email, password } = ctx.request.body;
 
-  if (!sessionCookie) {
-    return null;
+  const account = await getAccountByEmail(email);
+
+  if (!account) {
+    ctx.body = { error: "Unauthorized", error_description: "Unknown account" };
+    ctx.status = 401;
+    return;
   }
 
-  return sessionCookie;
+  const hasValidPassword = await verifyPassword(account, password);
+
+  if (!hasValidPassword) {
+    ctx.body = {
+      error: "Unauthorized",
+      error_description: "Invalid credentials",
+    };
+    ctx.status = 401;
+    return;
+  }
+
+  ctx.state = {
+    accountId: account.id,
+  }; // To update to account.account_id when other branched merged
+
+  return next();
 };
