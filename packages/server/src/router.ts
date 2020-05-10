@@ -2,13 +2,12 @@ import * as Router from "koa-router";
 
 import { getBooking, getBookings } from "./controllers/bookings";
 import { createAccount, getAccount } from "./controllers/accounts";
-import { validateCreateAccountBody } from "./middlewares/validate";
+import { validateCreateAccountData } from "./middlewares/validate";
 import {
   login,
   revokeAccountSessionById,
   listAccountSessions,
 } from "./controllers/auth";
-import { login } from "./controllers/auth";
 import { authenticate } from "./middlewares/authenticate";
 
 export const router = new Router();
