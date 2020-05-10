@@ -8,6 +8,7 @@ import {
   revokeAccountSessionById,
   listAccountSessions,
 } from "./controllers/auth";
+import { login } from "./controllers/auth";
 import { authenticate } from "./middlewares/authenticate";
 
 export const router = new Router();
@@ -20,7 +21,7 @@ router.get("/bookings", authenticate, getBookings);
 
 router.get("/bookings/:bookingId", authenticate, getBooking);
 
-router.post("/accounts", validateCreateAccountBody, createAccount);
+router.post("/accounts", validateCreateAccountData, createAccount);
 
 router.get("/accounts/:accountId", authenticate, getAccount);
 
