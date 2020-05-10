@@ -14,16 +14,6 @@ export const createUserSession = async (accountId: string): Promise<string> => {
   return token;
 };
 
-export const extractSessionId = (ctx: Context): string | null => {
-  const sessionCookie = ctx.cookies.get("laperette_session");
-
-  if (!sessionCookie) {
-    return null;
-  }
-
-  return sessionCookie;
-};
-
 export const verifySession = async (
   sessionCookie: string,
 ): Promise<boolean> => {
