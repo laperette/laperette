@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, Heading } from "grommet";
+import { Box, Button, Grid, Heading, Text } from "grommet";
 import { Next, Previous } from "grommet-icons";
+import rangeRight from "lodash/rangeRight";
+import range from "lodash/range";
 
 import {
   getDay,
@@ -12,10 +14,16 @@ import {
   startOfMonth,
   getDate,
   isWithinInterval,
-  parseISO,
   setYear,
+  endOfMonth,
+  addDays,
+  subDays,
+  isSameDay,
+  eachDayOfInterval,
+  Interval,
+  format,
 } from "date-fns";
-import { repeat, zeros } from "../utils";
+import { repeat } from "../utils";
 
 const WEEK_DAYS_NAMES = [
   "Lundi",
@@ -77,11 +85,10 @@ export const useCalendarActions = ({ date }: { date: Date }) => {
     resetToDate,
   };
 };
+
 export type Booking = {
-  readonly end_date: string;
   readonly name: string;
-  readonly start_date: string;
-  readonly surname: string;
+  readonly interval: Interval;
 };
 
 export const Calendar = ({
@@ -89,7 +96,7 @@ export const Calendar = ({
 }: {
   bookings: ReadonlyArray<Booking>;
 }) => {
-  const today = new Date();
+  const today = new Date(); // setHours(new Date(), 2);
   const {
     currentMonthNumber,
     currentYear,
@@ -100,29 +107,51 @@ export const Calendar = ({
   const currentMonthName = MONTHS_NAMES[currentMonthNumber];
 
   const monthDate = setYear(setMonth(today, currentMonthNumber), currentYear);
-  const daysInMonth = [];
-  for (let d = 1; d <= getDaysInMonth(monthDate); d++) {
-    const day = setDate(monthDate, d);
+
+  const firstDayInMonth = startOfMonth(monthDate);
+  const lastDayInMonth = endOfMonth(monthDate);
+
+  const previousMonthDays = rangeRight(
+    1,
+    getDay(firstDayInMonth),
+  ).map((dayNum) => subDays(firstDayInMonth, dayNum));
+  const currentMonthDays = range(1, getDaysInMonth(monthDate) + 1).map((date) =>
+    setDate(monthDate, date),
+  );
+  const nextMonthDays = range(
+    1,
+    42 - (previousMonthDays.length + currentMonthDays.length) + 1,
+  ).map((dayNum) => addDays(lastDayInMonth, dayNum));
+  const daysInMonth = [
+    ...previousMonthDays,
+    ...currentMonthDays,
+    ...nextMonthDays,
+  ].map((day, index) => {
     const booking = bookings.find((booking) =>
-      isWithinInterval(day, {
-        start: parseISO(booking.start_date),
-        end: parseISO(booking.end_date),
-      }),
+      isWithinInterval(day, booking.interval),
     );
-    daysInMonth.push(<Day key={d} day={day} booking={booking} />);
-  }
+    return (
+      <Day
+        booking={booking}
+        day={day}
+        dayNumber={index + 1}
+        key={day.toISOString()}
+        currentMonth={currentMonthName}
+      />
+    );
+  });
 
   return (
     <Grid
       fill
       columns={repeat(7, "1fr")}
-      rows={["xxsmall", "xxsmall", ...repeat(6, "auto")]}
-      gap="small"
+      rows={["xxsmall", "xxsmall", ...repeat(6, "1fr")]}
+      gap={undefined}
       areas={[
         repeat(7, "header"),
         WEEK_DAYS_NAMES,
-        ...zeros(6).map((_, row) =>
-          zeros(7).map((_, col) => `day-${row * 7 + col + 1}`),
+        ...range(6).map((_, row) =>
+          range(7).map((_, col) => `day-${row * 7 + col + 1}`),
         ),
       ]}
     >
@@ -159,13 +188,55 @@ export const Calendar = ({
   );
 };
 
-const Day = ({ day, booking }: { day: Date; booking?: Booking }) => {
+const Day = ({
+  day,
+  booking,
+  dayNumber,
+  currentMonth,
+}: {
+  day: Date;
+  booking?: Booking;
+  dayNumber: number;
+  currentMonth: string;
+}) => {
+  const today = new Date();
   const date = getDate(day);
-  const dayNumber = date + (getDay(startOfMonth(day)) || 7) - 1;
+  const month = MONTHS_NAMES[getMonth(day)];
+  const dayColor = isSameDay(day, today) ? "brand" : "light-3";
+  const DATE_FORMAT = "dd/MM/yyyy 'à' H 'heures'";
   return (
-    <Box border="all" gridArea={`day-${dayNumber}`} key={date}>
-      {date}
-      {booking && booking.name}
+    <Box
+      border={{ side: "all", color: dayColor }}
+      gridArea={`day-${dayNumber}`}
+      key={date}
+      pad="xxsmall"
+    >
+      <Text
+        color={month === currentMonth ? "dark-1" : "dark-4"}
+        size={date === 1 ? "large" : "medium"}
+        textAlign="end"
+      >
+        {date === 1 ? `${date} ${month}` : date}
+      </Text>
+      {booking && (
+        <Box
+          background="light-3"
+          hoverIndicator
+          onClick={() => {
+            alert(
+              `${booking.name} a réservé pour ${
+                eachDayOfInterval(booking.interval).length
+              } jours, du ${format(
+                booking.interval.start,
+                DATE_FORMAT,
+              )} au ${format(booking.interval.end, DATE_FORMAT)}`,
+            );
+          }}
+          pad="xxsmall"
+        >
+          <Text size="small">{booking.name}</Text>
+        </Box>
+      )}
     </Box>
   );
 };
