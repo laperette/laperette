@@ -13,7 +13,7 @@ export const createOneAccount = async (
 };
 
 export const getAccountById = async (accountId: string) => {
-  const account = await knex("accounts").where({ id: accountId });
+  const account = await knex("accounts").where({ account_id: accountId });
   return account[0];
 };
 
