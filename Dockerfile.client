@@ -6,7 +6,7 @@ COPY ./packages/client ./packages/client
 COPY ./package.json .
 COPY ./yarn.lock .
 
-RUN yarn install
+RUN yarn install --frozen-lockfile
 RUN yarn client build
 
 EXPOSE 3000
