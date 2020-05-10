@@ -1,12 +1,14 @@
 FROM node:12-alpine
 
+RUN apk --no-cache add --virtual builds-deps build-base python
+
 WORKDIR /app
 
 COPY ./packages/server ./packages/server
 COPY ./package.json .
 COPY ./yarn.lock .
 
-RUN yarn install
+RUN yarn install --frozen-lockfile
 RUN yarn server build
 
 EXPOSE 8000

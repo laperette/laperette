@@ -33,7 +33,7 @@ export const hashPassword = async (password: string): Promise<string> => {
 export const verifyPassword = async (
   account,
   password: string,
-): Promise<string> => {
+): Promise<boolean> => {
   const storedPassword = account.password;
 
   const isValidPassword = await compare(password, storedPassword);
