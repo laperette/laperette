@@ -1,5 +1,5 @@
 import React from "react";
-import { FormField, TextInput, Button, Box } from "grommet";
+import { FormField, TextInput, Button, Box, Heading } from "grommet";
 import { useAuth } from "../../contexts/AuthContext";
 
 export const Login = () => {
@@ -17,6 +17,7 @@ export const Login = () => {
             login({ email: "lol", password: "lol" });
           }}
         >
+          <Heading>Log in</Heading>
           <FormField htmlFor="email" label="Email">
             <TextInput
               autoComplete="email"

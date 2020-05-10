@@ -1,18 +1,16 @@
 import React from "react";
 import { render, wait } from "@testing-library/react";
 import { App } from "./App";
-import axios from "axios";
-
-jest.mock("axios");
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-
-const mockCall = () => {
-  mockedAxios.get.mockResolvedValueOnce({ data: [] });
-};
+import { AppProviders } from "./contexts/AppProviders";
 
 describe("App", () => {
-  afterEach(() => {
-    mockedAxios.get.mockClear();
+  it("should display a loading spinner and then the login page if not authenticated ", async () => {
+    const { getByText } = render(<App />, {
+      wrapper: ({ children }) => <AppProviders>{children}</AppProviders>,
+    });
+    expect(getByText(/loading/i)).toBeInTheDocument();
+    await wait();
+    expect(getByText(/log in/i)).toBeInTheDocument();
   });
 
   it("should display a loader while fetching the bookings, and then, the calendar", async () => {
