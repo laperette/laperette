@@ -1,10 +1,16 @@
-<<<<<<< HEAD
 import { verifySession, verifyPassword } from "../utils/auth";
-=======
-import { extractSessionId, verifySession, verifyPassword } from "../utils/auth";
->>>>>>> Created middleware to validate credentials + Added password hashing and insertion into DB
 import { Context } from "koa";
 import { getAccountByEmail } from "../db/accounts";
+
+const extractSessionId = (ctx: Context): string | null => {
+  const sessionCookie = ctx.cookies.get("laperette_session");
+
+  if (!sessionCookie) {
+    return null;
+  }
+
+  return sessionCookie;
+};
 
 export const authenticate = async (ctx: Context, next: () => void) => {
   const sessionId = extractSessionId(ctx);
@@ -24,19 +30,7 @@ export const authenticate = async (ctx: Context, next: () => void) => {
 
   return next();
 };
-<<<<<<< HEAD
 
-export const extractSessionId = (ctx: Context): string | null => {
-  const sessionCookie = ctx.cookies.get("laperette_session");
-
-  if (!sessionCookie) {
-    return null;
-  }
-
-  return sessionCookie;
-};
-=======
->>>>>>> Created middleware to validate credentials + Added password hashing and insertion into DB
 export const validateCredentials = async (ctx: Context, next: () => void) => {
   const { email, password } = ctx.request.body;
 
