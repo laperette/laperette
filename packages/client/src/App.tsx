@@ -12,7 +12,7 @@ const serializeBooking = (rawBooking: Record<string, any>): Booking => ({
     start: parseISO(rawBooking.start_date),
     end: parseISO(rawBooking.end_date),
   },
-  name: rawBooking.name,
+  name: rawBooking.first_name,
 });
 
 const App = () => {

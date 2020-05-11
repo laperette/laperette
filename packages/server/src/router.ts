@@ -16,7 +16,7 @@ router.get("/healthz", (ctx) => {
   ctx.body = { ok: true };
 });
 
-router.get("/bookings", authenticate, getBookings);
+router.get("/bookings", getBookings); // TODO: re-add authenticate middleware as soon as the signup/login flows are done
 
 router.get("/bookings/:bookingId", authenticate, getBooking);
 

@@ -4,15 +4,15 @@ on:
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - "packages/**"
-      - "package.json"
+    paths:
+      - "!packages/**"
+      - "!package.json"
   push:
     branches:
       - master
-    paths-ignore:
-      - "packages/**"
-      - "package.json"
+    paths:
+      - "!packages/**"
+      - "!package.json"
 
 jobs:
   dummy-test-client:
