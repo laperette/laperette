@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { Box, Button, Grid, Heading, Text } from "grommet";
 import { Next, Previous } from "grommet-icons";
 import rangeRight from "lodash/rangeRight";
 import range from "lodash/range";
+import Axios from "axios";
 
 import {
   getDay,
@@ -22,8 +23,12 @@ import {
   eachDayOfInterval,
   Interval,
   format,
+  parseISO,
 } from "date-fns";
-import { repeat } from "../utils";
+import { repeat } from "../../utils";
+import { useAsync } from "../../hooks/useAsync";
+import { FullPageSpinner } from "../FullPageSpinner";
+import { FullPageErrorFallback } from "../FullPageErrorCallback";
 
 const WEEK_DAYS_NAMES = [
   "Lundi",
@@ -91,11 +96,34 @@ export type Booking = {
   readonly interval: Interval;
 };
 
-export const Calendar = ({
-  bookings,
-}: {
-  bookings: ReadonlyArray<Booking>;
-}) => {
+const serializeBooking = (rawBooking: Record<string, any>): Booking => ({
+  interval: {
+    start: parseISO(rawBooking.start_date),
+    end: parseISO(rawBooking.end_date),
+  },
+  name: rawBooking.first_name,
+});
+
+export const Calendar = () => {
+  const {
+    data: bookings,
+    run,
+    isIdle,
+    isLoading,
+    isError,
+    error,
+  } = useAsync<ReadonlyArray<Booking> | null>();
+
+  useLayoutEffect(() => {
+    const getBookings = async (): Promise<ReadonlyArray<Booking>> => {
+      const response = await Axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/bookings`,
+      );
+      return response.data.map(serializeBooking);
+    };
+    run(getBookings());
+  }, [run]);
+
   const today = new Date(); // setHours(new Date(), 2);
   const {
     currentMonthNumber,
@@ -104,6 +132,15 @@ export const Calendar = ({
     incrementMonth,
     resetToDate,
   } = useCalendarActions({ date: today });
+
+  if (isError) {
+    return <FullPageErrorFallback error={error} />;
+  }
+
+  if (isIdle || isLoading || !bookings) {
+    return <FullPageSpinner />;
+  }
+
   const currentMonthName = MONTHS_NAMES[currentMonthNumber];
 
   const monthDate = setYear(setMonth(today, currentMonthNumber), currentYear);
