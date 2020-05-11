@@ -4,10 +4,11 @@ import "normalize.css";
 import { App } from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { AppProviders } from "./contexts/AppProviders";
+import { fakeAuthClient } from "./utils/authClient";
 
 ReactDOM.render(
   <React.StrictMode>
-    <AppProviders>
+    <AppProviders authClient={fakeAuthClient()}>
       <App />
     </AppProviders>
   </React.StrictMode>,

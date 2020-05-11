@@ -1,14 +1,17 @@
-import React, { useCallback, useMemo, useContext, useState } from "react";
-
-type AuthFormValues = { email: string; password: string };
-
-type User = {
-  email: string;
-};
+import React, {
+  useCallback,
+  useMemo,
+  useContext,
+  useLayoutEffect,
+} from "react";
+import { User, AuthClient, Credentials } from "../utils/authClient";
+import { useAsync } from "../hooks/useAsync";
+import { FullPageSpinner } from "../components/FullPageSpinner";
+import { FullPageErrorFallback } from "../components/FullPageErrorCallback";
 
 type AuthContextValue = {
   user: User | null;
-  login: (form: AuthFormValues) => void;
+  login: (form: Credentials) => void;
   logout: () => void;
 };
 
@@ -19,19 +22,61 @@ const AuthContext = React.createContext<AuthContextValue>({
 });
 AuthContext.displayName = "AuthContext";
 
-export const AuthProvider = (props: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const login = useCallback(({ email }: AuthFormValues) => setUser({ email }), [
-    setUser,
-  ]);
+export const AuthProvider = ({
+  children,
+  authClient,
+}: {
+  children: React.ReactNode;
+  authClient: AuthClient;
+}) => {
+  const {
+    data,
+    status,
+    error,
+    isLoading,
+    isIdle,
+    isError,
+    isSuccess,
+    run,
+    setData,
+  } = useAsync<{ user: User | null }>();
 
-  const logout = useCallback(() => {
-    setUser(null);
-  }, [setUser]);
+  useLayoutEffect(() => {
+    run(authClient.fetchUser());
+  }, [run, authClient]);
+
+  const login = useCallback(
+    async (credentials: Credentials) => {
+      const user = await authClient.login(credentials);
+      setData({ user });
+    },
+    [setData, authClient],
+  );
+
+  const logout = useCallback(async () => {
+    await authClient.logout();
+    setData(null);
+  }, [setData, authClient]);
+
+  const user = data?.user ?? null;
 
   const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
 
-  return <AuthContext.Provider value={value} {...props} />;
+  if (isLoading || isIdle) {
+    return <FullPageSpinner />;
+  }
+
+  if (isError) {
+    return <FullPageErrorFallback error={error} />;
+  }
+
+  if (isSuccess) {
+    return (
+      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    );
+  }
+
+  throw new Error(`Unhandled status: ${status}`);
 };
 
 export const useAuth = () => {

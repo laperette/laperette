@@ -7,9 +7,35 @@ import { useCalendarActions, Calendar } from "./Calendar";
 jest.mock("axios");
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;
 
-const mockCall = () => {
+const mockSuccessCall = () => {
   mockedAxios.get.mockResolvedValueOnce({ data: [] });
 };
+
+const mockFailedCall = () => {
+  mockedAxios.get.mockRejectedValueOnce(new Error("Unable to fetch bookings"));
+};
+
+describe("Calendar", () => {
+  afterEach(() => {
+    mockedAxios.get.mockClear();
+  });
+
+  it("should display a loader while fetching the bookings, and then, the calendar", async () => {
+    mockSuccessCall();
+    const { getByText } = render(<Calendar />);
+    expect(getByText(/loading.../i)).toBeInTheDocument();
+    await wait();
+    expect(getByText(/lundi/i)).toBeInTheDocument();
+  });
+
+  it("should display a loader while fetching the bookings, and then, the error page if fetching the bookings failed", async () => {
+    mockFailedCall();
+    const { getByText } = render(<Calendar />);
+    expect(getByText(/loading.../i)).toBeInTheDocument();
+    await wait();
+    expect(getByText(/Unable to fetch bookings/i)).toBeInTheDocument();
+  });
+});
 
 describe("useCalendarActions", () => {
   it("should increment the month number", () => {
@@ -53,19 +79,5 @@ describe("useCalendarActions", () => {
     });
     expect(result.current.currentMonthNumber).toBe(11);
     expect(result.current.currentYear).toBe(2019);
-  });
-});
-
-describe("Calendar", () => {
-  afterEach(() => {
-    mockedAxios.get.mockClear();
-  });
-
-  it("should display a loader while fetching the bookings, and then, the calendar", async () => {
-    mockCall();
-    const { getByText } = render(<Calendar />);
-    expect(getByText(/loading.../i)).toBeInTheDocument();
-    await wait();
-    expect(getByText(/lundi/i)).toBeInTheDocument();
   });
 });
