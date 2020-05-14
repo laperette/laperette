@@ -1,6 +1,7 @@
 import React from "react";
-import { FormField, TextInput, Button, Box, Heading } from "grommet";
+import { FormField, TextInput, Button, Box, Heading, Anchor } from "grommet";
 import { useAuth } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 export const Login = () => {
   const { login } = useAuth();
@@ -18,6 +19,10 @@ export const Login = () => {
           }}
         >
           <Heading>Log in</Heading>
+          <Link to="/signup">
+            <Anchor label="Or sign up" />
+          </Link>
+
           <FormField htmlFor="email" label="Email">
             <TextInput
               autoComplete="email"
