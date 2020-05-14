@@ -4,6 +4,7 @@ import { Home } from "grommet-icons";
 
 import { Calendar } from "./components/Calendar";
 import { useAuth } from "./contexts/AuthContext";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 const AuthenticatedApp = () => {
   const { user, logout } = useAuth();
@@ -36,7 +37,12 @@ const AuthenticatedApp = () => {
         </Box>
       </Header>
       <Main gridArea="main" background="light-1" pad="medium">
-        <Calendar />
+        <Switch>
+          <Route path="/calendar">
+            <Calendar />
+          </Route>
+          <Redirect to="/calendar" />
+        </Switch>
       </Main>
     </Grid>
   );
