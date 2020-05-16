@@ -20,7 +20,7 @@ export const Login = () => {
         >
           <Heading>Log in</Heading>
           <Link to="/signup">
-            <Anchor label="Or sign up" />
+            <Anchor as="span" label="Or sign up" />
           </Link>
 
           <FormField htmlFor="email" label="Email">

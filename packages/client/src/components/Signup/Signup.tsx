@@ -21,7 +21,7 @@ export const Signup = () => {
         >
           <Heading>Sign up</Heading>
           <Link to="/login">
-            <Anchor label="Or log in" />
+            <Anchor as="span" label="Or log in" />
           </Link>
           <FormField htmlFor="email" label="Email">
             <TextInput
