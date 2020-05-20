@@ -1,6 +1,6 @@
 import { Context } from "koa";
 import { createOneAccount, getAccountById } from "../db/accounts";
-import { hashPassword } from "../utils/auth";
+import { hashPassword, createAccountSession } from "../utils/auth";
 
 export const createAccount = async (ctx: Context) => {
   try {
@@ -8,7 +8,17 @@ export const createAccount = async (ctx: Context) => {
 
     const hashedPassword = await hashPassword(password);
 
-    await createOneAccount(firstName, lastName, email, hashedPassword);
+    const [accountId] = await createOneAccount(
+      firstName,
+      lastName,
+      email,
+      hashedPassword,
+    );
+
+    const sessionId = await createAccountSession(accountId);
+
+    ctx.cookies.set("laperette_session", sessionId);
+
     ctx.body = {
       status: "ok",
     };
