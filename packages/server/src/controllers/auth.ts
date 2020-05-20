@@ -12,9 +12,10 @@ export const login = async (ctx: Context) => {
 
   const sessionId = await createAccountSession(accountId);
 
+  ctx.cookies.set("laperette_session", sessionId);
   ctx.status = 200;
   ctx.body = {
-    sessionId,
+    status: "ok",
   };
 };
 
