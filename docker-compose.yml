@@ -9,6 +9,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: laperette
+
   app_server:
     build:
       context: .
@@ -25,6 +26,7 @@ services:
       - 8000:8000
     depends_on:
       - app_db
+
   app_client:
     build:
       context: .
