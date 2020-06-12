@@ -17,7 +17,7 @@ export const getAllBookings = async (): Promise<Booking[]> => {
 };
 
 export const getBookingById = async (bookingId: string): Promise<Booking> => {
-  const [booking] = await knex("bookings").where("booking_id", bookingId);
+  const booking = await knex("bookings").where("booking_id", bookingId).first();
   return booking;
 };
 
