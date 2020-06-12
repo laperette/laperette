@@ -6,15 +6,17 @@ import {
   getSessionsById,
 } from "../db/sessions";
 import { createAccountSession } from "../utils/auth";
+import { config } from "../../config";
 
 export const login = async (ctx: Context) => {
   const { accountId } = ctx.state;
 
   const sessionId = await createAccountSession(accountId);
 
+  ctx.cookies.set(config.cookies.session, sessionId);
   ctx.status = 200;
   ctx.body = {
-    sessionId,
+    status: "ok",
   };
 };
 

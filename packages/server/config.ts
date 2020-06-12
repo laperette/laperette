@@ -1,6 +1,9 @@
 require("dotenv").config({ path: "./.env" });
 
 interface Config {
+  cookies: {
+    session: string;
+  };
   database_client: string;
   database_url: string;
   token: {
@@ -10,6 +13,9 @@ interface Config {
 }
 
 export const config: Config = {
+  cookies: {
+    session: process.env.SESSION_COOKIE,
+  },
   database_client: "postgres",
   database_url: process.env.DATABASE_URL,
   token: {

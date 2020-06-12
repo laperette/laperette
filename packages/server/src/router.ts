@@ -20,7 +20,7 @@ router.get("/bookings", getBookings); // TODO: re-add authenticate middleware as
 
 router.get("/bookings/:bookingId", authenticate, getBooking);
 
-router.post("/accounts", validateCreateAccountData, createAccount);
+router.post("/signup", validateCreateAccountData, createAccount);
 
 router.get("/accounts/:accountId", authenticate, getAccount);
 
