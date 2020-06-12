@@ -15,11 +15,13 @@ export const createOneAccount = async (
 };
 
 export const getAccountById = async (accountId: string) => {
-  const account = await knex("accounts").where({ account_id: accountId });
-  return account[0];
+  const account = await knex("accounts")
+    .where({ account_id: accountId })
+    .first();
+  return account;
 };
 
 export const getAccountByEmail = async (accountEmail: string) => {
-  const account = await knex("accounts").where({ email: accountEmail });
-  return account[0];
+  const account = await knex("accounts").where({ email: accountEmail }).first();
+  return account;
 };

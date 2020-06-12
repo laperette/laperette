@@ -1,5 +1,41 @@
 import { Context } from "koa";
 import { getBookingById, getAllBookings } from "../db/bookings";
+import { validateNewBookingData, createNewBooking } from "../utils/booking";
+
+export const createBooking = async (ctx: Context) => {
+  const { accountId } = ctx.params;
+  const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
+  try {
+    const newBookingData = {
+      accountId,
+      arrivalTime,
+      departureTime,
+      comments,
+      companions,
+    };
+
+    const isValidData = !!(await validateNewBookingData(newBookingData));
+
+    if (!isValidData) {
+      ctx.status = 400;
+      ctx.message = "Impossible to create a booking - Invalid data";
+      return;
+    }
+
+    const newBookingId = await createNewBooking(newBookingData);
+
+    ctx.message = "New booking created";
+    ctx.body = {
+      status: "ok",
+      bookingId: newBookingId,
+    };
+  } catch (error) {
+    console.log(`Error while creating a booking`);
+    console.log(error);
+    ctx.status = 500;
+    ctx.message = "Error while creating a booking";
+  }
+};
 
 export const getBooking = async (ctx: Context) => {
   const { bookingId } = ctx.params;
