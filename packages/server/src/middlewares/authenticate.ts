@@ -1,19 +1,10 @@
 import { verifySession, verifyPassword } from "../utils/auth";
 import { Context } from "koa";
 import { getAccountByEmail } from "../db/accounts";
-
-export const insertSessionId = (ctx: Context): string | null => {
-  const sessionCookie = ctx.cookies.get("laperette_session");
-
-  if (!sessionCookie) {
-    return null;
-  }
-
-  return sessionCookie;
-};
+import { config } from "../../config";
 
 const extractSessionId = (ctx: Context): string | null => {
-  const sessionCookie = ctx.cookies.get("laperette_session");
+  const sessionCookie = ctx.cookies.get(config.cookies.session);
 
   if (!sessionCookie) {
     return null;
