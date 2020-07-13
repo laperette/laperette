@@ -1,6 +1,15 @@
 import { Context } from "koa";
-import { getBookingById, getAllBookings } from "../db/bookings";
-import { validateNewBookingData, createNewBooking } from "../utils/booking";
+import {
+  getBookingById,
+  getAllBookings,
+  updateBookingById,
+  BookingStatus,
+} from "../db/bookings";
+import {
+  validateNewBookingData,
+  createNewBooking,
+  haveBookingDatesChanged,
+} from "../utils/booking";
 
 export const createBooking = async (ctx: Context) => {
   const { accountId } = ctx.params;
@@ -44,7 +53,6 @@ export const getBooking = async (ctx: Context) => {
     ctx.body = booking;
   } catch (error) {
     console.log(`Error while retrieving a booking: ${bookingId}`);
-    console.log(error);
     ctx.status = 500;
   }
 };
@@ -56,6 +64,60 @@ export const getBookings = async (ctx: Context) => {
     ctx.status = 200;
   } catch (error) {
     console.log(`Error while retrieving all bookings`);
+    ctx.status = 500;
+  }
+};
+
+export const updateBooking = async (ctx: Context) => {
+  const { accountId, bookingId } = ctx.params;
+
+  const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
+  try {
+    const bookingToBeUpdated = await getBookingById(bookingId);
+
+    if (accountId !== bookingToBeUpdated.booker_id) {
+      ctx.status = 403;
+      ctx.message = "Impossible to update this booking - Invalid booking owner";
+      return;
+    }
+
+    if (
+      haveBookingDatesChanged(bookingToBeUpdated, departureTime, arrivalTime)
+    ) {
+      const dataToUpdate = {
+        arrival_time: arrivalTime,
+        departure_time: departureTime,
+        comments,
+        companions,
+        booking_status: "pending" as BookingStatus,
+      };
+
+      await updateBookingById(bookingId, dataToUpdate);
+
+      ctx.status = 200;
+      ctx.message = "Booking updated";
+      ctx.body = {
+        status: "ok",
+      };
+      return;
+    }
+
+    const dataToUpdate = {
+      comments,
+      companions,
+    };
+
+    await updateBookingById(bookingId, dataToUpdate);
+
+    ctx.status = 200;
+    ctx.message = "Booking updated";
+    ctx.body = {
+      status: "ok",
+    };
+    return;
+  } catch (error) {
+    console.log(`Error while updating a booking`, { bookingId });
+    console.log(error);
     ctx.status = 500;
   }
 };

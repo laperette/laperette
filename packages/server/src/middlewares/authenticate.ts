@@ -55,8 +55,8 @@ export const validateCredentials = async (ctx: Context, next: () => void) => {
   }
 
   ctx.state = {
-    accountId: account.id,
-  }; // To update to account.account_id when other branched merged
+    accountId: account.account_id,
+  };
 
   return next();
 };

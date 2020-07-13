@@ -1,6 +1,11 @@
 import * as Router from "koa-router";
 
-import { getBooking, getBookings, createBooking } from "./controllers/bookings";
+import {
+  getBooking,
+  getBookings,
+  createBooking,
+  updateBooking,
+} from "./controllers/bookings";
 import { createAccount, getAccount } from "./controllers/accounts";
 import { validateCreateAccountData } from "./middlewares/validate";
 import {
@@ -27,6 +32,12 @@ router.get("/accounts/:accountId", authenticate, getAccount);
 router.get("/accounts/:accountId/sessions", authenticate, listAccountSessions);
 
 router.post("/accounts/:accountId/booking", authenticate, createBooking);
+
+router.post(
+  "/accounts/:accountId/booking/:bookingId",
+  authenticate,
+  updateBooking,
+);
 
 router.delete("/accounts/:sessionId", authenticate, revokeAccountSessionById);
 
