@@ -9,11 +9,12 @@ import { useAsync } from "../../hooks/useAsync";
 import { useCalendarActions } from "../../hooks/useCalendarAction";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
-import { WEEK_DAYS_NAMES } from "../../utils/constants";
+import { WEEK_DAYS_NAMES, MONTHS_NAMES } from "../../utils/constants";
 import { serializeBooking } from "../../utils/calendar";
 import { Navigation } from "./Navigation/Navigation";
 import { Days } from "./Days/Days";
 import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
+import { useCalendarData } from "../../hooks/useCalendarData";
 
 export type Booking = {
   readonly name: string;
@@ -41,14 +42,20 @@ export const Calendar = () => {
   }, [run]);
 
   const {
-    previousMonthDays,
-    currentMonthDays,
-    nextMonthDays,
-    currentMonthName,
+    currentMonthNumber,
+    currentYear,
     decrementMonth,
     incrementMonth,
     resetToDate,
   } = useCalendarActions();
+
+  const currentMonthName = MONTHS_NAMES[currentMonthNumber];
+
+  const {
+    previousMonthDays,
+    currentMonthDays,
+    nextMonthDays,
+  } = useCalendarData({ currentMonthNumber, currentYear });
 
   if (isError) {
     return <FullPageErrorFallback error={error} />;

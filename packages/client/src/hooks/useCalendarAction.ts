@@ -1,25 +1,13 @@
 import { useState } from "react";
-import {
-  getMonth,
-  getYear,
-  setYear,
-  startOfMonth,
-  setMonth,
-  endOfMonth,
-  getDay,
-  subDays,
-  getDaysInMonth,
-  setDate,
-  addDays,
-} from "date-fns";
+import { getMonth, getYear } from "date-fns";
+import { useCalendarData } from "./useCalendarData";
 import { MONTHS_NAMES } from "../utils/constants";
-import { rangeRight, range } from "lodash";
 
 export const useCalendarActions = () => {
-  const today = new Date(); // setHours(new Date(), 2);
+  const date = new Date();
 
-  const [currentMonthNumber, setCurrentMonthNumber] = useState(getMonth(today));
-  const [currentYear, setCurrentYear] = useState(getYear(today));
+  const [currentMonthNumber, setCurrentMonthNumber] = useState(getMonth(date));
+  const [currentYear, setCurrentYear] = useState(getYear(date));
 
   const decrementMonth = () => {
     if (currentMonthNumber === 0) {
@@ -40,35 +28,13 @@ export const useCalendarActions = () => {
   };
 
   const resetToDate = () => {
-    setCurrentMonthNumber(getMonth(today));
-    setCurrentYear(getYear(today));
+    setCurrentMonthNumber(getMonth(date));
+    setCurrentYear(getYear(date));
   };
 
-  const currentMonthName = MONTHS_NAMES[currentMonthNumber];
-
-  const monthDate = setYear(setMonth(today, currentMonthNumber), currentYear);
-
-  const firstDayInMonth = startOfMonth(monthDate);
-  const lastDayInMonth = endOfMonth(monthDate);
-
-  const previousMonthDays = rangeRight(
-    1,
-    getDay(firstDayInMonth),
-  ).map((dayNum) => subDays(firstDayInMonth, dayNum));
-
-  const currentMonthDays = range(1, getDaysInMonth(monthDate) + 1).map((date) =>
-    setDate(monthDate, date),
-  );
-  const nextMonthDays = range(
-    1,
-    42 - (previousMonthDays.length + currentMonthDays.length) + 1,
-  ).map((dayNum) => addDays(lastDayInMonth, dayNum));
-
   return {
-    previousMonthDays,
-    currentMonthDays,
-    nextMonthDays,
-    currentMonthName,
+    currentMonthNumber,
+    currentYear,
     decrementMonth,
     incrementMonth,
     resetToDate,
