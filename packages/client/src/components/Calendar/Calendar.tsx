@@ -51,11 +51,7 @@ export const Calendar = () => {
 
   const currentMonthName = MONTHS_NAMES[currentMonthNumber];
 
-  const {
-    previousMonthDays,
-    currentMonthDays,
-    nextMonthDays,
-  } = useCalendarData({ currentMonthNumber, currentYear });
+  const [daysToDisplay] = useCalendarData({ currentMonthNumber, currentYear });
 
   if (isError) {
     return <FullPageErrorFallback error={error} />;
@@ -85,12 +81,7 @@ export const Calendar = () => {
         incrementMonth={incrementMonth}
       />
       <CalendarHeading />
-      <Days
-        previousMonthDays={previousMonthDays}
-        currentMonthDays={currentMonthDays}
-        nextMonthDays={nextMonthDays}
-        currentMonthName={currentMonthName}
-      />
+      <Days daysToDisplay={daysToDisplay} currentMonthName={currentMonthName} />
     </Grid>
   );
 };

@@ -2,27 +2,14 @@ import React from "react";
 import { Cell } from "../Cell/Cell";
 
 interface Props {
-  previousMonthDays: Date[];
-  currentMonthDays: Date[];
-  nextMonthDays: Date[];
+  daysToDisplay: Date[];
   currentMonthName: string;
 }
 
-export const Days = ({
-  previousMonthDays,
-  currentMonthDays,
-  nextMonthDays,
-  currentMonthName,
-}: Props) => {
-  const daysInMonth = [
-    ...previousMonthDays,
-    ...currentMonthDays,
-    ...nextMonthDays,
-  ];
-
+export const Days = ({ daysToDisplay, currentMonthName }: Props) => {
   return (
     <React.Fragment>
-      {daysInMonth.map((day, index) => {
+      {daysToDisplay.map((day, index) => {
         // const booking = bookings.find((booking) =>
         //   isWithinInterval(day, booking.interval),
         // );

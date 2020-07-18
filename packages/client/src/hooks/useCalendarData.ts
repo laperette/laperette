@@ -1,15 +1,10 @@
 import {
-  setYear,
-  setMonth,
   startOfMonth,
-  endOfMonth,
   getDay,
   subDays,
-  getDaysInMonth,
-  setDate,
   addDays,
+  eachDayOfInterval,
 } from "date-fns";
-import { rangeRight, range } from "lodash";
 
 interface CalendarState {
   currentMonthNumber: number;
@@ -20,32 +15,26 @@ export const useCalendarData = ({
   currentMonthNumber,
   currentYear,
 }: CalendarState) => {
-  const randomDateInCurrentMonth = new Date(
-    currentYear,
-    currentMonthNumber,
-    15,
+  const firstDayInCurrentMonth = startOfMonth(
+    new Date(currentYear, currentMonthNumber, 15),
   );
 
-  const firstDayInMonth = startOfMonth(randomDateInCurrentMonth);
-  const lastDayInMonth = endOfMonth(randomDateInCurrentMonth);
+  const placeInWeekFirstDayOfMonth = getDay(firstDayInCurrentMonth);
 
-  const previousMonthDays = rangeRight(
-    1,
-    getDay(firstDayInMonth),
-  ).map((dayNum) => subDays(firstDayInMonth, dayNum));
+  const numberOfDaysToTakeFromFormerMonth = (() => {
+    if (placeInWeekFirstDayOfMonth === 0) {
+      return 6;
+    }
+    return placeInWeekFirstDayOfMonth - 1;
+  })();
 
-  const currentMonthDays = range(
-    1,
-    getDaysInMonth(randomDateInCurrentMonth) + 1,
-  ).map((date) => setDate(randomDateInCurrentMonth, date));
-  const nextMonthDays = range(
-    1,
-    42 - (previousMonthDays.length + currentMonthDays.length) + 1,
-  ).map((dayNum) => addDays(lastDayInMonth, dayNum));
+  const daysToDisplay = eachDayOfInterval({
+    start: subDays(firstDayInCurrentMonth, numberOfDaysToTakeFromFormerMonth),
+    end: addDays(
+      subDays(firstDayInCurrentMonth, numberOfDaysToTakeFromFormerMonth),
+      41,
+    ),
+  });
 
-  return {
-    previousMonthDays,
-    currentMonthDays,
-    nextMonthDays,
-  };
+  return [daysToDisplay];
 };

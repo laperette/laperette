@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { getMonth, getYear } from "date-fns";
-import { useCalendarData } from "./useCalendarData";
-import { MONTHS_NAMES } from "../utils/constants";
 
 export const useCalendarActions = () => {
   const date = new Date();
