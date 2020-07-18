@@ -39,7 +39,7 @@ export const AuthProvider = ({
     isSuccess,
     run,
     setData,
-  } = useAsync<{ user: User | null }>();
+  } = useAsync<{ user: User }>();
 
   useLayoutEffect(() => {
     run(authClient.fetchUser());
