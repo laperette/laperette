@@ -1,17 +1,14 @@
 import { config } from "../../config";
 import { addDays } from "date-fns";
-import { saveAccountSession, getActiveAccountSession } from "../db/sessions";
-import { v4 as uuidv4 } from "uuid";
+import { saveAccountSession, getActiveSession } from "../db/sessions";
 import { hash, compare } from "bcrypt";
 
 export const createAccountSession = async (
   accountId: string,
 ): Promise<string> => {
-  const token = uuidv4();
-
   const expiryDate = addDays(new Date(), config.token.expiresIn);
 
-  await saveAccountSession(accountId, token, expiryDate);
+  const token = await saveAccountSession(accountId, expiryDate);
 
   return token;
 };
@@ -19,9 +16,8 @@ export const createAccountSession = async (
 export const verifySession = async (
   sessionCookie: string,
 ): Promise<boolean> => {
-  const activeSession = await getActiveAccountSession(sessionCookie);
-
-  return !!activeSession.length;
+  const activeSession = await getActiveSession(sessionCookie);
+  return !!activeSession;
 };
 
 export const hashPassword = async (password: string): Promise<string> => {

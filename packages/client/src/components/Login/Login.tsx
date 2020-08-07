@@ -9,10 +9,14 @@ type LoginData = { email: string; password: string };
 
 export const Login = () => {
   const { login } = useAuth();
-  const { register, handleSubmit, errors } = useForm<LoginData>();
-  const onSubmit: OnSubmit<LoginData> = (data) => {
-    console.log(data);
-    login(data);
+  const { register, handleSubmit, setError, errors } = useForm<LoginData>();
+  const onSubmit: OnSubmit<LoginData> = async (data) => {
+    try {
+      await login(data);
+    } catch (error) {
+      setError("email", "auth", "Invalid email");
+      setError("password", "auth", "Invalid password");
+    }
   };
 
   return (
@@ -29,7 +33,7 @@ export const Login = () => {
           <FormField
             htmlFor="email"
             label="Email"
-            error={errors.email && ERROR_FIELD_REQUIRED}
+            error={errors.email && errors.email.message}
           >
             <TextInput
               autoComplete="email"
@@ -43,7 +47,7 @@ export const Login = () => {
           <FormField
             htmlFor="password"
             label="Mot de passe"
-            error={errors.password && ERROR_FIELD_REQUIRED}
+            error={errors.password && errors.password.message}
           >
             <TextInput
               autoComplete="current-password"

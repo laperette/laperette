@@ -5,7 +5,7 @@ import * as bodyParser from "koa-bodyparser";
 
 const app = new Koa();
 
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(bodyParser());
 app.use(router.routes());
 

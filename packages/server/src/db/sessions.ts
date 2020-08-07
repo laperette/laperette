@@ -2,22 +2,32 @@ import { knex } from "./db";
 
 export const saveAccountSession = async (
   accountId: string,
-  token: string,
   expiryDate: Date,
-) => {
-  await knex("sessions").insert({
-    account_id: accountId,
-    session_id: token,
-    expires_at: expiryDate,
-  });
+): Promise<string> => {
+  return await knex("sessions")
+    .insert({
+      account_id: accountId,
+      expires_at: expiryDate,
+    })
+    .returning("session_id");
 };
-export const getActiveAccountSession = async (sessionId) => {
+export const getActiveSession = async (sessionId) => {
   return await knex("sessions")
     .where({
       session_id: sessionId,
     })
     .where("expires_at", ">", new Date())
-    .orderBy("created_at", "DESC");
+    .first();
+};
+
+export const getAccountBySessionId = async (sessionId) => {
+  return await knex("accounts")
+    .join("sessions", "accounts.account_id", "sessions.account_id")
+    .select("accounts.first_name", "accounts.last_name")
+    .where({
+      session_id: sessionId,
+    })
+    .first();
 };
 
 export const invalidateSessionById = async (sessionId: string) => {

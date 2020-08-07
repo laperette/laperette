@@ -16,7 +16,6 @@ export const Signup = () => {
   const { login } = useAuth();
   const { register, handleSubmit, errors } = useForm<SignupData>();
   const onSubmit: OnSubmit<SignupData> = (data) => {
-    console.log(data);
     login(data);
   };
 
@@ -74,8 +73,11 @@ export const Signup = () => {
               ref={register({ required: true })}
             />
           </FormField>
-          <FormField htmlFor="new-password" label="Choose a password">
+          <FormField
+            htmlFor="new-password"
+            label="Choose a password"
             error={errors.password && ERROR_FIELD_REQUIRED}
+          >
             <TextInput
               autoComplete="new-password"
               id="new-password"

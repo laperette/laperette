@@ -1,4 +1,3 @@
-import { getAccountByEmail } from "../db/accounts";
 import { Context } from "koa";
 import {
   invalidateSessionById,
@@ -7,25 +6,30 @@ import {
 } from "../db/sessions";
 import { createAccountSession } from "../utils/auth";
 import { config } from "../../config";
+import { extractSessionId } from "../middlewares/authenticate";
 
 export const login = async (ctx: Context) => {
-  const { accountId } = ctx.state;
+  const { account } = ctx.state;
 
-  const sessionId = await createAccountSession(accountId);
+  const sessionId = await createAccountSession(account.accountId);
 
   ctx.cookies.set(config.cookies.session, sessionId);
   ctx.status = 200;
   ctx.body = {
     status: "ok",
+    account: {
+      firstName: account.firstName,
+      lastName: account.lastName,
+    },
   };
 };
 
 export const revokeAccountSessionById = async (ctx: Context) => {
-  const { sessionId } = ctx.params;
+  const sessionId = extractSessionId(ctx);
 
-  const sessionExist = (await getSessionsById(sessionId)).length;
+  const doesSessionExist = (await getSessionsById(sessionId)).length;
 
-  if (!sessionExist) {
+  if (!doesSessionExist) {
     ctx.status = 404;
     ctx.message = "Session does not exist";
     return;
@@ -33,6 +37,7 @@ export const revokeAccountSessionById = async (ctx: Context) => {
 
   await invalidateSessionById(sessionId);
 
+  ctx.cookies.set(config.cookies.session, "");
   ctx.status = 204;
 };
 

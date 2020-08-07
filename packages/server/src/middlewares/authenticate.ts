@@ -3,7 +3,7 @@ import { Context } from "koa";
 import { getAccountByEmail } from "../db/accounts";
 import { config } from "../../config";
 
-const extractSessionId = (ctx: Context): string | null => {
+export const extractSessionId = (ctx: Context): string | null => {
   const sessionCookie = ctx.cookies.get(config.cookies.session);
 
   if (!sessionCookie) {
@@ -55,7 +55,11 @@ export const validateCredentials = async (ctx: Context, next: () => void) => {
   }
 
   ctx.state = {
-    accountId: account.account_id,
+    account: {
+      accountId: account.account_id,
+      firstName: account.first_name,
+      lastName: account.last_name,
+    },
   };
 
   return next();

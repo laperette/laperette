@@ -6,7 +6,11 @@ import {
   createBooking,
   updateBooking,
 } from "./controllers/bookings";
-import { createAccount, getAccount } from "./controllers/accounts";
+import {
+  createAccount,
+  getAccount,
+  getCurrentAccount,
+} from "./controllers/accounts";
 import { validateCreateAccountData } from "./middlewares/validate";
 import {
   login,
@@ -21,11 +25,17 @@ router.get("/healthz", (ctx) => {
   ctx.body = { ok: true };
 });
 
-router.get("/bookings", getBookings); // TODO: re-add authenticate middleware as soon as the signup/login flows are done
+router.post("/signup", validateCreateAccountData, createAccount);
+
+router.post("/login", validateCredentials, login);
+
+router.post("/logout", authenticate, revokeAccountSessionById);
+
+router.get("/bookings", getBookings); // TODO: re-add authenticate middleware as soon as the signup/login flows are done (also in frontend)
 
 router.get("/bookings/:bookingId", authenticate, getBooking);
 
-router.post("/signup", validateCreateAccountData, createAccount);
+router.get("/accounts/current", getCurrentAccount);
 
 router.get("/accounts/:accountId", authenticate, getAccount);
 
@@ -38,7 +48,3 @@ router.post(
   authenticate,
   updateBooking,
 );
-
-router.delete("/accounts/:sessionId", authenticate, revokeAccountSessionById);
-
-router.post("/login", validateCredentials, login);

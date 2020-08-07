@@ -8,7 +8,8 @@ import { User, AuthClient, Credentials } from "../utils/authClient";
 import { useAsync } from "../hooks/useAsync";
 import { FullPageSpinner } from "../components/FullPageSpinner";
 import { FullPageErrorFallback } from "../components/FullPageErrorCallback";
-
+import UnauthenticatedApp from "../UnauthenticatedApp";
+// import { useCookies } from "react-cookie";
 type AuthContextValue = {
   user: User | null;
   login: (form: Credentials) => void;
@@ -47,7 +48,9 @@ export const AuthProvider = ({
 
   const login = useCallback(
     async (credentials: Credentials) => {
+      console.log({ credentials });
       const user = await authClient.login(credentials);
+      console.log(user);
       setData({ user });
     },
     [setData, authClient],
@@ -62,15 +65,15 @@ export const AuthProvider = ({
 
   const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
 
+  // Normally provider components render the context provider with a value.
+  // But we postpone rendering any of the children until after we've determined
+  // whether or not we have a user and we render a spinner
+  // while we go retrieve that user's information.
   if (isLoading || isIdle) {
     return <FullPageSpinner />;
   }
 
-  if (isError) {
-    return <FullPageErrorFallback error={error} />;
-  }
-
-  if (isSuccess) {
+  if (isSuccess || isError) {
     return (
       <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
     );
@@ -80,9 +83,9 @@ export const AuthProvider = ({
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
+  const value = useContext(AuthContext);
+  if (value === undefined) {
     throw new Error(`useAuth must be used within a AuthProvider`);
   }
-  return context;
+  return value;
 };
