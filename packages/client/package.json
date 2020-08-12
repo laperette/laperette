@@ -6,10 +6,12 @@
     "start-dev": "react-scripts start",
     "build": "react-scripts build",
     "start": "serve -s ./build -l $PORT",
-    "test": "react-scripts test",
+    "test": "NODE_ENV=test TZ=UTC react-scripts test",
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@testing-library/dom": "^7.22.1",
+    "@testing-library/user-event": "^12.1.1",
     "axios": "^0.19.2",
     "date-fns": "^2.12.0",
     "grommet": "^2.13.0",
@@ -37,6 +39,7 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",
+    "mockdate": "^3.0.2",
     "mutationobserver-shim": "^0.3.5",
     "react-scripts": "3.4.1",
     "react-test-renderer": "^16.13.1",

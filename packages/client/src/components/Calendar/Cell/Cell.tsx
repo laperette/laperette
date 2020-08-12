@@ -34,9 +34,11 @@ export const Cell = ({
       pad="xxsmall"
     >
       <Text
+        id={`${dayNumber}-${day.toString()}`}
         color={month === currentMonth ? "dark-1" : "dark-4"}
         size={date === 1 ? "large" : "medium"}
         textAlign="end"
+        data-testid="day-text"
       >
         {date === 1 ? `${date} ${month}` : date}
       </Text>

@@ -8,7 +8,7 @@ interface Props {
 
 export const Days = ({ daysToDisplay, currentMonthName }: Props) => {
   return (
-    <React.Fragment>
+    <>
       {daysToDisplay.map((day, index) => {
         // const booking = bookings.find((booking) =>
         //   isWithinInterval(day, booking.interval),
@@ -23,6 +23,6 @@ export const Days = ({ daysToDisplay, currentMonthName }: Props) => {
           />
         );
       })}
-    </React.Fragment>
+    </>
   );
 };
