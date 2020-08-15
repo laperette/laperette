@@ -48,9 +48,7 @@ export const AuthProvider = ({
 
   const login = useCallback(
     async (credentials: Credentials) => {
-      console.log({ credentials });
       const user = await authClient.login(credentials);
-      console.log(user);
       setData({ user });
     },
     [setData, authClient],

@@ -7,17 +7,21 @@ export type AuthClient = {
   signup: (credentials: SignUpCredentials) => Promise<User>;
 };
 
-export type Credentials = { email: string; password: string };
-export type SignUpCredentials = {
+export interface Credentials {
+  email: string;
+  password: string;
+}
+
+export interface SignUpCredentials {
   email: string;
   firstName: string;
   lastName: string;
   password: string;
-};
-export type User = {
+}
+export interface User {
   firstName: string;
   lastName: string;
-};
+}
 
 export const AuthClient = ({
   fetchUser = () => {
@@ -42,7 +46,7 @@ export const AuthClient = ({
           lastName: result.data.account.lastName,
         }),
       )
-      .catch(() => Promise.reject());
+      .catch((error) => Promise.reject(error));
   },
   logout = async () => {
     return Axios({

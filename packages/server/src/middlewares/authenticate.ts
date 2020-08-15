@@ -54,6 +54,15 @@ export const validateCredentials = async (ctx: Context, next: () => void) => {
     return;
   }
 
+  if (!account.is_member) {
+    ctx.body = {
+      error: "Unauthorized",
+      error_description: "Member validation pending",
+    };
+    ctx.status = 401;
+    return;
+  }
+
   ctx.state = {
     account: {
       accountId: account.account_id,

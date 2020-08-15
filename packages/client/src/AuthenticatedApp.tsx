@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Calendar } from "./components/Calendar";
 import { useAuth } from "./contexts/AuthContext";
 import { Switch, Route, Redirect } from "react-router-dom";
-import { NewBooking } from "./pages/NewBooking";
+import { NewBooking } from "./pages/NewBooking/NewBooking";
 
 const AuthenticatedApp = () => {
   const { user, logout } = useAuth();
