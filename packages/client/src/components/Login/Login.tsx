@@ -17,7 +17,7 @@ export const Login = () => {
       if (
         error?.response?.data?.error_description === "Member validation pending"
       ) {
-        window.location.replace("/account-validation");
+        window.location.replace("/pending-validation");
         return;
       }
 

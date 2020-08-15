@@ -58,7 +58,7 @@ export const Signup = () => {
   };
 
   if (accountCreationSuccess) {
-    return <Redirect to="/account-validation" />;
+    return <Redirect to="/pending-validation" />;
   }
 
   return (
