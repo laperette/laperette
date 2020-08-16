@@ -7,9 +7,7 @@ import React, {
 import { User, AuthClient, Credentials } from "../utils/authClient";
 import { useAsync } from "../hooks/useAsync";
 import { FullPageSpinner } from "../components/FullPageSpinner";
-import { FullPageErrorFallback } from "../components/FullPageErrorCallback";
-import UnauthenticatedApp from "../UnauthenticatedApp";
-// import { useCookies } from "react-cookie";
+
 type AuthContextValue = {
   user: User | null;
   login: (form: Credentials) => void;
@@ -33,7 +31,6 @@ export const AuthProvider = ({
   const {
     data,
     status,
-    error,
     isLoading,
     isIdle,
     isError,

@@ -1,9 +1,9 @@
 import React from "react";
-import { FormField, TextInput, Button, Box, Heading, Anchor } from "grommet";
+import { FormField, TextInput, Button, Box, Heading } from "grommet";
 import { Link, Redirect } from "react-router-dom";
 import { OnSubmit, useForm } from "react-hook-form";
 import Axios from "axios";
-import { fieldsErrorsMapping } from "../../utils";
+import { fieldsErrorsMapping } from "../../utils/authClient";
 
 export interface SignupData {
   email: string;

@@ -3,7 +3,7 @@ import { FormField, TextInput, Button, Box, Heading } from "grommet";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { useForm, OnSubmit } from "react-hook-form";
-import { fieldsErrorsMapping } from "../../utils";
+import { fieldsErrorsMapping } from "../../utils/authClient";
 
 type LoginData = { email: string; password: string };
 
