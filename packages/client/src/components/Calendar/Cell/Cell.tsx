@@ -46,7 +46,7 @@ export const Cell = ({
           hoverIndicator
           onClick={() => {
             alert(
-              `${booking.name} a réservé pour ${
+              `${booking.firstName} ${booking.lastName} a réservé pour ${
                 eachDayOfInterval(booking.interval).length
               } jours, du ${format(
                 booking.interval.start,
@@ -56,7 +56,9 @@ export const Cell = ({
           }}
           pad="xxsmall"
         >
-          <Text size="small">{booking.name}</Text>
+          <Text size="small">
+            ${booking.firstName} ${booking.lastName}
+          </Text>
         </Box>
       )}
     </Box>
