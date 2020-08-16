@@ -80,7 +80,7 @@ export const Signup = () => {
           )}
           <FormField
             htmlFor="email"
-            error={errors.email && fieldsErrorsMapping["wrongEmail"]}
+            error={errors.email && fieldsErrorsMapping["required"]}
           >
             <TextInput
               autoComplete="email"
