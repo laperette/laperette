@@ -44,7 +44,9 @@ export const Cell = ({
       </Text>
       {booking && (
         <Box
-          background="light-3"
+          background={
+            booking.bookingStatus === "pending" ? "light-3" : "light-4"
+          }
           hoverIndicator
           onClick={() => {
             alert(
