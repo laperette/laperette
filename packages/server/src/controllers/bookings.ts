@@ -63,6 +63,7 @@ export const getBookings = async (ctx: Context) => {
     ctx.body = bookings;
     ctx.status = 200;
   } catch (error) {
+    console.log(error);
     console.log(`Error while retrieving all bookings`);
     ctx.status = 500;
   }

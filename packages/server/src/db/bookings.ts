@@ -20,12 +20,36 @@ export interface BookingDataToUpdate {
 }
 
 export const getAllBookings = async (): Promise<Booking[]> => {
-  const bookings = await knex("bookings").select();
+  const bookings = await knex("bookings")
+    .select(
+      "bookings.booking_id",
+      "accounts.first_name",
+      "accounts.last_name",
+      "bookings.departure_time",
+      "bookings.arrival_time",
+      "bookings.booking_status",
+      "bookings.comments",
+      "bookings.companions",
+    )
+    .join("accounts", "accounts.account_id", "bookings.booker_id");
   return bookings;
 };
 
 export const getBookingById = async (bookingId: string): Promise<Booking> => {
-  const booking = await knex("bookings").where("booking_id", bookingId).first();
+  const booking = await knex("bookings")
+    .select(
+      "bookings.booking_id",
+      "accounts.first_name",
+      "accounts.last_name",
+      "bookings.departure_time",
+      "bookings.arrival_time",
+      "bookings.booking_status",
+      "bookings.comments",
+      "bookings.companions",
+    )
+    .join("accounts", "accounts.account_id", "bookings.booker_id")
+    .where("booking_id", bookingId)
+    .first();
   return booking;
 };
 
