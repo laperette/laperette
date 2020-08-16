@@ -10,29 +10,32 @@ import { useCalendarActions } from "../../hooks/useCalendarAction";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { WEEK_DAYS_NAMES, MONTHS_NAMES } from "../../utils/constants";
-import { serializeBooking } from "../../utils/calendar";
+import { serializeBooking } from "../../utils/bookings";
 import { Navigation } from "./Navigation/Navigation";
 import { Days } from "./Days/Days";
 import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
 import { useCalendarData } from "../../hooks/useCalendarData";
 
-export type Booking = {
-  readonly name: string;
-  readonly interval: Interval;
-};
+export interface Booking {
+  interval: {
+    start: Date;
+    end: Date;
+  };
+  firstName: string;
+  lastName: string;
+  bookingId: string;
+  bookingStatus: string;
+  comments: string;
+  companions: string;
+}
 
 export const Calendar = () => {
-  const {
-    data: bookings,
-    run,
-    isIdle,
-    isLoading,
-    isError,
-    error,
-  } = useAsync<ReadonlyArray<Booking> | null>();
+  const { data: bookings, run, isIdle, isLoading, isError, error } = useAsync<
+    Booking[] | null
+  >();
 
   useLayoutEffect(() => {
-    const getBookings = async (): Promise<ReadonlyArray<Booking>> => {
+    const getBookings = async (): Promise<Booking[]> => {
       const response = await Axios.get(
         `${process.env.REACT_APP_SERVER_URL}/bookings`,
       );
@@ -81,7 +84,11 @@ export const Calendar = () => {
         incrementMonth={incrementMonth}
       />
       <CalendarHeading />
-      <Days daysToDisplay={daysToDisplay} currentMonthName={currentMonthName} />
+      <Days
+        daysToDisplay={daysToDisplay}
+        currentMonthName={currentMonthName}
+        bookings={bookings}
+      />
     </Grid>
   );
 };

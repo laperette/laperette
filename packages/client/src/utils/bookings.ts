@@ -6,7 +6,12 @@ export const serializeBooking = (rawBooking: Record<string, any>): Booking => ({
     start: parseISO(rawBooking.arrival_time),
     end: parseISO(rawBooking.departure_time),
   },
-  name: rawBooking.first_name,
+  firstName: rawBooking.first_name,
+  lastName: rawBooking.last_name,
+  bookingId: rawBooking.booking_id,
+  bookingStatus: rawBooking.booking_status,
+  comments: rawBooking.comments,
+  companions: rawBooking.companions,
 });
 
 export const getRandomIntegerInclusive = (min: number, max: number) => {
