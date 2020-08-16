@@ -5,12 +5,12 @@ on:
     branches:
       - master
     paths:
-      - "packages/server/**"
+      - 'packages/server/**'
   push:
     branches:
       - master
     paths:
-      - "packages/server/**"
+      - 'packages/server/**'
 
 jobs:
   dummy-test-client:
@@ -36,4 +36,5 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - run: yarn install
+      - run: yarn server lint
       - run: yarn server build
