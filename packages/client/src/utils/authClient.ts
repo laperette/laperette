@@ -7,17 +7,21 @@ export type AuthClient = {
   signup: (credentials: SignUpCredentials) => Promise<User>;
 };
 
-export type Credentials = { email: string; password: string };
-export type SignUpCredentials = {
+export interface Credentials {
+  email: string;
+  password: string;
+}
+
+export interface SignUpCredentials {
   email: string;
   firstName: string;
   lastName: string;
   password: string;
-};
-export type User = {
+}
+export interface User {
   firstName: string;
   lastName: string;
-};
+}
 
 export const AuthClient = ({
   fetchUser = () => {
@@ -35,14 +39,12 @@ export const AuthClient = ({
       url: `${process.env.REACT_APP_SERVER_URL}/login`,
       data: { email, password },
       withCredentials: true,
-    })
-      .then((result) =>
-        Promise.resolve({
-          firstName: result.data.account.firstName,
-          lastName: result.data.account.lastName,
-        }),
-      )
-      .catch(() => Promise.reject());
+    }).then((result) =>
+      Promise.resolve({
+        firstName: result.data.account.firstName,
+        lastName: result.data.account.lastName,
+      }),
+    );
   },
   logout = async () => {
     return Axios({
@@ -73,3 +75,11 @@ export const AuthClient = ({
   logout,
   signup,
 });
+
+export const fieldsErrorsMapping: { [key: string]: string } = {
+  "required": "Ce champ ne peut être vide",
+  "wrongEmail": " Cet email est incorrect",
+  "wrongPassword": "Ce mot de passe est incorrect",
+  "differentPassword": "Les mots de passe sont différents",
+  "passwordTooShort": "Le mot de passe doit contenir 6 caractères minimum",
+};

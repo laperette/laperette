@@ -1,4 +1,3 @@
-import { config } from "../../config";
 import { addDays } from "date-fns";
 import { saveAccountSession, getActiveSession } from "../db/sessions";
 import { hash, compare } from "bcrypt";
@@ -6,7 +5,7 @@ import { hash, compare } from "bcrypt";
 export const createAccountSession = async (
   accountId: string,
 ): Promise<string> => {
-  const expiryDate = addDays(new Date(), config.token.expiresIn);
+  const expiryDate = addDays(new Date(), 30);
 
   const token = await saveAccountSession(accountId, expiryDate);
 

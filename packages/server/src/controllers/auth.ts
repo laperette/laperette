@@ -5,7 +5,7 @@ import {
   getSessionsById,
 } from "../db/sessions";
 import { createAccountSession } from "../utils/auth";
-import { config } from "../../config";
+import { config } from "../config";
 import { extractSessionId } from "../middlewares/authenticate";
 
 export const login = async (ctx: Context) => {

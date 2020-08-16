@@ -1,9 +1,9 @@
 import React from "react";
-import { FormField, TextInput, Button, Box, Heading, Anchor } from "grommet";
+import { FormField, TextInput, Button, Box, Heading } from "grommet";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { useForm, OnSubmit } from "react-hook-form";
-import { ERROR_FIELD_REQUIRED } from "../../constants";
+import { fieldsErrorsMapping } from "../../utils/authClient";
 
 type LoginData = { email: string; password: string };
 
@@ -14,8 +14,15 @@ export const Login = () => {
     try {
       await login(data);
     } catch (error) {
-      setError("email", "auth", "Invalid email");
-      setError("password", "auth", "Invalid password");
+      if (
+        error?.response?.data?.error_description === "Member validation pending"
+      ) {
+        window.location.replace("/pending-validation");
+        return;
+      }
+
+      setError("email", "wrongEmail");
+      setError("password", "wrongPassword");
     }
   };
 
@@ -26,39 +33,38 @@ export const Login = () => {
         border={{ style: "solid", size: "1px", color: "black", side: "all" }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Heading>Log in</Heading>
-          <Link to="/signup">
-            <Anchor as="span" label="Or sign up" />
-          </Link>
+          <Heading>Se connecter</Heading>
+          <p>
+            Pas encore inscrit? <Link to="/signup">Créer un compte</Link>
+          </p>
+
           <FormField
             htmlFor="email"
-            label="Email"
-            error={errors.email && errors.email.message}
+            error={errors.email && fieldsErrorsMapping[errors.email.type]}
           >
             <TextInput
               autoComplete="email"
               id="email"
               name="email"
-              placeholder="email"
+              placeholder="Email"
               type="email"
               ref={register({ required: true })}
             />
           </FormField>
           <FormField
             htmlFor="password"
-            label="Mot de passe"
-            error={errors.password && errors.password.message}
+            error={errors.password && fieldsErrorsMapping[errors.password.type]}
           >
             <TextInput
               autoComplete="current-password"
               id="password"
               name="password"
-              placeholder="password"
+              placeholder="Mot de passe"
               type="password"
               ref={register({ required: true })}
             />
           </FormField>
-          <Button type="submit" primary label="Log me in" />
+          <Button type="submit" primary label="Se connecter !" />
         </form>
       </Box>
     </Box>

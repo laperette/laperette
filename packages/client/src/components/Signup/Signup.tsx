@@ -1,109 +1,156 @@
 import React from "react";
-import { FormField, TextInput, Button, Box, Heading, Anchor } from "grommet";
-import { useAuth } from "../../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { FormField, TextInput, Button, Box, Heading } from "grommet";
+import { Link, Redirect } from "react-router-dom";
 import { OnSubmit, useForm } from "react-hook-form";
-import { ERROR_FIELD_REQUIRED } from "../../constants";
+import Axios from "axios";
+import { fieldsErrorsMapping } from "../../utils/authClient";
 
-type SignupData = {
+export interface SignupData {
   email: string;
   firstName: string;
   lastName: string;
   password: string;
-};
+  confirmPassword: string;
+}
 
 export const Signup = () => {
-  const { login } = useAuth();
-  const { register, handleSubmit, errors } = useForm<SignupData>();
+  const { register, handleSubmit, setError, errors } = useForm<SignupData>();
+  const [accountCreationSuccess, setAccountCreationSuccess] = React.useState<
+    null | boolean
+  >(null);
+  const [accountCreationError, setAccountCreationError] = React.useState<
+    null | boolean
+  >(null);
+
   const onSubmit: OnSubmit<SignupData> = (data) => {
-    login(data);
+    const { firstName, lastName, email, password, confirmPassword } = data;
+
+    if (password !== confirmPassword) {
+      setAccountCreationError(true);
+      setError("password", "differentPassword");
+      setError("confirmPassword", "differentPassword");
+      return;
+    }
+
+    if (password.length <= 6) {
+      setError("password", "passwordTooShort");
+      return;
+    }
+
+    return Axios({
+      method: "post",
+      url: `${process.env.REACT_APP_SERVER_URL}/signup`,
+      data: {
+        email,
+        firstName,
+        lastName,
+        password,
+      },
+      withCredentials: true,
+    })
+      .then(() => {
+        setAccountCreationSuccess(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        setAccountCreationError(true);
+      });
   };
+
+  if (accountCreationSuccess) {
+    return <Redirect to="/pending-validation" />;
+  }
 
   return (
     <Box fill justify="center" align="center">
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box
           pad="medium"
-          border={{ style: "solid", size: "1px", color: "black", side: "all" }}
+          border={{
+            style: "solid",
+            size: "1px",
+            color: "black",
+            side: "all",
+          }}
           alignContent="center"
         >
-          <Heading>Sign up</Heading>
-          <Link to="/login">
-            <Anchor as="span" label="Or log in" />
-          </Link>
+          <Heading>Créer un compte</Heading>
+          {accountCreationError && (
+            <p>Navré une erreur s'est produite, veuillez réessayer</p>
+          )}
           <FormField
             htmlFor="email"
-            label="Email"
-            error={errors.email && ERROR_FIELD_REQUIRED}
+            error={errors.email && fieldsErrorsMapping["required"]}
           >
             <TextInput
               autoComplete="email"
               id="email"
               name="email"
-              placeholder="email"
+              placeholder="Adresse mail"
               type="email"
               ref={register({ required: true })}
             />
           </FormField>
           <FormField
             htmlFor="firstName"
-            label="First name"
-            error={errors.firstName && ERROR_FIELD_REQUIRED}
+            error={errors.firstName && fieldsErrorsMapping["required"]}
           >
             <TextInput
               autoComplete="given-name"
               id="firstName"
               name="firstName"
-              placeholder="First name"
+              placeholder="Prénom"
               type="text"
               ref={register({ required: true })}
             />
           </FormField>
           <FormField
             htmlFor="lastName"
-            label="Last name"
-            error={errors.lastName && ERROR_FIELD_REQUIRED}
+            error={errors.lastName && fieldsErrorsMapping["required"]}
           >
             <TextInput
               autoComplete="family-name"
               id="lastName"
               name="lastName"
-              placeholder="Last name"
+              placeholder="Nom de famille"
               type="text"
               ref={register({ required: true })}
             />
           </FormField>
           <FormField
-            htmlFor="new-password"
-            label="Choose a password"
-            error={errors.password && ERROR_FIELD_REQUIRED}
+            htmlFor="password"
+            error={errors.password && fieldsErrorsMapping[errors.password.type]}
           >
             <TextInput
-              autoComplete="new-password"
-              id="new-password"
-              name="new-password"
-              placeholder="password"
+              autoComplete="password"
+              id="password"
+              name="password"
+              placeholder="Choisissez un mot de passe"
               type="password"
               ref={register({ required: true })}
             />
           </FormField>
           <FormField
-            htmlFor="confirm-new-password"
-            label="Confirm your password"
-            error={errors.password && ERROR_FIELD_REQUIRED}
+            htmlFor="confirm-password"
+            error={
+              errors.confirmPassword &&
+              fieldsErrorsMapping[errors.confirmPassword.type]
+            }
           >
             <TextInput
-              autoComplete="new-password"
-              id="confirm-new-password"
-              name="confirm-new-password"
-              placeholder="password"
+              id="confirm-password"
+              name="confirmPassword"
+              placeholder="Confirmez votre mot de passe"
               type="password"
               ref={register({ required: true })}
             />
           </FormField>
-          <Button type="submit" primary label="Sign up" />
+          <Button type="submit" primary label="S'inscrire !" />
         </Box>
       </form>
+      <p>
+        Vous êtes déjà membre? <Link to={"/sign-in"}>Se connecter</Link>
+      </p>
     </Box>
   );
 };
