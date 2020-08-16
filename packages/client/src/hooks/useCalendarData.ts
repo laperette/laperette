@@ -21,12 +21,8 @@ export const useCalendarData = ({
 
   const placeInWeekFirstDayOfMonth = getDay(firstDayInCurrentMonth);
 
-  const numberOfDaysToTakeFromFormerMonth = (() => {
-    if (placeInWeekFirstDayOfMonth === 0) {
-      return 6;
-    }
-    return placeInWeekFirstDayOfMonth - 1;
-  })();
+  const numberOfDaysToTakeFromFormerMonth =
+    placeInWeekFirstDayOfMonth === 0 ? 6 : placeInWeekFirstDayOfMonth - 1;
 
   const daysToDisplay = eachDayOfInterval({
     start: subDays(firstDayInCurrentMonth, numberOfDaysToTakeFromFormerMonth),
