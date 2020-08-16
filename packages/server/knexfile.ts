@@ -1,4 +1,4 @@
-import { config } from "./config";
+import { config } from "./src/config";
 
 module.exports = {
   client: config.database_client,

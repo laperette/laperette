@@ -1,7 +1,7 @@
 import { verifySession, verifyPassword } from "../utils/auth";
 import { Context } from "koa";
 import { getAccountByEmail } from "../db/accounts";
-import { config } from "../../config";
+import { config } from "../config";
 
 export const extractSessionId = (ctx: Context): string | null => {
   const sessionCookie = ctx.cookies.get(config.cookies.session);

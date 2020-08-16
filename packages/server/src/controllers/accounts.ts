@@ -5,7 +5,7 @@ import {
   createAccountSession,
   verifySession,
 } from "../utils/auth";
-import { config } from "../../config";
+import { config } from "../config";
 import { extractSessionId } from "../middlewares/authenticate";
 import { getAccountBySessionId } from "../db/sessions";
 
