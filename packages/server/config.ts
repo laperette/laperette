@@ -10,6 +10,7 @@ interface Config {
     expiresIn: number;
     length: number;
   };
+  corsOrigin: string;
 }
 
 export const config: Config = {
@@ -22,4 +23,5 @@ export const config: Config = {
     expiresIn: parseInt(process.env.TOKEN_EXPIRY, 10),
     length: parseInt(process.env.TOKEN_LENGTH, 10),
   },
+  corsOrigin: process.env.CORS_ORIGIN,
 };
