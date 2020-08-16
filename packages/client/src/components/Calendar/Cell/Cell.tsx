@@ -26,6 +26,7 @@ export const Cell = ({
   const month = MONTHS_NAMES[getMonth(day)];
   const dayColor = isSameDay(day, today) ? "brand" : "light-3";
   const DATE_FORMAT = "dd/MM/yyyy 'à' H 'heures'";
+
   return (
     <Box
       border={{ side: "all", color: dayColor }}
@@ -42,26 +43,27 @@ export const Cell = ({
       >
         {date === 1 ? `${date} ${month}` : date}
       </Text>
+
       {booking && (
         <Box
-          background={
-            booking.bookingStatus === "pending" ? "light-3" : "light-4"
-          }
-          hoverIndicator
+          background={booking.status === "pending" ? "light-3" : "dark-4"}
           onClick={() => {
             alert(
               `${booking.firstName} ${booking.lastName} a réservé pour ${
-                eachDayOfInterval(booking.interval).length
+                eachDayOfInterval({
+                  start: booking.arrivalTime,
+                  end: booking.departureTime,
+                }).length
               } jours, du ${format(
-                booking.interval.start,
+                booking.arrivalTime,
                 DATE_FORMAT,
-              )} au ${format(booking.interval.end, DATE_FORMAT)}`,
+              )} au ${format(booking.departureTime, DATE_FORMAT)}`,
             );
           }}
           pad="xxsmall"
         >
           <Text size="small">
-            ${booking.firstName} ${booking.lastName}
+            {booking.firstName} {booking.lastName}
           </Text>
         </Box>
       )}

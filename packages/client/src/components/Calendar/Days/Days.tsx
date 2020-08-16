@@ -1,7 +1,7 @@
 import React from "react";
 import { Cell } from "../Cell/Cell";
 import { Booking } from "../Calendar";
-import { isWithinInterval } from "date-fns";
+import { isWithinInterval, startOfDay, endOfDay } from "date-fns";
 
 interface Props {
   daysToDisplay: Date[];
@@ -14,7 +14,10 @@ export const Days = ({ daysToDisplay, currentMonthName, bookings }: Props) => {
     <>
       {daysToDisplay.map((day, index) => {
         const booking = bookings.find((booking) =>
-          isWithinInterval(day, booking.interval),
+          isWithinInterval(day, {
+            start: startOfDay(booking.arrivalTime),
+            end: endOfDay(booking.departureTime),
+          }),
         );
         return (
           <Cell

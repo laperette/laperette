@@ -17,14 +17,12 @@ import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
 import { useCalendarData } from "../../hooks/useCalendarData";
 
 export interface Booking {
-  interval: {
-    start: Date;
-    end: Date;
-  };
+  arrivalTime: Date;
+  departureTime: Date;
   firstName: string;
   lastName: string;
   bookingId: string;
-  bookingStatus: string;
+  status: string;
   comments: string;
   companions: string;
 }
