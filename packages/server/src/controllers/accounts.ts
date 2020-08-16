@@ -1,11 +1,6 @@
 import { Context } from "koa";
 import { createOneAccount, getAccountById } from "../db/accounts";
-import {
-  hashPassword,
-  createAccountSession,
-  verifySession,
-} from "../utils/auth";
-import { config } from "../config";
+import { hashPassword, verifySession } from "../utils/auth";
 import { extractSessionId } from "../middlewares/authenticate";
 import { getAccountBySessionId } from "../db/sessions";
 
@@ -14,17 +9,12 @@ export const createAccount = async (ctx: Context) => {
     const { firstName, lastName, email, password } = ctx.request.body;
     const hashedPassword = await hashPassword(password);
 
-    const [first_name, last_name] = await createOneAccount(
-      firstName,
-      lastName,
-      email,
-      hashedPassword,
-    );
+    await createOneAccount(firstName, lastName, email, hashedPassword);
     ctx.body = {
       status: "ok",
       account: {
-        firstName: first_name,
-        lastName: last_name,
+        firstName,
+        lastName,
       },
     };
     ctx.status = 201;
