@@ -3,7 +3,7 @@ import range from "lodash/range";
 export const repeat = (length: number, ret: string) =>
   range(length).map(() => ret);
 
-export const fieldsErrorsMapping: { [key: string]: string } = {
+export const fieldsErrorsMapping = {
   "required": "Ce champ ne peut être vide",
   "wrongEmail": " Cet email est incorrect",
   "wrongPassword": "Ce mot de passe est incorrect",
