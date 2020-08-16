@@ -9,32 +9,3 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: laperette
-  # app_server:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.server
-  #   environment:
-  #     - PORT=8000
-  #     - DATABASE_URL=postgres://postgres:postgres@app_db:5432/laperette
-  #   command: yarn server start-dev
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules/bcrypt/
-  #     - /app/packages/server/node_modules/bcrypt/
-  #   ports:
-  #     - 8000:8000
-  #   depends_on:
-  #     - app_db
-  # app_client:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.client
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
-  #   command: yarn client start-dev
-  #   volumes:
-  #     - .:/app
-  #   ports:
-  #     - 3000:3000
-  #     - 35729:35729
-  #   stdin_open: true
