@@ -11,7 +11,7 @@ export const insertAccountSession = async (
     })
     .returning("session_id");
 };
-export const retrieveActiveSession = async (sessionId) => {
+export const retrieveActiveSession = async (sessionId: string) => {
   return await knex("sessions")
     .where({
       session_id: sessionId,
@@ -20,7 +20,7 @@ export const retrieveActiveSession = async (sessionId) => {
     .first();
 };
 
-export const retrieveAccountBySessionId = async (sessionId) => {
+export const retrieveAccountBySessionId = async (sessionId: string) => {
   return await knex("accounts")
     .join("sessions", "accounts.account_id", "sessions.account_id")
     .select("accounts.first_name", "accounts.last_name")
@@ -36,20 +36,20 @@ export const invalidateSessionById = async (sessionId: string) => {
   });
 };
 
-export const invalidateSessionByUser = async (accountId) => {
+export const invalidateSessionByUser = async (accountId: string) => {
   await knex("sessions").del().where({
     account_id: accountId,
   });
 };
 
-export const retrieveSessionsByUser = async (accountId) => {
+export const retrieveSessionsByUser = async (accountId: string) => {
   const accountSessions = await knex("sessions").where({
     account_id: accountId,
   });
   return accountSessions;
 };
 
-export const retrieveSessionsById = async (sessionId) => {
+export const retrieveSessionsById = async (sessionId: string) => {
   const session = await knex("sessions").where({
     session_id: sessionId,
   });
@@ -57,7 +57,7 @@ export const retrieveSessionsById = async (sessionId) => {
 };
 
 // To be done, leaving here not to forget
-// export const invalidateSessionByAccount = async (sessionId) => {
+// export const invalidateSessionByAccount = async (sessionId:string) => {
 //   await knex("sessions").del().where({
 //     session_id: sessionId,
 //   });

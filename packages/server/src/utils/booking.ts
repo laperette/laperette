@@ -1,5 +1,5 @@
 import { validateAccountId } from "./account";
-import { insertOneBooking, BookingStatus } from "../db/bookings";
+import { insertOneBooking, BookingStatus, Booking } from "../db/bookings";
 import { isSameDay } from "date-fns";
 
 interface NewBookingData {
@@ -143,9 +143,9 @@ const validateCompanions = (
 };
 
 export const haveBookingDatesChanged = (
-  bookingToBeUpdated,
-  departureTime,
-  arrivalTime,
+  bookingToBeUpdated: Booking,
+  departureTime: string,
+  arrivalTime: string,
 ) => {
   if (!departureTime && !arrivalTime) {
     return false;
