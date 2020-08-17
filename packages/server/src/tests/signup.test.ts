@@ -8,4 +8,14 @@ describe("signup", () => {
     const response = await request(server).post("/signup").send();
     expect(response.status).toStrictEqual(400);
   });
+  it("should return status 200 and create an account", async () => {
+    const server = setupTest();
+    const response = await request(server).post("/signup").send({
+      email: "name@email.com",
+      firstName: "firstName",
+      lastName: "lastName",
+      password: "password",
+    });
+    expect(response.status).toStrictEqual(200);
+  });
 });
