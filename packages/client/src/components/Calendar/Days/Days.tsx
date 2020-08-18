@@ -20,6 +20,7 @@ export const Days = ({ daysToDisplay, currentMonthName, bookings }: Props) => {
               end: endOfDay(booking.departureTime),
             }),
           ) || undefined;
+
         return (
           <Cell
             booking={booking}

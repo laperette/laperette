@@ -1,4 +1,4 @@
-import { getAccountById } from "../db/accounts";
+import { retrieveAccountById } from "../db/accounts";
 
 export const validateAccountId = async (
   accountId: string,
@@ -7,7 +7,7 @@ export const validateAccountId = async (
     return false;
   }
 
-  const account = await getAccountById(accountId);
+  const account = await retrieveAccountById(accountId);
 
   if (!account) {
     return false;
