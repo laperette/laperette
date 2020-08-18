@@ -3,7 +3,6 @@ import { Grid } from "grommet";
 import range from "lodash/range";
 import Axios from "axios";
 
-import { Interval } from "date-fns";
 import { repeat } from "../../utils";
 import { useAsync } from "../../hooks/useAsync";
 import { useCalendarActions } from "../../hooks/useCalendarAction";
