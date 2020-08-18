@@ -1,15 +1,17 @@
 import { Context } from "koa";
 import {
-  getBookingById,
-  getAllBookings,
+  retrieveBookingById,
+  retrieveAllBookings,
   updateBookingById,
   BookingStatus,
+  retrieveBookingsByInterval,
 } from "../db/bookings";
 import {
   validateNewBookingData,
   createNewBooking,
   haveBookingDatesChanged,
 } from "../utils/booking";
+import { format, toDate } from "date-fns";
 
 export const createBooking = async (ctx: Context) => {
   const { accountId } = ctx.params;
@@ -49,7 +51,7 @@ export const createBooking = async (ctx: Context) => {
 export const getBooking = async (ctx: Context) => {
   const { bookingId } = ctx.params;
   try {
-    const booking = await getBookingById(bookingId);
+    const booking = await retrieveBookingById(bookingId);
     ctx.body = booking;
   } catch (error) {
     console.log(`Error while retrieving a booking: ${bookingId}`);
@@ -57,9 +59,36 @@ export const getBooking = async (ctx: Context) => {
   }
 };
 
+export const getBookingsByInterval = async (ctx: Context) => {
+  try {
+    const { start, end } = ctx.query;
+
+    if (!start || !end) {
+      console.log(`Could not find query parameters`);
+      ctx.status = 500;
+    }
+
+    const formattedStart = format(new Date(start), "y/MM/dd");
+
+    const formattedEnd = format(new Date(end), "y/MM/dd");
+
+    const bookings = await retrieveBookingsByInterval(
+      formattedStart,
+      formattedEnd,
+    );
+
+    ctx.body = bookings;
+    ctx.status = 200;
+  } catch (error) {
+    console.log(error);
+    console.log(`Error while retrieving bookings by interval`);
+    ctx.status = 500;
+  }
+};
+
 export const getBookings = async (ctx: Context) => {
   try {
-    const bookings = await getAllBookings();
+    const bookings = await retrieveAllBookings();
     ctx.body = bookings;
     ctx.status = 200;
   } catch (error) {
@@ -74,7 +103,7 @@ export const updateBooking = async (ctx: Context) => {
 
   const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
   try {
-    const bookingToBeUpdated = await getBookingById(bookingId);
+    const bookingToBeUpdated = await retrieveBookingById(bookingId);
 
     if (accountId !== bookingToBeUpdated.booker_id) {
       ctx.status = 403;

@@ -31,17 +31,6 @@ export const Calendar = () => {
   const { data: bookings, run, isIdle, isLoading, isError, error } = useAsync<
     Booking[] | null
   >();
-
-  useLayoutEffect(() => {
-    const getBookings = async (): Promise<Booking[]> => {
-      const response = await Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/bookings`,
-      );
-      return response.data.map(serializeBooking);
-    };
-    run(getBookings());
-  }, [run]);
-
   const {
     currentMonthNumber,
     currentYear,
@@ -53,6 +42,22 @@ export const Calendar = () => {
   const currentMonthName = MONTHS_NAMES[currentMonthNumber];
 
   const [daysToDisplay] = useCalendarData({ currentMonthNumber, currentYear });
+
+  useLayoutEffect(() => {
+    const getBookings = async (): Promise<Booking[]> => {
+      const response = await Axios({
+        method: "get",
+        url: `${process.env.REACT_APP_SERVER_URL}/bookings`,
+        params: {
+          start: daysToDisplay[0],
+          end: daysToDisplay[daysToDisplay.length - 1],
+        },
+      });
+
+      return response.data.map(serializeBooking);
+    };
+    run(getBookings());
+  }, [run]);
 
   if (isError) {
     return <FullPageErrorFallback error={error} />;

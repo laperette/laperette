@@ -2,7 +2,7 @@ import * as Router from "koa-router";
 
 import {
   getBooking,
-  getBookings,
+  getBookingsByInterval,
   createBooking,
   updateBooking,
 } from "./controllers/bookings";
@@ -31,7 +31,7 @@ router.post("/login", validateCredentials, login);
 
 router.post("/logout", authenticate, revokeAccountSessionById);
 
-router.get("/bookings", getBookings); // TODO: re-add authenticate middleware as soon as the signup/login flows are done (also in frontend)
+router.get("/bookings", getBookingsByInterval); // TODO: re-add authenticate middleware as soon as the signup/login flows are done (also in frontend)
 
 router.get("/bookings/:bookingId", authenticate, getBooking);
 

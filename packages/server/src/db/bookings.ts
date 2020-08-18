@@ -19,7 +19,7 @@ export interface BookingDataToUpdate {
   booking_status?: BookingStatus;
 }
 
-export const getAllBookings = async (): Promise<Booking[]> => {
+export const retrieveAllBookings = async (): Promise<Booking[]> => {
   const bookings = await knex("bookings")
     .select(
       "bookings.booking_id",
@@ -35,7 +35,9 @@ export const getAllBookings = async (): Promise<Booking[]> => {
   return bookings;
 };
 
-export const getBookingById = async (bookingId: string): Promise<Booking> => {
+export const retrieveBookingById = async (
+  bookingId: string,
+): Promise<Booking> => {
   const booking = await knex("bookings")
     .select(
       "bookings.booking_id",
@@ -51,6 +53,32 @@ export const getBookingById = async (bookingId: string): Promise<Booking> => {
     .where("booking_id", bookingId)
     .first();
   return booking;
+};
+
+export const retrieveBookingsByInterval = async (
+  start: string,
+  end: string,
+) => {
+  const bookings = await knex("bookings")
+    .select(
+      "bookings.booking_id",
+      "accounts.first_name",
+      "accounts.last_name",
+      "bookings.departure_time",
+      "bookings.arrival_time",
+      "bookings.status",
+      "bookings.comments",
+      "bookings.companions",
+    )
+    .join("accounts", "accounts.account_id", "bookings.booker_id")
+    .where(
+      knex.raw(
+        "bookings.arrival_time BETWEEN  ? AND ? OR bookings.departure_time BETWEEN  ? AND ? ",
+        [start, end, start, end],
+      ),
+    );
+
+  return bookings;
 };
 
 export const insertNewBooking = async (newBooking: Booking) => {
