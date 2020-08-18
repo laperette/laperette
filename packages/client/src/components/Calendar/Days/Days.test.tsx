@@ -55,6 +55,7 @@ describe(Days.name, () => {
       <Days
         daysToDisplay={mockDaysToDisplay}
         currentMonthName={mockCurrentMonthName}
+        bookings={[]}
       />,
     );
 

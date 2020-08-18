@@ -3,7 +3,6 @@ import { Grid } from "grommet";
 import range from "lodash/range";
 import Axios from "axios";
 
-import { repeat } from "../../utils";
 import { useAsync } from "../../hooks/useAsync";
 import { useCalendarActions } from "../../hooks/useCalendarAction";
 import { FullPageSpinner } from "../FullPageSpinner";
@@ -14,6 +13,7 @@ import { Navigation } from "./Navigation/Navigation";
 import { Days } from "./Days/Days";
 import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
 import { useCalendarData } from "../../hooks/useCalendarData";
+import { repeat } from "../../utils/calendar";
 
 export interface Booking {
   arrivalTime: Date;
@@ -44,14 +44,16 @@ export const Calendar = () => {
 
   useLayoutEffect(() => {
     const getBookings = async (): Promise<Booking[]> => {
-      const response = await Axios({
-        method: "get",
-        url: `${process.env.REACT_APP_SERVER_URL}/bookings`,
+      const response = await Axios.get("/bookings", {
         params: {
           start: daysToDisplay[0],
           end: daysToDisplay[daysToDisplay.length - 1],
         },
       });
+
+      if (!response.data.length) {
+        return [];
+      }
 
       return response.data.map(serializeBooking);
     };
