@@ -58,7 +58,7 @@ export const Calendar = () => {
       return response.data.map(serializeBooking);
     };
     run(getBookings());
-  }, [run]);
+  }, [daysToDisplay, run]);
 
   if (isError) {
     return <FullPageErrorFallback error={error} />;
