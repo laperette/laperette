@@ -11,7 +11,7 @@ import {
   createNewBooking,
   haveBookingDatesChanged,
 } from "../utils/booking";
-import { format, toDate } from "date-fns";
+import { format } from "date-fns";
 
 export const createBooking = async (ctx: Context) => {
   const { accountId } = ctx.params;
