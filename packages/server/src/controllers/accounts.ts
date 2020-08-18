@@ -1,15 +1,15 @@
 import { Context } from "koa";
-import { createOneAccount, getAccountById } from "../db/accounts";
+import { insertOneAccount, retrieveAccountById } from "../db/accounts";
 import { hashPassword, verifySession } from "../utils/auth";
 import { extractSessionId } from "../middlewares/authenticate";
-import { getAccountBySessionId } from "../db/sessions";
+import { retrieveAccountBySessionId } from "../db/sessions";
 
 export const createAccount = async (ctx: Context) => {
   try {
     const { firstName, lastName, email, password } = ctx.request.body;
     const hashedPassword = await hashPassword(password);
 
-    await createOneAccount(firstName, lastName, email, hashedPassword);
+    await insertOneAccount(firstName, lastName, email, hashedPassword);
     ctx.body = {
       status: "ok",
       account: {
@@ -27,7 +27,7 @@ export const createAccount = async (ctx: Context) => {
 export const getAccount = async (ctx: Context) => {
   try {
     const { accountId } = ctx.params;
-    const account = await getAccountById(accountId);
+    const account = await retrieveAccountById(accountId);
     ctx.body = { account };
     ctx.status = 200;
   } catch (error) {
@@ -58,7 +58,7 @@ export const getCurrentAccount = async (ctx: Context) => {
       return;
     }
 
-    const user = await getAccountBySessionId(sessionId);
+    const user = await retrieveAccountBySessionId(sessionId);
 
     if (!user) {
       ctx.body = { error: "Server error", error_description: "no_user_found" };

@@ -81,7 +81,7 @@ export const retrieveBookingsByInterval = async (
   return bookings;
 };
 
-export const insertNewBooking = async (newBooking: Booking) => {
+export const insertOneBooking = async (newBooking: Booking) => {
   await knex("bookings").insert(newBooking);
 };
 
