@@ -24,7 +24,7 @@
     "seed": "ts-node src/scripts/seed",
     "rollback": "knex migrate:rollback",
     "lint": "eslint . --ext .ts",
-    "test": "jest"
+    "test": "NODE_ENV=test jest"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",

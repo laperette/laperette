@@ -8,7 +8,7 @@ describe("signup", () => {
     const response = await request(server).post("/signup").send();
     expect(response.status).toStrictEqual(400);
   });
-  it("should return status 200 and create an account", async () => {
+  it("should return status 201 and create an account", async () => {
     const server = setupTest();
     const response = await request(server).post("/signup").send({
       email: "name@email.com",
@@ -16,6 +16,13 @@ describe("signup", () => {
       lastName: "lastName",
       password: "password",
     });
-    expect(response.status).toStrictEqual(200);
+    expect(response.status).toStrictEqual(201);
+    expect(response.body).toStrictEqual({
+      status: "ok",
+      account: {
+        firstName: "firstName",
+        lastName: "lastName",
+      },
+    });
   });
 });

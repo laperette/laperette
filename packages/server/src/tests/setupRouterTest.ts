@@ -5,8 +5,6 @@ import { router } from "../router";
 export const setupTest = () => {
   const app = new Koa();
   app.use(async (ctx, next) => {
-    console.log({ ctx });
-
     try {
       await next();
     } catch (err) {

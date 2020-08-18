@@ -1,6 +1,7 @@
 import { Context } from "koa";
 import { accountSchema } from "../validation";
 import { retrieveAccountByEmail } from "../db/accounts";
+
 export const validateCreateAccountData = async (
   ctx: Context,
   next: () => void,

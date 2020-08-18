@@ -24,7 +24,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:9.6.16
+        image: postgres:12.2
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -35,10 +35,10 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5434:5432
 
     env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/laperette
+      DATABASE_URL: postgres://postgres:postgres@localhost:5434/laperette
 
     steps:
       - uses: actions/checkout@v2
