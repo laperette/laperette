@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import { Days } from "./Days";
 
@@ -55,6 +55,7 @@ describe(Days.name, () => {
       <Days
         daysToDisplay={mockDaysToDisplay}
         currentMonthName={mockCurrentMonthName}
+        bookings={[]}
       />,
     );
 

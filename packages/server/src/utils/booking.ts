@@ -1,5 +1,5 @@
 import { validateAccountId } from "./account";
-import { insertNewBooking, BookingStatus } from "../db/bookings";
+import { insertOneBooking, BookingStatus } from "../db/bookings";
 import { isSameDay } from "date-fns";
 
 interface NewBookingData {
@@ -29,7 +29,7 @@ export const createNewBooking = async (
     booking_status: "pending" as BookingStatus,
   };
 
-  await insertNewBooking(formattedBooking);
+  await insertOneBooking(formattedBooking);
 };
 
 export const validateNewBookingData = async (

@@ -1,5 +1,5 @@
 import { addDays } from "date-fns";
-import { saveAccountSession, getActiveSession } from "../db/sessions";
+import { insertAccountSession, retrieveActiveSession } from "../db/sessions";
 import { hash, compare } from "bcrypt";
 
 export const createAccountSession = async (
@@ -7,7 +7,7 @@ export const createAccountSession = async (
 ): Promise<string> => {
   const expiryDate = addDays(new Date(), 30);
 
-  const token = await saveAccountSession(accountId, expiryDate);
+  const token = await insertAccountSession(accountId, expiryDate);
 
   return token;
 };
@@ -15,7 +15,7 @@ export const createAccountSession = async (
 export const verifySession = async (
   sessionCookie: string,
 ): Promise<boolean> => {
-  const activeSession = await getActiveSession(sessionCookie);
+  const activeSession = await retrieveActiveSession(sessionCookie);
   return !!activeSession;
 };
 

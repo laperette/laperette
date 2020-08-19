@@ -3,43 +3,33 @@ import { Grid } from "grommet";
 import range from "lodash/range";
 import Axios from "axios";
 
-import { Interval } from "date-fns";
-import { repeat } from "../../utils";
 import { useAsync } from "../../hooks/useAsync";
 import { useCalendarActions } from "../../hooks/useCalendarAction";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { WEEK_DAYS_NAMES, MONTHS_NAMES } from "../../utils/constants";
-import { serializeBooking } from "../../utils/calendar";
+import { serializeBooking } from "../../utils/bookings";
 import { Navigation } from "./Navigation/Navigation";
 import { Days } from "./Days/Days";
 import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
 import { useCalendarData } from "../../hooks/useCalendarData";
+import { repeat } from "../../utils/calendar";
 
-export type Booking = {
-  readonly name: string;
-  readonly interval: Interval;
-};
+export interface Booking {
+  arrivalTime: Date;
+  departureTime: Date;
+  firstName: string;
+  lastName: string;
+  bookingId: string;
+  status: string;
+  comments: string;
+  companions: string;
+}
 
 export const Calendar = () => {
-  const {
-    data: bookings,
-    run,
-    isIdle,
-    isLoading,
-    isError,
-    error,
-  } = useAsync<ReadonlyArray<Booking> | null>();
-
-  useLayoutEffect(() => {
-    const getBookings = async (): Promise<ReadonlyArray<Booking>> => {
-      const response = await Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/bookings`,
-      );
-      return response.data.map(serializeBooking);
-    };
-    run(getBookings());
-  }, [run]);
+  const { data: bookings, run, isIdle, isLoading, isError, error } = useAsync<
+    Booking[] | null
+  >();
 
   const {
     currentMonthNumber,
@@ -52,6 +42,27 @@ export const Calendar = () => {
   const currentMonthName = MONTHS_NAMES[currentMonthNumber];
 
   const [daysToDisplay] = useCalendarData({ currentMonthNumber, currentYear });
+
+  useLayoutEffect(() => {
+    const getBookings = async (): Promise<Booking[]> => {
+      const response = await Axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/bookings`,
+        {
+          params: {
+            start: daysToDisplay[0],
+            end: daysToDisplay[daysToDisplay.length - 1],
+          },
+        },
+      );
+
+      if (!response.data.length) {
+        return [];
+      }
+
+      return response.data.map(serializeBooking);
+    };
+    run(getBookings());
+  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isError) {
     return <FullPageErrorFallback error={error} />;
@@ -81,7 +92,11 @@ export const Calendar = () => {
         incrementMonth={incrementMonth}
       />
       <CalendarHeading />
-      <Days daysToDisplay={daysToDisplay} currentMonthName={currentMonthName} />
+      <Days
+        daysToDisplay={daysToDisplay}
+        currentMonthName={currentMonthName}
+        bookings={bookings}
+      />
     </Grid>
   );
 };

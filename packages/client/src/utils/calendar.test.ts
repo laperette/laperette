@@ -1,4 +1,4 @@
-import { repeat } from "./utils";
+import { repeat } from "./calendar";
 
 describe("utils", () => {
   describe("repeat", () => {

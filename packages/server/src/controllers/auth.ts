@@ -1,8 +1,8 @@
 import { Context } from "koa";
 import {
   invalidateSessionById,
-  getSessionsByUser,
-  getSessionsById,
+  retrieveSessionsByUser,
+  retrieveSessionsById,
 } from "../db/sessions";
 import { createAccountSession } from "../utils/auth";
 import { config } from "../config";
@@ -27,7 +27,7 @@ export const login = async (ctx: Context) => {
 export const revokeAccountSessionById = async (ctx: Context) => {
   const sessionId = extractSessionId(ctx);
 
-  const doesSessionExist = (await getSessionsById(sessionId)).length;
+  const doesSessionExist = (await retrieveSessionsById(sessionId)).length;
 
   if (!doesSessionExist) {
     ctx.status = 404;
@@ -44,7 +44,7 @@ export const revokeAccountSessionById = async (ctx: Context) => {
 export const listAccountSessions = async (ctx: Context) => {
   const { accountId } = ctx.params;
 
-  const accountSessions = await getSessionsByUser(accountId);
+  const accountSessions = await retrieveSessionsByUser(accountId);
 
   ctx.status = 200;
   ctx.body = { sessions: accountSessions };

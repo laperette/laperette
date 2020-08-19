@@ -1,6 +1,6 @@
 import { knex } from "./db";
 
-export const createOneAccount = async (
+export const insertOneAccount = async (
   firstName: string,
   lastName: string,
   email: string,
@@ -9,21 +9,21 @@ export const createOneAccount = async (
   return await knex("accounts")
     .returning(["account_id", "first_name", "last_name"])
     .insert({
-      firstName,
-      lastName,
+      first_name: firstName,
+      last_name: lastName,
       email,
       password,
     });
 };
 
-export const getAccountById = async (accountId: string) => {
+export const retrieveAccountById = async (accountId: string) => {
   const account = await knex("accounts")
     .where({ account_id: accountId })
     .first();
   return account;
 };
 
-export const getAccountByEmail = async (accountEmail: string) => {
+export const retrieveAccountByEmail = async (accountEmail: string) => {
   const account = await knex("accounts").where({ email: accountEmail }).first();
   return account;
 };

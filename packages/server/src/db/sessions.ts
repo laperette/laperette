@@ -1,6 +1,6 @@
 import { knex } from "./db";
 
-export const saveAccountSession = async (
+export const insertAccountSession = async (
   accountId: string,
   expiryDate: Date,
 ): Promise<string> => {
@@ -11,7 +11,7 @@ export const saveAccountSession = async (
     })
     .returning("session_id");
 };
-export const getActiveSession = async (sessionId) => {
+export const retrieveActiveSession = async (sessionId) => {
   return await knex("sessions")
     .where({
       session_id: sessionId,
@@ -20,7 +20,7 @@ export const getActiveSession = async (sessionId) => {
     .first();
 };
 
-export const getAccountBySessionId = async (sessionId) => {
+export const retrieveAccountBySessionId = async (sessionId) => {
   return await knex("accounts")
     .join("sessions", "accounts.account_id", "sessions.account_id")
     .select("accounts.first_name", "accounts.last_name")
@@ -42,14 +42,14 @@ export const invalidateSessionByUser = async (accountId) => {
   });
 };
 
-export const getSessionsByUser = async (accountId) => {
+export const retrieveSessionsByUser = async (accountId) => {
   const accountSessions = await knex("sessions").where({
     account_id: accountId,
   });
   return accountSessions;
 };
 
-export const getSessionsById = async (sessionId) => {
+export const retrieveSessionsById = async (sessionId) => {
   const session = await knex("sessions").where({
     session_id: sessionId,
   });

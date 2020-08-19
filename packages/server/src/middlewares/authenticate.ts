@@ -1,6 +1,6 @@
 import { verifySession, verifyPassword } from "../utils/auth";
 import { Context } from "koa";
-import { getAccountByEmail } from "../db/accounts";
+import { retrieveAccountByEmail } from "../db/accounts";
 import { config } from "../config";
 
 export const extractSessionId = (ctx: Context): string | null => {
@@ -35,7 +35,7 @@ export const authenticate = async (ctx: Context, next: () => void) => {
 export const validateCredentials = async (ctx: Context, next: () => void) => {
   const { email, password } = ctx.request.body;
 
-  const account = await getAccountByEmail(email);
+  const account = await retrieveAccountByEmail(email);
 
   if (!account) {
     ctx.body = { error: "Unauthorized", error_description: "Unknown account" };
