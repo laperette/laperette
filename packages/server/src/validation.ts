@@ -10,4 +10,4 @@ export const accountSchema = Joi.object({
     })
     .required(),
   password: Joi.string().alphanum().min(6).max(30).required(),
-});
+}).required();

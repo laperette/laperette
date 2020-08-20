@@ -5,10 +5,9 @@ import { extractSessionId } from "../middlewares/authenticate";
 import { retrieveAccountBySessionId } from "../db/sessions";
 
 export const createAccount = async (ctx: Context) => {
+  const { firstName, lastName, email, password } = ctx.request.body;
+  const hashedPassword = await hashPassword(password);
   try {
-    const { firstName, lastName, email, password } = ctx.request.body;
-    const hashedPassword = await hashPassword(password);
-
     await insertOneAccount(firstName, lastName, email, hashedPassword);
     ctx.body = {
       status: "ok",

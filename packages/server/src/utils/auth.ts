@@ -26,7 +26,7 @@ export const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const verifyPassword = async (
-  account,
+  account: any,
   password: string,
 ): Promise<boolean> => {
   const storedPassword = account.password;

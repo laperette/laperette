@@ -1,5 +1,7 @@
 import * as dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
+dotenv.config({
+  path: `./.env${process.env.NODE_ENV === "test" ? ".test" : ""}`,
+});
 
 export const config = {
   cookies: {

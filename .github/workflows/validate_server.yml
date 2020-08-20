@@ -21,6 +21,25 @@ jobs:
   build:
     name: Build the server
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:12.2
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: laperette
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5434:5432
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5434/laperette
+
     steps:
       - uses: actions/checkout@v2
 
@@ -38,3 +57,4 @@ jobs:
       - run: yarn install
       - run: yarn server lint
       - run: yarn server build
+      - run: yarn server test
