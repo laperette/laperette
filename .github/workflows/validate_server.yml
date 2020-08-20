@@ -5,21 +5,22 @@ on:
     branches:
       - master
     paths:
-      - 'packages/server/**'
+      - "packages/server/**"
   push:
     branches:
       - master
     paths:
-      - 'packages/server/**'
+      - "packages/server/**"
 
 jobs:
-  dummy-test-client:
-    name: Test the client
+  dummy-validate-client:
+    name: Validate the client
     runs-on: ubuntu-latest
     steps:
       - run: exit 0
-  build:
-    name: Build the server
+
+  validate_server:
+    name: Validate the server
     runs-on: ubuntu-latest
 
     services:

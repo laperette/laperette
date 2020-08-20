@@ -5,14 +5,14 @@ on:
     branches:
       - master
     paths:
-      - '!packages/**'
-      - '!package.json'
+      - "!packages/**"
+      - "!package.json"
   push:
     branches:
       - master
     paths:
-      - '!packages/**'
-      - '!package.json'
+      - "!packages/**"
+      - "!package.json"
 
 jobs:
   dummy-test-client:
