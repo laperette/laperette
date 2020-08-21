@@ -56,7 +56,7 @@ export const Calendar = () => {
         },
       );
 
-      if (!response.data || !response.data.bookings.length) {
+      if (!response?.data || !response?.data?.bookings.length) {
         return [];
       }
 

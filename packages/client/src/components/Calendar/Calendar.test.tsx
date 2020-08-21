@@ -19,7 +19,7 @@ jest.mock("axios");
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;
 
 const mockSuccessCall = () => {
-  mockedAxios.get.mockResolvedValueOnce({ data: [] });
+  mockedAxios.get.mockResolvedValueOnce({ data: { bookings: [] } });
 };
 
 const mockFailedCall = () => {
