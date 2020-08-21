@@ -31,7 +31,7 @@ router.post("/login", validateCredentials, login);
 
 router.post("/logout", authenticate, revokeAccountSessionById);
 
-router.get("/bookings", getBookingsByInterval); // TODO: re-add authenticate middleware as soon as the signup/login flows are done (also in frontend)
+router.get("/bookings", authenticate, getBookingsByInterval);
 
 router.get("/bookings/:bookingId", authenticate, getBooking);
 

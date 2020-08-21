@@ -2,6 +2,7 @@ import { verifySession, verifyPassword } from "../utils/auth";
 import { Context } from "koa";
 import { retrieveAccountByEmail } from "../db/accounts";
 import { config } from "../config";
+import { serializeAccountForClient } from "../utils/account";
 
 export const extractSessionId = (ctx: Context): string | null => {
   const sessionCookie = ctx.cookies.get(config.cookies.session);
@@ -63,12 +64,10 @@ export const validateCredentials = async (ctx: Context, next: () => void) => {
     return;
   }
 
+  const serializedAccount = serializeAccountForClient(account);
+
   ctx.state = {
-    account: {
-      accountId: account.account_id,
-      firstName: account.first_name,
-      lastName: account.last_name,
-    },
+    account: serializedAccount,
   };
 
   return next();

@@ -1,4 +1,5 @@
 import { retrieveAccountById } from "../db/accounts";
+import { AccountFromDB, AccountForClient } from "../types/accounts";
 
 export const validateAccountId = async (
   accountId: string,
@@ -15,3 +16,14 @@ export const validateAccountId = async (
 
   return true;
 };
+
+export const serializeAccountForClient = (
+  account: AccountFromDB,
+): AccountForClient => ({
+  accountId: account.account_id,
+  firstName: account.first_name,
+  lastName: account.last_name,
+  email: account.email,
+  isMember: account.is_member,
+  isAdmin: account.is_admin,
+});
