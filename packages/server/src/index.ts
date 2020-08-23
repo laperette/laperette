@@ -9,10 +9,10 @@ const app = new Koa();
 app.use(async (ctx: Koa.Context, next) => {
   try {
     await next();
-  } catch (err) {
-    ctx.status = err.status || 500;
-    ctx.body = err.message;
-    ctx.app.emit("error", err, ctx);
+  } catch (error) {
+    ctx.status = error.status || 500;
+    ctx.message = error.message;
+    ctx.app.emit("error", error, ctx);
   }
 });
 
@@ -23,8 +23,4 @@ app.use(router.routes());
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`Server started. Listening on port ${port}`);
-});
-
-app.on("error", (err) => {
-  console.log(err);
 });
