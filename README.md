@@ -1,15 +1,8 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
   <a href="https://github.com/laperette/laperette">
-    <img src="./logo.png" alt="Logo" width="80" height="80">
+    <img src="./logo.png" alt="Logo" width="120" height="80">
   </a>
 
   <h3 align="center">LA PERETTE</h3>
@@ -37,12 +30,11 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [Usage](#usage)
+  <!-- - [Usage](#usage) -->
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
-- [Acknowledgements](#acknowledgements)
 
 <!-- ABOUT THE PROJECT -->
 
@@ -146,7 +138,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 Axel Martin - mtn.axel@gmail.com
-[linkedin-url]: https://www.linkedin.com/in/martinaxel/
+[Github](https://github.com/paradoux)
+[LinkedIn](https://www.linkedin.com/in/martinaxel/)
 
 Alexandre Behagel - alexandre.behaghel@club-internet.fr
-[linkedin-url]: https://www.linkedin.com/in/alexandre-behaghel/
+[Github](https://github.com/AlexGeb)
+[LinkedIn](https://www.linkedin.com/in/alexandre-behaghel/)
