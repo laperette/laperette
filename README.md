@@ -139,12 +139,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Axel Martin - mtn.axel@gmail.com
 
-[Github](https://github.com/paradoux)
-
-[LinkedIn](https://www.linkedin.com/in/martinaxel/)
+[Github](https://github.com/paradoux) - [LinkedIn](https://www.linkedin.com/in/martinaxel/)
 
 Alexandre Behagel - alexandre.behaghel@club-internet.fr
 
-[Github](https://github.com/AlexGeb)
-
-[LinkedIn](https://www.linkedin.com/in/alexandre-behaghel/)
+[Github](https://github.com/AlexGeb) - [LinkedIn](https://www.linkedin.com/in/alexandre-behaghel/)
