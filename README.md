@@ -15,7 +15,7 @@
   <h3 align="center">LA PERETTE</h3>
 
   <p align="center">
-    Share your family house 
+    Smoothly manage your family house
     <br />
     <a href="https://github.com/github_username/repo"><strong>Explore the docs »</strong></a>
     <br />
@@ -48,7 +48,7 @@
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
 ### Built With
 
@@ -66,8 +66,8 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-- Docker
-- yarn
+- Install Docker
+- Install yarn
 
 ### Installation
 
@@ -83,16 +83,16 @@ git clone https://github.com/laperette/laperette
 yarn install
 ```
 
-3. Launch the local database
-
-```sh
-docker-compose up
-```
-
-4. Launch the local database
+3. Launch the local database accessible at `postgres://postgres:postgres@localhost:5430/laperette`
 
 ```sh
 docker-compose up -d
+```
+
+4. Run the migrations
+
+```sh
+yarn server migrate
 ```
 
 5. Launch the server
@@ -105,7 +105,7 @@ yarn start-dev
 6. Launch the client
 
 ```sh
-cd ../packages/client
+cd packages/client
 yarn start-dev
 ```
 
@@ -113,9 +113,9 @@ yarn start-dev
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+<!-- Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://example.com)_ -->
 
 <!-- ROADMAP -->
 
