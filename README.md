@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/laperette/laperette">
-    <img src="./logo.png" alt="Logo" width="80" height="60">
+    <img src="./logo.png" alt="Logo" width="120" height="120">
   </a>
 
   <h3 align="center">LA PERETTE</h3>
