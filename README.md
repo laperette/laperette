@@ -146,54 +146,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 Axel Martin - mtn.axel@gmail.com
+[linkedin-url]: https://www.linkedin.com/in/martinaxel/
 
 Alexandre Behagel - alexandre.behaghel@club-internet.fr
-
-<!-- ACKNOWLEDGEMENTS -->
-
-## Acknowledgements
-
-- []()
-- []()
-- []()
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=flat-square
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
-
-## Install
-
-```sh
-yarn install
-```
-
-## Start local development services:
-
-```sh
-docker-compose up
-```
-
-This command will start 3 services:
-
-- app_db: a postgre sql database, accesssible on the local host at `postgres://postgres:postgres@localhost:5430/laperette`
-- app_server: the node server, started with nodemon
-- app_client: the react app, started with react-scripts
-
-## Run migrations
-
-```sh
-docker-compose run app_server yarn server migrate
-```
+[linkedin-url]: https://www.linkedin.com/in/alexandre-behaghel/
