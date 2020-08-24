@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/laperette/laperette">
-    <img src="./logo.png" alt="Logo" width="120" height="80">
+    <img src="./logo.png" alt="Logo" width="60" height="40">
   </a>
 
   <h3 align="center">LA PERETTE</h3>
@@ -138,9 +138,13 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 Axel Martin - mtn.axel@gmail.com
+
 [Github](https://github.com/paradoux)
+
 [LinkedIn](https://www.linkedin.com/in/martinaxel/)
 
 Alexandre Behagel - alexandre.behaghel@club-internet.fr
+
 [Github](https://github.com/AlexGeb)
+
 [LinkedIn](https://www.linkedin.com/in/alexandre-behaghel/)
