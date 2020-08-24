@@ -3,12 +3,19 @@ import { insertOneAccount, retrieveAccountById } from "../db/accounts";
 import { hashPassword, verifySession } from "../utils/auth";
 import { extractSessionId } from "../middlewares/authenticate";
 import { retrieveAccountBySessionId } from "../db/sessions";
+import { serializeAccountForClient } from "../utils/account";
 
 export const createAccount = async (ctx: Context) => {
   const { firstName, lastName, email, password } = ctx.request.body;
   const hashedPassword = await hashPassword(password);
   try {
-    await insertOneAccount(firstName, lastName, email, hashedPassword);
+    await insertOneAccount({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+
     ctx.body = {
       status: "ok",
       account: {
@@ -27,10 +34,13 @@ export const getAccount = async (ctx: Context) => {
   try {
     const { accountId } = ctx.params;
     const account = await retrieveAccountById(accountId);
-    ctx.body = { account };
+    const serializedAccount = serializeAccountForClient(account);
+
+    ctx.body = {
+      account: serializedAccount,
+    };
     ctx.status = 200;
   } catch (error) {
-    console.log("Error when fetching account");
     ctx.status = 500;
     ctx.message = "Error when fetching account";
   }
@@ -57,24 +67,22 @@ export const getCurrentAccount = async (ctx: Context) => {
       return;
     }
 
-    const user = await retrieveAccountBySessionId(sessionId);
+    const account = await retrieveAccountBySessionId(sessionId);
 
-    if (!user) {
+    if (!account) {
       ctx.body = { error: "Server error", error_description: "no_user_found" };
       ctx.status = 500;
       return;
     }
 
+    const serializedAccount = serializeAccountForClient(account);
+
     ctx.body = {
-      user: {
-        firstName: user.first_name,
-        lastName: user.last_name,
-      },
+      user: serializedAccount, // Client expects keyname user
     };
     ctx.status = 200;
     ctx.message = "User authenticated";
   } catch (error) {
-    console.log(error);
     console.log("Error when fetching current account");
     ctx.status = 500;
     ctx.message = "Error when fetching current account";

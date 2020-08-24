@@ -5,7 +5,7 @@ import { hash, compare } from "bcrypt";
 export const createAccountSession = async (
   accountId: string,
 ): Promise<string> => {
-  const expiryDate = addDays(new Date(), 30);
+  const expiryDate = addDays(new Date(), 7);
 
   const token = await insertAccountSession(accountId, expiryDate);
 

@@ -3,15 +3,18 @@ import {
   retrieveBookingById,
   retrieveAllBookings,
   updateBookingById,
-  BookingStatus,
   retrieveBookingsByInterval,
+  insertOneBooking,
 } from "../db/bookings";
 import {
   validateNewBookingData,
-  createNewBooking,
   haveBookingDatesChanged,
+  serializeBookingForClient,
+  serializeBookingForDBInsert,
+  serializeBookingForDBUpdate,
 } from "../utils/booking";
 import { format } from "date-fns";
+import { UpdatedBookingProperties } from "../types/bookings";
 
 export const createBooking = async (ctx: Context) => {
   const { accountId } = ctx.params;
@@ -33,7 +36,9 @@ export const createBooking = async (ctx: Context) => {
       return;
     }
 
-    const newBookingId = await createNewBooking(newBookingData);
+    const serializedBooking = serializeBookingForDBInsert(newBookingData);
+
+    const newBookingId = await insertOneBooking(serializedBooking);
 
     ctx.message = "New booking created";
     ctx.body = {
@@ -41,8 +46,9 @@ export const createBooking = async (ctx: Context) => {
       bookingId: newBookingId,
     };
   } catch (error) {
-    console.log(`Error while creating a booking`);
     console.log(error);
+
+    console.log(`Error while creating a booking`);
     ctx.status = 500;
     ctx.message = "Error while creating a booking";
   }
@@ -52,7 +58,12 @@ export const getBooking = async (ctx: Context) => {
   const { bookingId } = ctx.params;
   try {
     const booking = await retrieveBookingById(bookingId);
-    ctx.body = booking;
+
+    const serializedBooking = serializeBookingForClient(booking);
+
+    ctx.body = {
+      booking: serializedBooking,
+    };
   } catch (error) {
     console.log(`Error while retrieving a booking: ${bookingId}`);
     ctx.status = 500;
@@ -77,10 +88,11 @@ export const getBookingsByInterval = async (ctx: Context) => {
       formattedEnd,
     );
 
-    ctx.body = bookings;
+    const serializedBookings = bookings.map(serializeBookingForClient);
+
+    ctx.body = { bookings: serializedBookings };
     ctx.status = 200;
   } catch (error) {
-    console.log(error);
     console.log(`Error while retrieving bookings by interval`);
     ctx.status = 500;
   }
@@ -89,10 +101,12 @@ export const getBookingsByInterval = async (ctx: Context) => {
 export const getBookings = async (ctx: Context) => {
   try {
     const bookings = await retrieveAllBookings();
-    ctx.body = bookings;
+
+    const serializedBookings = bookings.map(serializeBookingForClient);
+
+    ctx.body = { bookings: serializedBookings };
     ctx.status = 200;
   } catch (error) {
-    console.log(error);
     console.log(`Error while retrieving all bookings`);
     ctx.status = 500;
   }
@@ -102,6 +116,7 @@ export const updateBooking = async (ctx: Context) => {
   const { accountId, bookingId } = ctx.params;
 
   const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
+
   try {
     const bookingToBeUpdated = await retrieveBookingById(bookingId);
 
@@ -114,15 +129,18 @@ export const updateBooking = async (ctx: Context) => {
     if (
       haveBookingDatesChanged(bookingToBeUpdated, departureTime, arrivalTime)
     ) {
-      const dataToUpdate = {
-        arrival_time: arrivalTime,
-        departure_time: departureTime,
+      const bookingDataToUpdate: UpdatedBookingProperties = {
+        arrivalTime,
+        departureTime,
         comments,
         companions,
-        booking_status: "pending" as BookingStatus,
       };
 
-      await updateBookingById(bookingId, dataToUpdate);
+      const serializedBooking = serializeBookingForDBUpdate(
+        bookingDataToUpdate,
+      );
+
+      await updateBookingById(bookingId, serializedBooking);
 
       ctx.status = 200;
       ctx.message = "Booking updated";
@@ -132,12 +150,14 @@ export const updateBooking = async (ctx: Context) => {
       return;
     }
 
-    const dataToUpdate = {
+    const bookingDataToUpdate: UpdatedBookingProperties = {
       comments,
       companions,
     };
 
-    await updateBookingById(bookingId, dataToUpdate);
+    const serializedBooking = serializeBookingForDBUpdate(bookingDataToUpdate);
+
+    await updateBookingById(bookingId, serializedBooking);
 
     ctx.status = 200;
     ctx.message = "Booking updated";

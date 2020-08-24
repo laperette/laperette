@@ -6,7 +6,7 @@ import { config } from "./config";
 
 const app = new Koa();
 
-app.use(async (ctx, next) => {
+app.use(async (ctx: Koa.Context, next) => {
   try {
     await next();
   } catch (err) {

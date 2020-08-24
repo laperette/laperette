@@ -52,14 +52,15 @@ export const Calendar = () => {
             start: daysToDisplay[0],
             end: daysToDisplay[daysToDisplay.length - 1],
           },
+          withCredentials: true,
         },
       );
 
-      if (!response.data.length) {
+      if (!response?.data || !response?.data?.bookings.length) {
         return [];
       }
 
-      return response.data.map(serializeBooking);
+      return response.data.bookings.map(serializeBooking);
     };
     run(getBookings());
   }, [run]); // eslint-disable-line react-hooks/exhaustive-deps

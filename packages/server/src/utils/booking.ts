@@ -1,39 +1,17 @@
 import { validateAccountId } from "./account";
-import { insertOneBooking, BookingStatus, Booking } from "../db/bookings";
-import { isSameDay } from "date-fns";
-
-interface NewBookingData {
-  accountId: string;
-  arrivalTime: string;
-  departureTime: string;
-  comments: string;
-  companions: string[];
-}
-
-interface VerifiedNewBookingData {
-  accountId: string;
-  arrivalTime: Date;
-  departureTime: Date;
-  comments: string;
-  companions: string[];
-}
-export const createNewBooking = async (
-  newBookingData: VerifiedNewBookingData,
-) => {
-  const formattedBooking = {
-    booker_id: newBookingData.accountId,
-    arrival_time: newBookingData.arrivalTime,
-    departure_time: newBookingData.departureTime,
-    comments: newBookingData.comments,
-    companions: newBookingData.companions,
-    booking_status: "pending" as BookingStatus,
-  };
-
-  await insertOneBooking(formattedBooking);
-};
+import { isSameDay, parseJSON } from "date-fns";
+import {
+  NewBookingProperties,
+  BookingStatus,
+  BookingForClient,
+  BookingFromDB,
+  BookingForDBInsert,
+  UpdatedBookingProperties,
+  BookingForDBUpdate,
+} from "../types/bookings";
 
 export const validateNewBookingData = async (
-  newBookingData: NewBookingData,
+  newBookingData: NewBookingProperties,
 ): Promise<boolean> => {
   const {
     accountId,
@@ -85,7 +63,7 @@ export const validateNewBookingData = async (
 };
 
 const validateArrivalTime = (
-  arrivalTime: NewBookingData["arrivalTime"],
+  arrivalTime: NewBookingProperties["arrivalTime"],
 ): boolean => {
   const parsedArrivalTime = Date.parse(arrivalTime);
   if (isNaN(parsedArrivalTime)) {
@@ -100,8 +78,8 @@ const validateArrivalTime = (
 };
 
 const validateDepartureTime = (
-  departureTime: NewBookingData["departureTime"],
-  arrivalTime: NewBookingData["arrivalTime"],
+  departureTime: NewBookingProperties["departureTime"],
+  arrivalTime: NewBookingProperties["arrivalTime"],
 ): boolean => {
   const parsedArrivalTime = Date.parse(arrivalTime);
   const parsedDepartureTime = Date.parse(departureTime);
@@ -116,7 +94,9 @@ const validateDepartureTime = (
   return true;
 };
 
-const validateComments = (comments: NewBookingData["comments"]): boolean => {
+const validateComments = (
+  comments: NewBookingProperties["comments"],
+): boolean => {
   if (typeof comments !== "string") {
     return false;
   }
@@ -129,7 +109,7 @@ const validateComments = (comments: NewBookingData["comments"]): boolean => {
 };
 
 const validateCompanions = (
-  companions: NewBookingData["companions"],
+  companions: NewBookingProperties["companions"],
 ): boolean => {
   if (companions.constructor !== Array) {
     return false;
@@ -143,10 +123,10 @@ const validateCompanions = (
 };
 
 export const haveBookingDatesChanged = (
-  bookingToBeUpdated: Booking,
+  bookingToBeUpdated: BookingFromDB,
   departureTime: string,
   arrivalTime: string,
-) => {
+): boolean => {
   if (!departureTime && !arrivalTime) {
     return false;
   }
@@ -160,3 +140,37 @@ export const haveBookingDatesChanged = (
 
   return false;
 };
+
+export const serializeBookingForDBInsert = (
+  bookingProperties: NewBookingProperties,
+): BookingForDBInsert => ({
+  booker_id: bookingProperties.accountId,
+  arrival_time: parseJSON(bookingProperties.arrivalTime),
+  departure_time: parseJSON(bookingProperties.departureTime),
+  comments: bookingProperties.comments,
+  companions: bookingProperties.companions,
+  status: "pending" as BookingStatus,
+});
+
+export const serializeBookingForDBUpdate = (
+  bookingProperties: UpdatedBookingProperties,
+): BookingForDBUpdate => ({
+  arrival_time: parseJSON(bookingProperties.arrivalTime),
+  departure_time: parseJSON(bookingProperties.departureTime),
+  comments: bookingProperties.comments,
+  companions: bookingProperties.companions,
+  status: "pending" as BookingStatus,
+});
+
+export const serializeBookingForClient = (
+  booking: BookingFromDB,
+): BookingForClient => ({
+  bookingId: booking.booking_id,
+  firstName: booking.first_name,
+  lastName: booking.last_name,
+  arrivalTime: booking.arrival_time,
+  departureTime: booking.departure_time,
+  status: booking.status,
+  comments: booking.comments,
+  companions: booking.companions,
+});

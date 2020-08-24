@@ -4,7 +4,9 @@ export type AuthClient = {
   fetchUser: () => Promise<{ user: User } | null>;
   login: (credentials: Credentials) => Promise<User>;
   logout: () => Promise<void>;
-  signup: (credentials: SignUpCredentials) => Promise<User>;
+  signup: (
+    credentials: SignUpCredentials,
+  ) => Promise<{ firstName: string; lastName: string }>;
 };
 
 export interface Credentials {
@@ -18,10 +20,15 @@ export interface SignUpCredentials {
   lastName: string;
   password: string;
 }
-export interface User {
+
+export type User = {
+  accountId: string;
   firstName: string;
   lastName: string;
-}
+  email: string;
+  isMember: boolean;
+  isAdmin: boolean;
+};
 
 export const AuthClient = ({
   fetchUser = () => {
@@ -41,8 +48,12 @@ export const AuthClient = ({
       withCredentials: true,
     }).then((result) =>
       Promise.resolve({
+        accountId: result.data.account.accountId,
         firstName: result.data.account.firstName,
         lastName: result.data.account.lastName,
+        email: result.data.account.email,
+        isMember: result.data.account.isMember,
+        isAdmin: result.data.account.isAdmin,
       }),
     );
   },
