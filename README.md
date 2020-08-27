@@ -40,6 +40,8 @@
 
 ## About The Project
 
+### Documentation
+
 Just head to our [Notion page](https://www.notion.so/axelmtn/La-Perette-b9cb65b6f7e34df7abc43d80412428c4) to understand how to use our platform and have a look at how it is architectured.
 
 ### Built With
