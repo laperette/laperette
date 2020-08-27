@@ -90,15 +90,13 @@ yarn server migrate
 5. Launch the server
 
 ```sh
-cd packages/server
-yarn start-dev
+yarn server start-dev
 ```
 
 6. Launch the client
 
 ```sh
-cd packages/client
-yarn start-dev
+yarn client start-dev
 ```
 
 <!-- USAGE EXAMPLES -->
@@ -122,9 +120,9 @@ See the [open issues](https://github.com/laperette/laperette/issues) for a list 
 Any contributions you make are **greatly appreciated**, especially styling!
 
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+2. Create your Feature Branch using your initials (`git checkout -b am/amazing-feature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+4. Push to the Branch (`git push origin am/amazing-feature`)
 5. Open a Pull Request
 
 <!-- LICENSE -->
