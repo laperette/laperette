@@ -103,6 +103,8 @@ yarn client start-dev
 
 ## Usage
 
+Just head to our [Notion page](https://www.notion.so/axelmtn/La-Perette-b9cb65b6f7e34df7abc43d80412428c4) to understand how to use our platform and have a look on how it is architectured.
+
 <!-- Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
 _For more examples, please refer to the [Documentation](https://example.com)_ -->
