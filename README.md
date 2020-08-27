@@ -10,7 +10,7 @@
   <p align="center">
     Smoothly manage your family house
     <br />
-    <a href="https://github.com/github_username/repo"><strong>Explore the docs »</strong></a>
+    <a href="https://www.notion.so/axelmtn/La-Perette-b9cb65b6f7e34df7abc43d80412428c4"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://laperette-client.herokuapp.com/">View Demo</a>
