@@ -2,6 +2,10 @@ import * as Knex from "knex";
 import { addDays } from "date-fns";
 import { hashPassword } from "../src/utils/auth";
 export async function seed(knex: Knex): Promise<void> {
+  if (process.env.NODE_ENV === "production") {
+    throw Error("Cannot seed data in production, aborting");
+  }
+
   const seedDatabase = async () => {
     const createMockAccount = async (
       firstName: string,
