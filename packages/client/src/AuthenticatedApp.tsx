@@ -1,12 +1,10 @@
 import React from "react";
 import { Grid, Header, Box, Anchor, Main, Text, Button } from "grommet";
 import { Home } from "grommet-icons";
-import { Link } from "react-router-dom";
 
 import { Calendar } from "./components/Calendar";
 import { useAuth } from "./contexts/AuthContext";
 import { Switch, Route, Redirect } from "react-router-dom";
-import { NewBooking } from "./pages/NewBooking/NewBooking";
 
 const AuthenticatedApp = () => {
   const { user, logout } = useAuth();
@@ -36,18 +34,12 @@ const AuthenticatedApp = () => {
             </Text>
           </Anchor>
           <Button onClick={logout} label="logout" />
-          <Link to="/new-booking">
-            <Anchor as="span" label="New booking" />
-          </Link>
         </Box>
       </Header>
       <Main gridArea="main" background="light-1" pad="medium">
         <Switch>
           <Route path="/calendar">
             <Calendar />
-          </Route>
-          <Route path="/new-booking">
-            <NewBooking />
           </Route>
           <Redirect to="/calendar" />
         </Switch>
