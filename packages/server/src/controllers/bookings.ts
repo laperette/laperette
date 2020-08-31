@@ -15,6 +15,7 @@ import {
 } from "../utils/booking";
 import { format } from "date-fns";
 import { UpdatedBookingProperties } from "../types/bookings";
+import { logger, sanitizeError } from "../logger";
 
 export const createBooking = async (ctx: Context) => {
   const { accountId } = ctx.params;
@@ -31,8 +32,10 @@ export const createBooking = async (ctx: Context) => {
     const isValidData = !!(await validateNewBookingData(newBookingData));
 
     if (!isValidData) {
+      const errorMessage = "Impossible to create a booking - Invalid data";
+      logger.error(errorMessage);
       ctx.status = 400;
-      ctx.message = "Impossible to create a booking - Invalid data";
+      ctx.message = errorMessage;
       return;
     }
 
@@ -40,17 +43,26 @@ export const createBooking = async (ctx: Context) => {
 
     const newBookingId = await insertOneBooking(serializedBooking);
 
-    ctx.message = "New booking created";
+    const successMessage = "New booking created";
+    logger.info(successMessage, {
+      accountId: accountId,
+      bookingId: newBookingId,
+    });
+    ctx.status = 201;
+    ctx.message = successMessage;
     ctx.body = {
-      status: "ok",
       bookingId: newBookingId,
     };
   } catch (error) {
-    console.log(error);
+    const errorMessage = "Error while creating a booking";
 
-    console.log(`Error while creating a booking`);
+    logger.error(errorMessage, {
+      accountId: accountId,
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
-    ctx.message = "Error while creating a booking";
+    ctx.message = errorMessage;
   }
 };
 
@@ -61,12 +73,19 @@ export const getBooking = async (ctx: Context) => {
 
     const serializedBooking = serializeBookingForClient(booking);
 
-    ctx.body = {
-      booking: serializedBooking,
-    };
+    ctx.status = 200;
+    ctx.message = "Booking retrieved";
+    ctx.body = { serializedBooking };
   } catch (error) {
-    console.log(`Error while retrieving a booking: ${bookingId}`);
+    const errorMessage = "Error while retrieving a booking";
+
+    logger.error(errorMessage, {
+      bookingId: bookingId,
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
+    ctx.message = errorMessage;
   }
 };
 
@@ -75,8 +94,10 @@ export const getBookingsByInterval = async (ctx: Context) => {
     const { start, end } = ctx.query;
 
     if (!start || !end) {
-      console.log(`Could not find query parameters`);
-      ctx.status = 500;
+      const errorMessage = "Could not find query parameters";
+      logger.error(errorMessage);
+      ctx.status = 404;
+      ctx.message = errorMessage;
     }
 
     const formattedStart = format(new Date(start), "y/MM/dd");
@@ -90,11 +111,17 @@ export const getBookingsByInterval = async (ctx: Context) => {
 
     const serializedBookings = bookings.map(serializeBookingForClient);
 
-    ctx.body = { bookings: serializedBookings };
     ctx.status = 200;
+    ctx.body = { bookings: serializedBookings };
   } catch (error) {
-    console.log(`Error while retrieving bookings by interval`);
+    const errorMessage = "Error while retrieving bookings by interval";
+
+    logger.error(errorMessage, {
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
+    ctx.message = errorMessage;
   }
 };
 
@@ -104,11 +131,17 @@ export const getBookings = async (ctx: Context) => {
 
     const serializedBookings = bookings.map(serializeBookingForClient);
 
-    ctx.body = { bookings: serializedBookings };
     ctx.status = 200;
+    ctx.body = { bookings: serializedBookings };
   } catch (error) {
-    console.log(`Error while retrieving all bookings`);
+    const errorMessage = "Error while retrieving all bookings";
+
+    logger.error(errorMessage, {
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
+    ctx.message = errorMessage;
   }
 };
 
@@ -121,8 +154,11 @@ export const updateBooking = async (ctx: Context) => {
     const bookingToBeUpdated = await retrieveBookingById(bookingId);
 
     if (accountId !== bookingToBeUpdated.booker_id) {
+      const errorMessage =
+        "Impossible to update this booking - Invalid booking owner";
+      logger.error(errorMessage);
       ctx.status = 403;
-      ctx.message = "Impossible to update this booking - Invalid booking owner";
+      ctx.message = errorMessage;
       return;
     }
 
@@ -142,11 +178,13 @@ export const updateBooking = async (ctx: Context) => {
 
       await updateBookingById(bookingId, serializedBooking);
 
+      const successMessage = "Booking updated";
+      logger.info(successMessage, {
+        accountId: accountId,
+        bookingId: bookingId,
+      });
       ctx.status = 200;
-      ctx.message = "Booking updated";
-      ctx.body = {
-        status: "ok",
-      };
+      ctx.message = successMessage;
       return;
     }
 
@@ -159,15 +197,22 @@ export const updateBooking = async (ctx: Context) => {
 
     await updateBookingById(bookingId, serializedBooking);
 
+    const successMessage = "Booking updated";
+    logger.info(successMessage, {
+      accountId: accountId,
+      bookingId: bookingId,
+    });
     ctx.status = 200;
-    ctx.message = "Booking updated";
-    ctx.body = {
-      status: "ok",
-    };
-    return;
+    ctx.message = successMessage;
   } catch (error) {
-    console.log(`Error while updating a booking`, { bookingId });
-    console.log(error);
+    const errorMessage = "Error while updating a booking";
+
+    logger.error(errorMessage, {
+      bookingId: bookingId,
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
+    ctx.message = errorMessage;
   }
 };

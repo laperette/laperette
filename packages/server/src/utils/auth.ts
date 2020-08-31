@@ -1,6 +1,7 @@
 import { addDays } from "date-fns";
 import { insertAccountSession, retrieveActiveSession } from "../db/sessions";
 import { hash, compare } from "bcrypt";
+import { AccountFromDB } from "../types/accounts";
 
 export const createAccountSession = async (
   accountId: string,
@@ -26,7 +27,7 @@ export const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const verifyPassword = async (
-  account: any,
+  account: AccountFromDB,
   password: string,
 ): Promise<boolean> => {
   const storedPassword = account.password;

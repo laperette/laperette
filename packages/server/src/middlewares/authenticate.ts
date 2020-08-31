@@ -16,17 +16,18 @@ export const extractSessionId = (ctx: Context): string | null => {
 
 export const authenticate = async (ctx: Context, next: () => void) => {
   const sessionId = extractSessionId(ctx);
+
   if (!sessionId) {
-    ctx.body = { error: "Unauthorized", error_description: "no_session_id" };
     ctx.status = 401;
+    ctx.message = "Unauthorized - No sessionId";
     return;
   }
 
   const isAuthenticated = await verifySession(sessionId);
 
   if (!isAuthenticated) {
-    ctx.body = { error: "Unauthorized", error_description: "invalid_session" };
     ctx.status = 401;
+    ctx.message = "Unauthorized - Invalid sessionId";
     return;
   }
 
@@ -39,28 +40,22 @@ export const validateCredentials = async (ctx: Context, next: () => void) => {
   const account = await retrieveAccountByEmail(email);
 
   if (!account) {
-    ctx.body = { error: "Unauthorized", error_description: "Unknown account" };
     ctx.status = 401;
+    ctx.message = "Unauthorized";
     return;
   }
 
   const hasValidPassword = await verifyPassword(account, password);
 
   if (!hasValidPassword) {
-    ctx.body = {
-      error: "Unauthorized",
-      error_description: "Invalid credentials",
-    };
     ctx.status = 401;
+    ctx.message = "Unauthorized";
     return;
   }
 
   if (!account.is_member) {
-    ctx.body = {
-      error: "Unauthorized",
-      error_description: "Member validation pending",
-    };
     ctx.status = 401;
+    ctx.message = "Unauthorized - Membership validation pending";
     return;
   }
 
