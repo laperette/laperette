@@ -15,9 +15,10 @@ import { validateCreateAccountData } from "./middlewares/validate";
 import {
   login,
   revokeAccountSessionById,
-  listAccountSessions,
+  getAccountSessions,
 } from "./controllers/auth";
 import { authenticate, validateCredentials } from "./middlewares/authenticate";
+import { getAccountHouses } from "./controllers/houses";
 
 export const router = new Router();
 
@@ -39,7 +40,7 @@ router.get("/accounts/current", getCurrentAccount);
 
 router.get("/accounts/:accountId", authenticate, getAccount);
 
-router.get("/accounts/:accountId/sessions", authenticate, listAccountSessions);
+router.get("/accounts/:accountId/sessions", authenticate, getAccountSessions);
 
 router.post("/accounts/:accountId/booking", authenticate, createBooking);
 
@@ -48,3 +49,5 @@ router.post(
   authenticate,
   updateBooking,
 );
+
+router.get("/accounts/:accountId/houses", authenticate, getAccountHouses);

@@ -38,7 +38,7 @@ export const revokeAccountSessionById = async (ctx: Context) => {
   ctx.status = 204;
 };
 
-export const listAccountSessions = async (ctx: Context) => {
+export const getAccountSessions = async (ctx: Context) => {
   const { accountId } = ctx.params;
 
   const accountSessions = await retrieveSessionsByUser(accountId);
