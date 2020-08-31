@@ -58,6 +58,13 @@ Just head to our [Notion page](https://www.notion.so/axelmtn/La-Perette-b9cb65b6
 
 To get a local copy up and running follow these simple steps.
 
+After running the knex seeding, you can use the following account for testing purposes on local:
+
+```
+email: 'admin@gmail.com'
+password: 'password'
+```
+
 ### Prerequisites
 
 - Install Docker
@@ -89,13 +96,19 @@ docker-compose up -d
 yarn server migrate
 ```
 
-5. Launch the server
+5. Run the seeds
+
+```sh
+yarn server seed
+```
+
+6. Launch the server
 
 ```sh
 yarn server start-dev
 ```
 
-6. Launch the client
+7. Launch the client
 
 ```sh
 yarn client start-dev
