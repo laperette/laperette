@@ -18,7 +18,6 @@ describe("signup", () => {
     });
     expect(response.status).toStrictEqual(201);
     expect(response.body).toStrictEqual({
-      status: "ok",
       account: {
         firstName: "firstName",
         lastName: "lastName",

@@ -20,7 +20,7 @@ export const validateCreateAccountData = async (
 
   if (alreadyExist) {
     ctx.status = 409;
-    ctx.message = "Account already exist";
+    ctx.message = "Account already exists";
     return;
   }
 

@@ -4,29 +4,38 @@ import { hashPassword, verifySession } from "../utils/auth";
 import { extractSessionId } from "../middlewares/authenticate";
 import { retrieveAccountBySessionId } from "../db/sessions";
 import { serializeAccountForClient } from "../utils/account";
+import { logger, sanitizeError } from "../logger";
 
 export const createAccount = async (ctx: Context) => {
   const { firstName, lastName, email, password } = ctx.request.body;
   const hashedPassword = await hashPassword(password);
   try {
-    await insertOneAccount({
+    const [accountId] = await insertOneAccount({
       firstName,
       lastName,
       email,
       password: hashedPassword,
     });
 
+    logger.info("New account created", {
+      accountId: accountId,
+    });
+    ctx.status = 201;
     ctx.body = {
-      status: "ok",
       account: {
         firstName,
         lastName,
       },
     };
-    ctx.status = 201;
   } catch (error) {
+    const errorMessage = "Error when creating account";
+
+    logger.error(errorMessage, {
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
-    ctx.message = "Error when creating account";
+    ctx.message = errorMessage;
   }
 };
 
@@ -36,13 +45,20 @@ export const getAccount = async (ctx: Context) => {
     const account = await retrieveAccountById(accountId);
     const serializedAccount = serializeAccountForClient(account);
 
+    ctx.status = 200;
+
     ctx.body = {
       account: serializedAccount,
     };
-    ctx.status = 200;
   } catch (error) {
+    const errorMessage = "Error when fetching account";
+
+    logger.error(errorMessage, {
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
-    ctx.message = "Error when fetching account";
+    ctx.message = errorMessage;
   }
 };
 
@@ -51,40 +67,44 @@ export const getCurrentAccount = async (ctx: Context) => {
     const sessionId = extractSessionId(ctx);
 
     if (!sessionId) {
-      ctx.body = { error: "Unauthorized", error_description: "no_session_id" };
       ctx.status = 401;
+      ctx.message = "Unauthorized - No sessionId";
       return;
     }
 
     const isAuthenticated = await verifySession(sessionId);
 
     if (!isAuthenticated) {
-      ctx.body = {
-        error: "Unauthorized",
-        error_description: "invalid_session",
-      };
       ctx.status = 401;
+      ctx.message = "Unauthorized - Session no longer active";
       return;
     }
 
     const account = await retrieveAccountBySessionId(sessionId);
 
     if (!account) {
-      ctx.body = { error: "Server error", error_description: "no_user_found" };
+      const errorMessage = "Unauthorized - User linked to session not found";
+      logger.error(errorMessage);
       ctx.status = 500;
+      ctx.message = errorMessage;
       return;
     }
 
     const serializedAccount = serializeAccountForClient(account);
 
+    ctx.status = 200;
+    ctx.message = "User authenticated";
     ctx.body = {
       user: serializedAccount, // Client expects keyname user
     };
-    ctx.status = 200;
-    ctx.message = "User authenticated";
   } catch (error) {
-    console.log("Error when fetching current account");
+    const errorMessage = "Error when fetching current account";
+
+    logger.error(errorMessage, {
+      error: sanitizeError(error),
+    });
+
     ctx.status = 500;
-    ctx.message = "Error when fetching current account";
+    ctx.message = errorMessage;
   }
 };
