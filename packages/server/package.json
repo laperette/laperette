@@ -22,7 +22,8 @@
     "start": "node ./dist/src/index.js",
     "migrate:make": "knex migrate:make -x ts",
     "migrate": "knex migrate:latest",
-    "seed": "ts-node src/scripts/seed",
+    "seed:make": "knex seed:make",
+    "seed": "knex seed:run",
     "rollback": "knex migrate:rollback",
     "lint": "eslint . --ext .ts",
     "test": "NODE_ENV=test jest"
@@ -31,21 +32,21 @@
     "@types/bcrypt": "^3.0.0",
     "@types/hapi__joi": "^17.1.4",
     "@types/jest": "^26.0.10",
-    "@types/koa": "^2.11.3",
+    "@types/koa": "^2.11.4",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-router": "^7.4.0",
     "@types/koa__cors": "^3.0.1",
     "@types/supertest": "^2.0.10",
     "@types/uuid": "^7.0.3",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
-    "@typescript-eslint/parser": "^3.9.0",
+    "@typescript-eslint/parser": "^3.10.1",
     "eslint": "^7.7.0",
     "jest": "^26.4.0",
     "nodemon": "^2.0.4",
     "supertest": "^4.0.2",
-    "ts-jest": "^26.2.0",
+    "ts-jest": "^26.3.0",
     "ts-node": "^8.8.2",
-    "typescript": "^3.8.3"
+    "typescript": "^4.0.2"
   },
   "workspaces": {
     "nohoist": [
