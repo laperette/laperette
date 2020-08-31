@@ -60,10 +60,8 @@ To get a local copy up and running follow these simple steps.
 
 After running the knex seeding, you can use the following account for testing purposes on local:
 
-```
-email: 'admin@gmail.com'
-password: 'password'
-```
+`email: admin@gmail.com`
+`password: password`
 
 ### Prerequisites
 
