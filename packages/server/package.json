@@ -21,7 +21,8 @@
     "start": "node ./dist/src/index.js",
     "migrate:make": "knex migrate:make -x ts",
     "migrate": "knex migrate:latest",
-    "seed": "ts-node src/scripts/seed",
+    "seed:make": "knex seed:make",
+    "seed": "knex seed:run",
     "rollback": "knex migrate:rollback",
     "lint": "eslint . --ext .ts",
     "test": "NODE_ENV=test jest"
