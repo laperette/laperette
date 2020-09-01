@@ -27,6 +27,22 @@ export async function seed(knex: Knex): Promise<void> {
       return knex.table("accounts").insert(account).returning("account_id");
     };
 
+    // const createMockHouse = async (
+    //   accountId: string,
+
+    // ): Promise<string> => {
+    //   const account = {
+    //     first_name: firstName,
+    //     last_name: lastName,
+    //     email,
+    //     is_member: isMember,
+    //     is_admin: isAdmin,
+    //     password: dumbPassword,
+    //   };
+
+    //   return knex.table("accounts").insert(account).returning("account_id");
+    // };
+
     const createMockBooking = async (
       accountId: string,
       randomDate: number,

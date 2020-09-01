@@ -9,6 +9,7 @@ import {
   UpdatedBookingProperties,
   BookingForDBUpdate,
 } from "../types/bookings";
+import { logger } from "../logger";
 
 export const validateNewBookingData = async (
   newBookingData: NewBookingProperties,
@@ -24,14 +25,19 @@ export const validateNewBookingData = async (
   const isAccounValid = !!(await validateAccountId(accountId));
 
   if (!isAccounValid) {
-    console.log("Invalid account id");
+    logger.error("Invalid account id", {
+      accountId: accountId,
+    });
     return false;
   }
 
   const isArrivalTimeValid = !!validateArrivalTime(arrivalTime);
 
   if (!isArrivalTimeValid) {
-    console.log("Invalid arrival time");
+    logger.error("Invalid arrival time", {
+      accountId: accountId,
+      arrivalTime: arrivalTime,
+    });
     return false;
   }
 
@@ -41,21 +47,31 @@ export const validateNewBookingData = async (
   );
 
   if (!isDepartureTimeValid) {
-    console.log("Invalid departure time");
+    logger.error("Invalid departure time", {
+      accountId: accountId,
+      arrivalTime: arrivalTime,
+      departureTime: departureTime,
+    });
     return false;
   }
 
   const isValidComments = !!validateComments(comments);
 
   if (!isValidComments) {
-    console.log("Invalid comments");
+    logger.error("Invalid comments", {
+      accountId: accountId,
+      comments: comments,
+    });
     return false;
   }
 
   const isValidCompanions = !!validateCompanions(companions);
 
   if (!isValidCompanions) {
-    console.log("Invalid companions");
+    logger.error("Invalid companions", {
+      accountId: accountId,
+      companions: companions,
+    });
     return false;
   }
 

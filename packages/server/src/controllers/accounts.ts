@@ -20,6 +20,7 @@ export const createAccount = async (ctx: Context) => {
     logger.info("New account created", {
       accountId: accountId,
     });
+
     ctx.status = 201;
     ctx.body = {
       account: {

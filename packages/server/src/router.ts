@@ -18,7 +18,7 @@ import {
   getAccountSessions,
 } from "./controllers/auth";
 import { authenticate, validateCredentials } from "./middlewares/authenticate";
-import { getAccountHouses } from "./controllers/houses";
+import { getAccountHouses, createHouse } from "./controllers/houses";
 
 export const router = new Router();
 
@@ -49,5 +49,7 @@ router.post(
   authenticate,
   updateBooking,
 );
+
+router.post("/accounts/:accountId/house", authenticate, createHouse);
 
 router.get("/accounts/:accountId/houses", authenticate, getAccountHouses);
