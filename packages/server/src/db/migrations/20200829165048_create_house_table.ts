@@ -9,14 +9,14 @@ export async function up(knex: Knex): Promise<any> {
 
   await knex.schema.createTable("house_memberships", (table) => {
     table.increments();
-    table.uuid("account_id").unique().notNullable();
+    table.uuid("account_id").notNullable();
     table.foreign("account_id").references("account_id").inTable("accounts");
-    table.uuid("house_id").unique().notNullable();
+    table.uuid("house_id").notNullable();
     table.foreign("house_id").references("house_id").inTable("houses");
   });
 
   await knex.schema.alterTable("bookings", (table) => {
-    table.uuid("house_id").unique().notNullable();
+    table.uuid("house_id").notNullable();
     table.foreign("house_id").references("house_id").inTable("houses");
   });
 }

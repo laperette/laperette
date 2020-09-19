@@ -26,8 +26,6 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  isMember: boolean;
-  isAdmin: boolean;
 };
 
 export const AuthClient = ({
@@ -52,8 +50,6 @@ export const AuthClient = ({
         firstName: result.data.account.firstName,
         lastName: result.data.account.lastName,
         email: result.data.account.email,
-        isMember: result.data.account.isMember,
-        isAdmin: result.data.account.isAdmin,
       }),
     );
   },

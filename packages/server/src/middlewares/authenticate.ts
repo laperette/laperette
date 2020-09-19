@@ -1,18 +1,6 @@
-import { verifySession, verifyPassword } from "../utils/auth";
+import { verifySession } from "../utils/auth";
 import { Context } from "koa";
-import { retrieveAccountByEmail } from "../db/accounts";
 import { config } from "../config";
-import { serializeAccountForClient } from "../utils/account";
-
-export const extractSessionId = (ctx: Context): string | null => {
-  const sessionCookie = ctx.cookies.get(config.cookies.session);
-
-  if (!sessionCookie) {
-    return null;
-  }
-
-  return sessionCookie;
-};
 
 export const authenticate = async (ctx: Context, next: () => void) => {
   const sessionId = extractSessionId(ctx);
@@ -23,47 +11,25 @@ export const authenticate = async (ctx: Context, next: () => void) => {
     return;
   }
 
-  const isAuthenticated = await verifySession(sessionId);
+  const session = await verifySession(sessionId);
 
-  if (!isAuthenticated) {
+  if (!session) {
     ctx.status = 401;
     ctx.message = "Unauthorized - Invalid sessionId";
     return;
   }
 
+  ctx.state.accountId = session.account_id;
+
   return next();
 };
 
-export const validateCredentials = async (ctx: Context, next: () => void) => {
-  const { email, password } = ctx.request.body;
+export const extractSessionId = (ctx: Context): string | null => {
+  const sessionCookie = ctx.cookies.get(config.cookies.session);
 
-  const account = await retrieveAccountByEmail(email);
-
-  if (!account) {
-    ctx.status = 401;
-    ctx.message = "Unauthorized";
-    return;
+  if (!sessionCookie) {
+    return null;
   }
 
-  const hasValidPassword = await verifyPassword(account, password);
-
-  if (!hasValidPassword) {
-    ctx.status = 401;
-    ctx.message = "Unauthorized";
-    return;
-  }
-
-  if (!account.is_member) {
-    ctx.status = 401;
-    ctx.message = "Unauthorized - Membership validation pending";
-    return;
-  }
-
-  const serializedAccount = serializeAccountForClient(account);
-
-  ctx.state = {
-    account: serializedAccount,
-  };
-
-  return next();
+  return sessionCookie;
 };

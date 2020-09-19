@@ -10,6 +10,7 @@ export interface BookingFromDB {
   status: BookingStatus;
   comments: string;
   companions: string;
+  house_id: string;
 }
 
 export interface BookingForClient {
@@ -21,6 +22,7 @@ export interface BookingForClient {
   status: BookingFromDB["status"];
   comments: BookingFromDB["comments"];
   companions: BookingFromDB["companions"];
+  houseId: BookingFromDB["house_id"];
 }
 
 export interface NewBookingProperties {
@@ -29,6 +31,7 @@ export interface NewBookingProperties {
   departureTime: string;
   comments: string;
   companions: string[];
+  houseId: string;
 }
 
 export interface UpdatedBookingProperties {
@@ -40,16 +43,17 @@ export interface UpdatedBookingProperties {
 
 export interface BookingForDBInsert {
   booker_id: BookingFromDB["booking_id"];
-  arrival_time: BookingFromDB["arrival_time"];
-  departure_time: BookingFromDB["departure_time"];
+  arrival_time: string;
+  departure_time: string;
   comments: BookingFromDB["comments"];
   companions: string[];
   status: BookingFromDB["status"];
+  house_id: BookingFromDB["house_id"];
 }
 
 export interface BookingForDBUpdate {
-  arrival_time?: BookingFromDB["arrival_time"];
-  departure_time?: BookingFromDB["departure_time"];
+  arrival_time?: BookingForDBInsert["arrival_time"];
+  departure_time?: BookingForDBInsert["departure_time"];
   comments: BookingFromDB["comments"];
   companions: string[];
   status: BookingFromDB["status"];

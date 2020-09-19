@@ -66,7 +66,7 @@ export const revokeAccountSessionById = async (ctx: Context) => {
 };
 
 export const getAccountSessions = async (ctx: Context) => {
-  const { accountId } = ctx.params;
+  const { accountId } = ctx.state;
 
   try {
     const accountSessions = await retrieveSessionsByUser(accountId);

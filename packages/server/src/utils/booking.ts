@@ -1,5 +1,5 @@
 import { validateAccountId } from "./account";
-import { isSameDay, parseJSON } from "date-fns";
+import { isSameDay } from "date-fns";
 import {
   NewBookingProperties,
   BookingStatus,
@@ -161,18 +161,19 @@ export const serializeBookingForDBInsert = (
   bookingProperties: NewBookingProperties,
 ): BookingForDBInsert => ({
   booker_id: bookingProperties.accountId,
-  arrival_time: parseJSON(bookingProperties.arrivalTime),
-  departure_time: parseJSON(bookingProperties.departureTime),
+  arrival_time: bookingProperties.arrivalTime,
+  departure_time: bookingProperties.departureTime,
   comments: bookingProperties.comments,
   companions: bookingProperties.companions,
   status: "pending" as BookingStatus,
+  house_id: bookingProperties.houseId,
 });
 
 export const serializeBookingForDBUpdate = (
   bookingProperties: UpdatedBookingProperties,
 ): BookingForDBUpdate => ({
-  arrival_time: parseJSON(bookingProperties.arrivalTime),
-  departure_time: parseJSON(bookingProperties.departureTime),
+  arrival_time: bookingProperties.arrivalTime,
+  departure_time: bookingProperties.departureTime,
   comments: bookingProperties.comments,
   companions: bookingProperties.companions,
   status: "pending" as BookingStatus,
@@ -189,4 +190,5 @@ export const serializeBookingForClient = (
   status: booking.status,
   comments: booking.comments,
   companions: booking.companions,
+  houseId: booking.house_id,
 });

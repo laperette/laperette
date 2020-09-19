@@ -17,11 +17,13 @@ export const createAccount = async (ctx: Context) => {
       password: hashedPassword,
     });
 
-    logger.info("New account created", {
+    const successMessage = "New account created";
+    logger.info(successMessage, {
       accountId: accountId,
     });
 
     ctx.status = 201;
+    ctx.message = successMessage;
     ctx.body = {
       account: {
         firstName,
@@ -42,12 +44,11 @@ export const createAccount = async (ctx: Context) => {
 
 export const getAccount = async (ctx: Context) => {
   try {
-    const { accountId } = ctx.params;
+    const { accountId } = ctx.state;
     const account = await retrieveAccountById(accountId);
     const serializedAccount = serializeAccountForClient(account);
 
     ctx.status = 200;
-
     ctx.body = {
       account: serializedAccount,
     };
