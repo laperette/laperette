@@ -33,8 +33,6 @@ export const createBooking = async (ctx: Context) => {
       houseId,
     };
 
-    console.log(newBookingData);
-
     const isValidData = !!(await validateNewBookingData(newBookingData));
 
     if (!isValidData) {
