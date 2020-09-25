@@ -1,5 +1,4 @@
 import { knex } from "./db";
-import { AccountFromDB } from "../types/accounts";
 import { Session } from "../types/auth";
 
 export const insertAccountSession = async (
@@ -22,17 +21,6 @@ export const retrieveActiveSession = async (
       session_id: sessionId,
     })
     .where("expires_at", ">", new Date())
-    .first();
-};
-
-export const retrieveAccountBySessionId = async (
-  sessionId: string,
-): Promise<AccountFromDB> => {
-  return await knex("accounts")
-    .join("sessions", "accounts.account_id", "sessions.account_id")
-    .where({
-      session_id: sessionId,
-    })
     .first();
 };
 

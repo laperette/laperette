@@ -1,4 +1,4 @@
-import { knex, tables } from "./src/db/db";
+import { tables, knex } from "../db/db";
 
 const emptyTheDatabase = () =>
   Promise.all(

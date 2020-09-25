@@ -1,9 +1,11 @@
 import * as Koa from "koa";
+import * as net from "net";
 import * as bodyParser from "koa-bodyparser";
-import { router } from "../router";
 import { logger } from "../logger";
+import { privateRouter } from "../routers/privateRouter";
+import { publicRouter } from "../routers/publicRouter";
 
-export const setupTest = () => {
+export const setupTestRouter = () => {
   const app = new Koa();
   app.use(async (ctx, next) => {
     try {
@@ -16,7 +18,11 @@ export const setupTest = () => {
     }
   });
   app.use(bodyParser());
-  app.use(router.routes());
-  const server = app.callback();
-  return server;
+  app.use(privateRouter.routes());
+  app.use(publicRouter.routes());
+  return app;
+};
+
+export const closeServer = async (server: net.Server) => {
+  server.close();
 };
