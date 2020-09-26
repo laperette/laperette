@@ -4,7 +4,7 @@ import { Session } from "../types/auth";
 export const insertAccountSession = async (
   accountId: string,
   expiryDate: Date,
-): Promise<string> => {
+): Promise<string[]> => {
   return await knex("sessions")
     .insert({
       account_id: accountId,
@@ -60,7 +60,7 @@ export const retrieveSessionById = async (
   return session;
 };
 
-// To be done, leaving here not to forget
+// Router + Controller to be created, leaving here not to forget
 // export const invalidateSessionByAccount = async (sessionId:string) => {
 //   await knex("sessions").del().where({
 //     session_id: sessionId,

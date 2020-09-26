@@ -9,7 +9,7 @@ export const createAccountSession = async (
 ): Promise<string> => {
   const expiryDate = addDays(new Date(), 7);
 
-  const token = await insertAccountSession(accountId, expiryDate);
+  const [token] = await insertAccountSession(accountId, expiryDate);
 
   return token;
 };

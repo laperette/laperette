@@ -1,59 +1,16 @@
 import * as Knex from "knex";
-import { addDays } from "date-fns";
-import { hashPassword } from "../src/utils/auth";
 import { logger } from "../src/logger";
+import {
+  createMockAccount,
+  createMockBooking,
+  createMockHouse,
+} from "../src/utils/tests";
 export async function seed(knex: Knex): Promise<void> {
   if (process.env.NODE_ENV === "production") {
     throw Error("Cannot seed data in production, aborting");
   }
 
   const seedDatabase = async () => {
-    const createMockAccount = async (
-      firstName: string,
-      lastName: string,
-      email: string,
-    ): Promise<string> => {
-      const dumbPassword = await hashPassword("password");
-      const account = {
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        password: dumbPassword,
-      };
-
-      return knex.table("accounts").insert(account).returning("account_id");
-    };
-
-    const createMockHouse = async (
-      name: string,
-      accountId: string,
-    ): Promise<string> => {
-      const fakeHouse = {
-        name,
-      };
-
-      let houseId;
-
-      const trx = await knex.transaction();
-      try {
-        [houseId] = await trx("houses")
-          .returning("house_id")
-          .insert({ name: fakeHouse.name });
-
-        await trx("house_memberships").insert({
-          account_id: accountId,
-          house_id: houseId,
-          is_admin: true,
-        });
-
-        trx.commit();
-      } catch (error) {
-        logger.error(error);
-        trx.rollback();
-      }
-      return houseId;
-    };
-
     const addMockAccountToMockHouse = async (
       accountId: string,
       houseId: string,
@@ -69,27 +26,6 @@ export async function seed(knex: Knex): Promise<void> {
         logger.error(error);
       }
       return houseId;
-    };
-
-    const createMockBooking = async (
-      accountId: string,
-      randomDate: number,
-      stayLength: number,
-      status: string,
-      houseId: string,
-    ): Promise<void> => {
-      const today = new Date();
-      const fakeBooking = {
-        booker_id: accountId,
-        arrival_time: addDays(today, randomDate),
-        departure_time: addDays(today, randomDate + stayLength),
-        comments: "Eager to be there!",
-        companions: ["Alain Gerbault", "Olivier de Kersauson"],
-        status,
-        house_id: houseId,
-      };
-
-      return knex("bookings").insert(fakeBooking).returning("booking_id");
     };
 
     const clearTables = async () => {
@@ -110,6 +46,7 @@ export async function seed(knex: Knex): Promise<void> {
       "Eric",
       "Tabraly",
       "admin@gmail.com",
+      "password",
     );
     logger.info(`Inserted admin account, accountId: ${adminId}`);
     logger.info("Inserting member account");
@@ -117,6 +54,7 @@ export async function seed(knex: Knex): Promise<void> {
       "Bernard",
       "Moitessier",
       "member@gmail.com",
+      "password",
     );
     logger.info(`Inserted member account, accountId: ${memberId}`);
 

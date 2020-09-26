@@ -4,6 +4,7 @@ import { setupTestRouter } from "../testSetup/setupTestRouter";
 import { verifyPassword } from "../utils/auth";
 import * as net from "net";
 import { addDays } from "date-fns";
+import { createMockAccount } from "../utils/tests";
 
 const app = setupTestRouter();
 let server: net.Server;
@@ -44,7 +45,7 @@ describe("Create a new Account: /signup", () => {
       },
     });
 
-    expect(newRow).not.toBeNull();
+    expect(newRow).not.toBeUndefined();
     expect(verifyPassword(newRow, mockNewAccountData.password)).toBeTruthy();
   });
 });
@@ -58,16 +59,14 @@ describe("Get current account: /accounts/current", () => {
       password: "password",
     };
 
-    const [accountId] = await knex("accounts")
-      .insert({
-        first_name: mockNewAccountData.firstName,
-        last_name: mockNewAccountData.lastName,
-        email: mockNewAccountData.email,
-        password: mockNewAccountData.password,
-      })
-      .returning("account_id");
+    const [accountId] = await createMockAccount(
+      mockNewAccountData.firstName,
+      mockNewAccountData.lastName,
+      mockNewAccountData.email,
+      mockNewAccountData.password,
+    );
 
-    const sessionToken = await knex("sessions")
+    const [sessionToken] = await knex("sessions")
       .insert({
         account_id: accountId,
         expires_at: addDays(new Date(), 1),
@@ -88,18 +87,20 @@ describe("Get current account: /accounts/current", () => {
       },
     });
   });
-  it("should return status 500 if no account linked to sessionId", async () => {
-    const sessionToken = await knex("sessions")
-      .insert({
-        account_id: "70917482-9163-49f9-ac96-e5a758c0f817",
-        expires_at: addDays(new Date(), 1),
-      })
-      .returning("session_id");
+  describe("When account linked to sessionId can't be found", () => {
+    it("should return status 500", async () => {
+      const sessionToken = await knex("sessions")
+        .insert({
+          account_id: "70917482-9163-49f9-ac96-e5a758c0f817",
+          expires_at: addDays(new Date(), 1),
+        })
+        .returning("session_id");
 
-    const response = await request(server)
-      .get("/accounts/current")
-      .set("Cookie", [`laperette_session=${sessionToken}`]);
+      const response = await request(server)
+        .get("/accounts/current")
+        .set("Cookie", [`laperette_session=${sessionToken}`]);
 
-    expect(response.status).toStrictEqual(500);
+      expect(response.status).toStrictEqual(500);
+    });
   });
 });

@@ -18,10 +18,7 @@ export const insertOneAccount = async ({
 export const retrieveAccountById = async (
   accountId: string,
 ): Promise<AccountFromDB> => {
-  const account = await knex("accounts")
-    .where({ account_id: accountId })
-    .first();
-  return account;
+  return knex("accounts").where({ account_id: accountId }).first();
 };
 
 export const retrieveAccountByEmail = async (
