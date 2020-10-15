@@ -17,8 +17,7 @@ export const createAccountSession = async (
 export const verifySession = async (
   sessionCookie: string,
 ): Promise<Session> => {
-  const activeSession = await retrieveActiveSession(sessionCookie);
-  return activeSession;
+  return retrieveActiveSession(sessionCookie);
 };
 
 export const hashPassword = async (password: string): Promise<string> => {

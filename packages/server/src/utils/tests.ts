@@ -17,53 +17,46 @@ export const createMockAccount = async (
     password: dumbPassword,
   };
 
-  return await knex.table("accounts").insert(account).returning("account_id");
+  return knex("accounts").insert(account).returning("account_id");
 };
 
 export const createMockHouse = async (
-  name: string,
+  houseName: string,
   accountId: string,
-): Promise<string> => {
-  const fakeHouse = {
-    name,
-  };
-
-  let houseId;
-
+): Promise<string | undefined> => {
   const trx = await knex.transaction();
   try {
-    [houseId] = await trx("houses")
-      .returning("house_id")
-      .insert({ name: fakeHouse.name });
-
+    const [houseId]: string = await trx("houses")
+      .insert({ name: houseName })
+      .returning("house_id");
     await trx("house_memberships").insert({
       account_id: accountId,
       house_id: houseId,
       is_admin: true,
     });
-
     trx.commit();
+    return houseId;
   } catch (error) {
     logger.error(error);
     trx.rollback();
   }
-  return houseId;
 };
 
 export const createMockBooking = async (
   accountId: string,
-  randomDate: number,
+  daysNumberFromToday: number,
   stayLength: number,
   status: string,
   houseId: string,
-): Promise<void> => {
+): Promise<string[]> => {
   const today = new Date();
+
   const fakeBooking = {
     booker_id: accountId,
-    arrival_time: addDays(today, randomDate),
-    departure_time: addDays(today, randomDate + stayLength),
+    arrival_time: addDays(today, daysNumberFromToday),
+    departure_time: addDays(today, daysNumberFromToday + stayLength),
     comments: "Eager to be there!",
-    companions: ["Alain Gerbault", "Olivier de Kersauson"],
+    companions: 2,
     status,
     house_id: houseId,
   };
@@ -74,7 +67,7 @@ export const createMockBooking = async (
 export const createMockSession = async (
   accountId: string,
   validityLength: number,
-) => {
+): Promise<string[]> => {
   const expiryDate = addDays(new Date(), validityLength);
   return knex("sessions")
     .insert({
@@ -82,4 +75,21 @@ export const createMockSession = async (
       expires_at: expiryDate,
     })
     .returning("session_id");
+};
+
+export const addMockAccountToMockHouse = async (
+  accountId: string,
+  houseId: string,
+  isAdmin: boolean,
+): Promise<string> => {
+  try {
+    await knex("house_memberships").insert({
+      account_id: accountId,
+      house_id: houseId,
+      is_admin: isAdmin,
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+  return houseId;
 };

@@ -14,7 +14,7 @@ export const logger = createLogger({
   level: getLogLevel(),
   format: format.combine(format.colorize(), format.timestamp(), format.json()),
   transports: [new transports.Console()],
-  // silent: process.env.NODE_ENV === "test",
+  silent: process.env.NODE_ENV === "test",
 });
 
 export const sanitizeError = (error: Error) => {

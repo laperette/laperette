@@ -1,5 +1,5 @@
 import { Context } from "koa";
-import { validateMembership } from "../db/houses";
+import { checkExistingMembership } from "../db/houses";
 
 export const validateHouseMembership = async (
   ctx: Context,
@@ -9,17 +9,13 @@ export const validateHouseMembership = async (
   const { accountId } = ctx.state;
 
   if (!accountId || !houseId) {
-    ctx.status = 401;
-    ctx.message = "Unauthorized";
-    return;
+    ctx.throw(404, "Not found");
   }
 
-  const isHouseMember = await validateMembership(accountId, houseId);
+  const isHouseMember = await checkExistingMembership(accountId, houseId);
 
   if (!isHouseMember) {
-    ctx.status = 401;
-    ctx.message = "Unauthorized - User not a member of requested house";
-    return;
+    ctx.throw(401, "Unauthorized - User not a member of requested house");
   }
 
   return next();

@@ -1,13 +1,11 @@
-import * as Knex from "knex";
-
-export async function up(knex: Knex): Promise<any> {
+exports.up = async (knex) => {
   return knex.schema.alterTable("accounts", (table) => {
     table.string("password");
   });
-}
+};
 
-export async function down(knex: Knex): Promise<any> {
+exports.down = async (knex) => {
   return knex.schema.alterTable("accounts", (table) => {
     table.dropColumn("password");
   });
-}
+};

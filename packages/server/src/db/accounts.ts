@@ -7,7 +7,7 @@ export const insertOneAccount = async ({
   email,
   password,
 }: NewAccountProperties): Promise<string> => {
-  return await knex("accounts").returning(["account_id"]).insert({
+  return knex("accounts").returning("account_id").insert({
     first_name: firstName,
     last_name: lastName,
     email,

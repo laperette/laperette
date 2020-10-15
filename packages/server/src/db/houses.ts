@@ -41,7 +41,10 @@ export const retrieveHouseById = async (houseId: string) => {
     .first();
 };
 
-export const validateMembership = (accountId: string, houseId: string) => {
+export const checkExistingMembership = async (
+  accountId: string,
+  houseId: string,
+) => {
   return knex("house_memberships")
     .where({
       account_id: accountId,
@@ -60,9 +63,11 @@ export const validateAdminStatus = (accountId: string, houseId: string) => {
 export const insertNewHouseMembership = (
   accountId: string,
   houseId: string,
+  adminStatus: boolean,
 ) => {
   return knex("house_memberships").insert({
     account_id: accountId,
     house_id: houseId,
+    is_admin: adminStatus,
   });
 };

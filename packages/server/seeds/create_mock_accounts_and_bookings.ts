@@ -1,6 +1,7 @@
 import * as Knex from "knex";
 import { logger } from "../src/logger";
 import {
+  addMockAccountToMockHouse,
   createMockAccount,
   createMockBooking,
   createMockHouse,
@@ -11,23 +12,6 @@ export async function seed(knex: Knex): Promise<void> {
   }
 
   const seedDatabase = async () => {
-    const addMockAccountToMockHouse = async (
-      accountId: string,
-      houseId: string,
-      isAdmin: boolean,
-    ): Promise<string> => {
-      try {
-        await knex("house_memberships").insert({
-          account_id: accountId,
-          house_id: houseId,
-          is_admin: isAdmin,
-        });
-      } catch (error) {
-        logger.error(error);
-      }
-      return houseId;
-    };
-
     const clearTables = async () => {
       Promise.all([
         knex("accounts").del(),

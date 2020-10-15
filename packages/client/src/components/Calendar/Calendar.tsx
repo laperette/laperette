@@ -23,7 +23,7 @@ export interface Booking {
   bookingId: string;
   status: string;
   comments: string;
-  companions: string;
+  companions: number;
 }
 
 export const Calendar = () => {

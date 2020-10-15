@@ -66,7 +66,11 @@ privateRouter.get(
   getHouseBooking,
 );
 
-privateRouter.post("/houses/:houseId", addNewHouseMember);
+privateRouter.post(
+  "/houses/:houseId/members/member",
+  validateHouseMembership,
+  addNewHouseMember,
+);
 
 privateRouter.get("/account/sessions", getAccountSessions);
 
