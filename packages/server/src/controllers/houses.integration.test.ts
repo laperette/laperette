@@ -264,42 +264,6 @@ describe("Houses", () => {
         expect(newMembershipRow).toBeUndefined();
       });
     });
-    describe("When the house does not exist", () => {
-      it("should not create a new membership and return an error", async () => {
-        const [[accountId1], [accountId2]] = await Promise.all([
-          createMockAccount(
-            mockNewAccountData1.firstName,
-            mockNewAccountData1.lastName,
-            mockNewAccountData1.email,
-            mockNewAccountData1.password,
-          ),
-          createMockAccount(
-            mockNewAccountData2.firstName,
-            mockNewAccountData2.lastName,
-            mockNewAccountData2.email,
-            mockNewAccountData2.password,
-          ),
-        ]);
-
-        const invalidHouseId = "e9547d52-a371-458e-a3e6-40729417299d";
-
-        const [sessionToken] = await createMockSession(accountId1, 1);
-
-        const response = await request(server)
-          .post(`/houses/${invalidHouseId}/members/member`)
-          .send({
-            newMemberEmail: mockNewAccountData2.email,
-          })
-          .set("Cookie", [`laperette_session=${sessionToken}`]);
-
-        const newMembershipRow = await knex("house_memberships")
-          .where({ account_id: accountId2 })
-          .first();
-
-        expect(response.status).toStrictEqual(401);
-        expect(newMembershipRow).toBeUndefined();
-      });
-    });
     describe("When the logged in account is not a house administrator", () => {
       it("should not create a new membership and return an error", async () => {
         const [[accountId1], [accountId2], [accountId3]] = await Promise.all([

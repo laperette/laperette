@@ -139,9 +139,9 @@ export const addNewHouseMember = async (ctx: Context) => {
       return;
     }
 
-    const doesHouseExist = await retrieveHouseById(houseId);
+    const house = await retrieveHouseById(houseId);
 
-    if (!doesHouseExist) {
+    if (!house) {
       const errorMessage = "Unknown house";
 
       logger.error(errorMessage, {
