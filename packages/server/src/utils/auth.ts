@@ -3,6 +3,8 @@ import { insertAccountSession, retrieveActiveSession } from "../db/sessions";
 import { hash, compare } from "bcrypt";
 import { AccountFromDB } from "../types/accounts";
 import { Session } from "../types/auth";
+import { Context } from "koa";
+import { config } from "../config";
 
 export const createAccountSession = async (
   accountId: string,
@@ -35,4 +37,14 @@ export const verifyPassword = async (
   const isValidPassword = await compare(password, storedPassword);
 
   return isValidPassword;
+};
+
+export const extractSessionId = (ctx: Context): string | null => {
+  const sessionCookie = ctx.cookies.get(config.cookies.session);
+
+  if (!sessionCookie) {
+    return null;
+  }
+
+  return sessionCookie;
 };

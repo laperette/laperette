@@ -31,6 +31,7 @@
     "test:integration": "NODE_ENV=test jest -c jest.integration.config.js --runInBand"
   },
   "devDependencies": {
+    "@shopify/jest-koa-mocks": "^2.2.3",
     "@types/bcrypt": "^3.0.0",
     "@types/hapi__joi": "^17.1.4",
     "@types/jest": "^26.0.10",

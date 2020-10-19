@@ -1,7 +1,7 @@
 import * as Router from "koa-router";
 import { createAccount } from "../controllers/accounts";
 import { login } from "../controllers/auth";
-import { validateCreateAccountData } from "../middlewares/validate";
+import { validateCreateAccountData } from "../middlewares/validateNewAccount";
 import { validateCredentials } from "../middlewares/validateCredentials";
 
 export const publicRouter = new Router();

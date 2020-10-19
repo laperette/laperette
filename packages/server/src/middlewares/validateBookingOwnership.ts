@@ -9,7 +9,21 @@ export const validateBookingOwnership = async (
   const { bookingId } = ctx.params;
   const { accountId } = ctx.state;
 
+  if (!bookingId) {
+    ctx.status = 400;
+    ctx.message = "Invalid booking id";
+    return;
+  }
+
   const booking = await retrieveBookingById(bookingId);
+
+  if (!booking) {
+    const errorMessage = "Booking not found";
+    logger.error(errorMessage);
+    ctx.status = 404;
+    ctx.message = errorMessage;
+    return;
+  }
 
   if (accountId !== booking.booker_id) {
     const errorMessage =

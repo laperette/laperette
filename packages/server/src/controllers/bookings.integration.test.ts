@@ -7,8 +7,7 @@ import {
   createMockSession,
 } from "../utils/tests";
 import { knex } from "../db/db";
-// import { addDays, lastDayOfMonth, startOfMonth } from "date-fns";
-import { addDays } from "date-fns";
+import { addDays, lastDayOfMonth, startOfMonth } from "date-fns";
 
 import { BookingForClient } from "../types/bookings";
 import app from "../app";
@@ -256,205 +255,205 @@ describe("Bookings", () => {
     });
   });
 
-  // describe("Get all the bookings in a given interval: /houses/:houseId/bookings", () => {
-  //   it("should return bookings within the given interval", async () => {
-  //     const [accountId] = await createMockAccount(
-  //       mockNewAccountData.firstName,
-  //       mockNewAccountData.lastName,
-  //       mockNewAccountData.email,
-  //       mockNewAccountData.password,
-  //     );
+  describe("Get all the bookings in a given interval: /houses/:houseId/bookings", () => {
+    it("should return bookings within the given interval", async () => {
+      const [accountId] = await createMockAccount(
+        mockNewAccountData.firstName,
+        mockNewAccountData.lastName,
+        mockNewAccountData.email,
+        mockNewAccountData.password,
+      );
 
-  //     const houseId = await createMockHouse(mockHouseData.name, accountId);
+      const houseId = await createMockHouse(mockHouseData.name, accountId);
 
-  //     const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
-  //       createMockSession(accountId, 1),
-  //       createMockBooking(accountId, 0, 3, "pending", houseId),
-  //       createMockBooking(accountId, 0, 3, "pending", houseId),
-  //     ]);
+      const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
+        createMockSession(accountId, 1),
+        createMockBooking(accountId, 0, 3, "pending", houseId),
+        createMockBooking(accountId, 0, 3, "pending", houseId),
+      ]);
 
-  //     const today = new Date();
-  //     const intervalStart = startOfMonth(today);
-  //     const intervalEnd = lastDayOfMonth(today);
+      const today = new Date();
+      const intervalStart = startOfMonth(today);
+      const intervalEnd = lastDayOfMonth(today);
 
-  //     const response = await request(server)
-  //       .get(`/houses/${houseId}/bookings`)
-  //       .query({
-  //         start: intervalStart,
-  //         end: intervalEnd,
-  //       })
-  //       .set("Cookie", [`laperette_session=${sessionToken}`]);
+      const response = await request(server)
+        .get(`/houses/${houseId}/bookings`)
+        .query({
+          start: intervalStart,
+          end: intervalEnd,
+        })
+        .set("Cookie", [`laperette_session=${sessionToken}`]);
 
-  //     expect(response.status).toStrictEqual(200);
-  //     expect(response.body.bookings).not.toBeUndefined();
-  //     expect(response.body.bookings.length).toStrictEqual(2);
+      expect(response.status).toStrictEqual(200);
+      expect(response.body.bookings).not.toBeUndefined();
+      expect(response.body.bookings.length).toStrictEqual(2);
 
-  //     const bookingIds = response.body.bookings.map(
-  //       (booking: BookingForClient) => booking.bookingId,
-  //     );
-  //     expect(bookingIds.includes(bookingId1)).toBeTruthy();
-  //     expect(bookingIds.includes(bookingId2)).toBeTruthy();
-  //   });
+      const bookingIds = response.body.bookings.map(
+        (booking: BookingForClient) => booking.bookingId,
+      );
+      expect(bookingIds.includes(bookingId1)).toBeTruthy();
+      expect(bookingIds.includes(bookingId2)).toBeTruthy();
+    });
 
-  //   it("should not return bookings outside the given interval", async () => {
-  //     const [accountId] = await createMockAccount(
-  //       mockNewAccountData.firstName,
-  //       mockNewAccountData.lastName,
-  //       mockNewAccountData.email,
-  //       mockNewAccountData.password,
-  //     );
+    it("should not return bookings outside the given interval", async () => {
+      const [accountId] = await createMockAccount(
+        mockNewAccountData.firstName,
+        mockNewAccountData.lastName,
+        mockNewAccountData.email,
+        mockNewAccountData.password,
+      );
 
-  //     const houseId = await createMockHouse(mockHouseData.name, accountId);
+      const houseId = await createMockHouse(mockHouseData.name, accountId);
 
-  //     const twoMonthsAwayDate = 65;
+      const twoMonthsAwayDate = 65;
 
-  //     const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
-  //       createMockSession(accountId, 1),
-  //       createMockBooking(accountId, 1, 3, "pending", houseId), // Inside interval booking
-  //       createMockBooking(accountId, twoMonthsAwayDate, 3, "pending", houseId), // Outside interval booking
-  //     ]);
+      const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
+        createMockSession(accountId, 1),
+        createMockBooking(accountId, 1, 3, "pending", houseId), // Inside interval booking
+        createMockBooking(accountId, twoMonthsAwayDate, 3, "pending", houseId), // Outside interval booking
+      ]);
 
-  //     const today = new Date();
+      const today = new Date();
 
-  //     const intervalStart = startOfMonth(today);
-  //     const intervalEnd = lastDayOfMonth(today);
+      const intervalStart = startOfMonth(today);
+      const intervalEnd = lastDayOfMonth(today);
 
-  //     const response = await request(server)
-  //       .get(`/houses/${houseId}/bookings`)
-  //       .query({
-  //         start: intervalStart,
-  //         end: intervalEnd,
-  //       })
-  //       .set("Cookie", [`laperette_session=${sessionToken}`]);
+      const response = await request(server)
+        .get(`/houses/${houseId}/bookings`)
+        .query({
+          start: intervalStart,
+          end: intervalEnd,
+        })
+        .set("Cookie", [`laperette_session=${sessionToken}`]);
 
-  //     expect(response.status).toStrictEqual(200);
-  //     expect(response.body.bookings).not.toBeUndefined();
-  //     expect(response.body.bookings.length).toStrictEqual(1);
+      expect(response.status).toStrictEqual(200);
+      expect(response.body.bookings).not.toBeUndefined();
+      expect(response.body.bookings.length).toStrictEqual(1);
 
-  //     const bookingIds = response.body.bookings.map(
-  //       (booking: BookingForClient) => booking.bookingId,
-  //     );
-  //     expect(bookingIds.includes(bookingId1)).toBeTruthy(); // Inside interval booking
-  //     expect(bookingIds.includes(bookingId2)).toBeFalsy(); // Outside interval booking
-  //   });
+      const bookingIds = response.body.bookings.map(
+        (booking: BookingForClient) => booking.bookingId,
+      );
+      expect(bookingIds.includes(bookingId1)).toBeTruthy(); // Inside interval booking
+      expect(bookingIds.includes(bookingId2)).toBeFalsy(); // Outside interval booking
+    });
 
-  //   it("should not return bookings from another house", async () => {
-  //     const [accountId] = await createMockAccount(
-  //       mockNewAccountData.firstName,
-  //       mockNewAccountData.lastName,
-  //       mockNewAccountData.email,
-  //       mockNewAccountData.password,
-  //     );
+    it("should not return bookings from another house", async () => {
+      const [accountId] = await createMockAccount(
+        mockNewAccountData.firstName,
+        mockNewAccountData.lastName,
+        mockNewAccountData.email,
+        mockNewAccountData.password,
+      );
 
-  //     const houseId1 = await createMockHouse(mockHouseData.name, accountId);
-  //     const houseId2 = await createMockHouse(mockHouseData.name, accountId);
+      const houseId1 = await createMockHouse(mockHouseData.name, accountId);
+      const houseId2 = await createMockHouse(mockHouseData.name, accountId);
 
-  //     const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
-  //       createMockSession(accountId, 1),
-  //       createMockBooking(accountId, 1, 3, "pending", houseId1), // First house booking
-  //       createMockBooking(accountId, 1, 3, "pending", houseId2), // Second house booking
-  //     ]);
+      const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
+        createMockSession(accountId, 1),
+        createMockBooking(accountId, 1, 3, "pending", houseId1), // First house booking
+        createMockBooking(accountId, 1, 3, "pending", houseId2), // Second house booking
+      ]);
 
-  //     const today = new Date();
+      const today = new Date();
 
-  //     const intervalStart = startOfMonth(today);
-  //     const intervalEnd = lastDayOfMonth(today);
+      const intervalStart = startOfMonth(today);
+      const intervalEnd = lastDayOfMonth(today);
 
-  //     const response = await request(server)
-  //       .get(`/houses/${houseId1}/bookings`)
-  //       .query({
-  //         start: intervalStart,
-  //         end: intervalEnd,
-  //       })
-  //       .set("Cookie", [`laperette_session=${sessionToken}`]);
+      const response = await request(server)
+        .get(`/houses/${houseId1}/bookings`)
+        .query({
+          start: intervalStart,
+          end: intervalEnd,
+        })
+        .set("Cookie", [`laperette_session=${sessionToken}`]);
 
-  //     expect(response.status).toStrictEqual(200);
-  //     expect(response.body.bookings).not.toBeUndefined();
-  //     expect(response.body.bookings.length).toStrictEqual(1);
+      expect(response.status).toStrictEqual(200);
+      expect(response.body.bookings).not.toBeUndefined();
+      expect(response.body.bookings.length).toStrictEqual(1);
 
-  //     const bookingIds = response.body.bookings.map(
-  //       (booking: BookingForClient) => booking.bookingId,
-  //     );
-  //     expect(bookingIds.includes(bookingId1)).toBeTruthy(); // First house booking
-  //     expect(bookingIds.includes(bookingId2)).toBeFalsy(); // Second house booking
-  //   });
-  // });
+      const bookingIds = response.body.bookings.map(
+        (booking: BookingForClient) => booking.bookingId,
+      );
+      expect(bookingIds.includes(bookingId1)).toBeTruthy(); // First house booking
+      expect(bookingIds.includes(bookingId2)).toBeFalsy(); // Second house booking
+    });
+  });
 
-  // describe("Update a booking: /bookings/:bookingId", () => {
-  //   it("should update the booking with the new data", async () => {
-  //     const [accountId] = await createMockAccount(
-  //       mockNewAccountData.firstName,
-  //       mockNewAccountData.lastName,
-  //       mockNewAccountData.email,
-  //       mockNewAccountData.password,
-  //     );
+  describe("Update a booking: /bookings/:bookingId", () => {
+    it("should update the booking with the new data", async () => {
+      const [accountId] = await createMockAccount(
+        mockNewAccountData.firstName,
+        mockNewAccountData.lastName,
+        mockNewAccountData.email,
+        mockNewAccountData.password,
+      );
 
-  //     const houseId = await createMockHouse(mockHouseData.name, accountId);
+      const houseId = await createMockHouse(mockHouseData.name, accountId);
 
-  //     const [[sessionToken], [bookingId]] = await Promise.all([
-  //       createMockSession(accountId, 1),
-  //       createMockBooking(accountId, 0, 3, "accepted", houseId),
-  //     ]);
+      const [[sessionToken], [bookingId]] = await Promise.all([
+        createMockSession(accountId, 1),
+        createMockBooking(accountId, 0, 3, "accepted", houseId),
+      ]);
 
-  //     const mockNewData = {
-  //       comments: "Thanks for the slot!",
-  //       companions: 1,
-  //     };
+      const mockNewData = {
+        comments: "Thanks for the slot!",
+        companions: 1,
+      };
 
-  //     const response = await request(server)
-  //       .put(`/bookings/${bookingId}`)
-  //       .send(mockNewData)
-  //       .set("Cookie", [`laperette_session=${sessionToken}`]);
+      const response = await request(server)
+        .put(`/bookings/${bookingId}`)
+        .send(mockNewData)
+        .set("Cookie", [`laperette_session=${sessionToken}`]);
 
-  //     const updatedBookingRow = await knex("bookings")
-  //       .where({
-  //         booking_id: bookingId,
-  //       })
-  //       .first();
+      const updatedBookingRow = await knex("bookings")
+        .where({
+          booking_id: bookingId,
+        })
+        .first();
 
-  //     expect(response.status).toStrictEqual(200);
-  //     expect(updatedBookingRow.booking_id).toStrictEqual(bookingId);
-  //     expect(updatedBookingRow.comments).toStrictEqual(mockNewData.comments);
-  //     expect(updatedBookingRow.companions).toStrictEqual(1);
-  //   });
+      expect(response.status).toStrictEqual(200);
+      expect(updatedBookingRow.booking_id).toStrictEqual(bookingId);
+      expect(updatedBookingRow.comments).toStrictEqual(mockNewData.comments);
+      expect(updatedBookingRow.companions).toStrictEqual(1);
+    });
 
-  //   describe("when updated booking data is invalid", () => {
-  //     it("should not update the booking and return 400", async () => {
-  //       const [accountId] = await createMockAccount(
-  //         mockNewAccountData.firstName,
-  //         mockNewAccountData.lastName,
-  //         mockNewAccountData.email,
-  //         mockNewAccountData.password,
-  //       );
+    describe("when updated booking data is invalid", () => {
+      it("should not update the booking and return 400", async () => {
+        const [accountId] = await createMockAccount(
+          mockNewAccountData.firstName,
+          mockNewAccountData.lastName,
+          mockNewAccountData.email,
+          mockNewAccountData.password,
+        );
 
-  //       const houseId = await createMockHouse(mockHouseData.name, accountId);
+        const houseId = await createMockHouse(mockHouseData.name, accountId);
 
-  //       const [[sessionToken], [bookingId]] = await Promise.all([
-  //         createMockSession(accountId, 1),
-  //         createMockBooking(accountId, 0, 3, "accepted", houseId),
-  //       ]);
+        const [[sessionToken], [bookingId]] = await Promise.all([
+          createMockSession(accountId, 1),
+          createMockBooking(accountId, 0, 3, "accepted", houseId),
+        ]);
 
-  //       const mockInvalidNewData = {
-  //         comments: 1232324,
-  //         companions: "wrongdata",
-  //       };
+        const mockInvalidNewData = {
+          comments: 1232324,
+          companions: "wrongdata",
+        };
 
-  //       const response = await request(server)
-  //         .put(`/bookings/${bookingId}`)
-  //         .send(mockInvalidNewData)
-  //         .set("Cookie", [`laperette_session=${sessionToken}`]);
+        const response = await request(server)
+          .put(`/bookings/${bookingId}`)
+          .send(mockInvalidNewData)
+          .set("Cookie", [`laperette_session=${sessionToken}`]);
 
-  //       const updatedBookingRow = await knex("bookings")
-  //         .where({
-  //           booking_id: bookingId,
-  //         })
-  //         .first();
+        const updatedBookingRow = await knex("bookings")
+          .where({
+            booking_id: bookingId,
+          })
+          .first();
 
-  //       expect(response.status).toStrictEqual(400);
-  //       expect(updatedBookingRow.booking_id).toStrictEqual(bookingId);
-  //       expect(updatedBookingRow.comments).toStrictEqual("Eager to be there!");
-  //       expect(updatedBookingRow.companions).toStrictEqual(2);
-  //     });
-  //   });
-  // });
+        expect(response.status).toStrictEqual(400);
+        expect(updatedBookingRow.booking_id).toStrictEqual(bookingId);
+        expect(updatedBookingRow.comments).toStrictEqual("Eager to be there!");
+        expect(updatedBookingRow.companions).toStrictEqual(2);
+      });
+    });
+  });
 });

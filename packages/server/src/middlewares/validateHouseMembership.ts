@@ -9,13 +9,17 @@ export const validateHouseMembership = async (
   const { accountId } = ctx.state;
 
   if (!accountId || !houseId) {
-    ctx.throw(404, "Not found");
+    ctx.status = 400;
+    ctx.message = "Invalid house id";
+    return;
   }
 
   const isHouseMember = await checkExistingMembership(accountId, houseId);
 
   if (!isHouseMember) {
-    ctx.throw(401, "Unauthorized - User not a member of requested house");
+    ctx.status = 403;
+    ctx.message = "Unauthorized - User not a member of requested house";
+    return;
   }
 
   return next();
