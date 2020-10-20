@@ -1,10 +1,10 @@
 import { Context } from "koa";
 import {
   retrieveBookingById,
-  retrieveAllBookings,
   updateBookingById,
-  retrieveBookingsByInterval,
+  retrieveHouseBookingsByInterval,
   insertOneBooking,
+  retrieveBookingsByAccountId,
 } from "../db/bookings";
 import {
   validateNewBookingData,
@@ -18,8 +18,11 @@ import { UpdatedBookingProperties } from "../types/bookings";
 import { logger, sanitizeError } from "../logger";
 
 export const createBooking = async (ctx: Context) => {
-  const { accountId } = ctx.params;
+  const { accountId } = ctx.state;
+  const { houseId } = ctx.params;
+
   const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
+
   try {
     const newBookingData = {
       accountId,
@@ -27,6 +30,7 @@ export const createBooking = async (ctx: Context) => {
       departureTime,
       comments,
       companions,
+      houseId,
     };
 
     const isValidData = !!(await validateNewBookingData(newBookingData));
@@ -66,7 +70,50 @@ export const createBooking = async (ctx: Context) => {
   }
 };
 
-export const getBooking = async (ctx: Context) => {
+export const getAccountBookings = async (ctx: Context) => {
+  const { accountId } = ctx.state;
+  try {
+    const bookings = await retrieveBookingsByAccountId(accountId);
+
+    const serializedBookings = bookings.map(serializeBookingForClient);
+
+    ctx.status = 200;
+    ctx.body = { bookings: serializedBookings };
+  } catch (error) {
+    const errorMessage = "Error while retrieving bookings by interval";
+
+    logger.error(errorMessage, {
+      error: sanitizeError(error),
+    });
+
+    ctx.status = 500;
+    ctx.message = errorMessage;
+  }
+};
+
+export const getAccountBooking = async (ctx: Context) => {
+  const { bookingId } = ctx.params;
+  const { booking } = ctx.state;
+  try {
+    const serializedBooking = serializeBookingForClient(booking);
+
+    ctx.status = 200;
+    ctx.message = "Booking retrieved";
+    ctx.body = { serializedBooking };
+  } catch (error) {
+    const errorMessage = "Error while retrieving a booking";
+
+    logger.error(errorMessage, {
+      bookingId: bookingId,
+      error: sanitizeError(error),
+    });
+
+    ctx.status = 500;
+    ctx.message = errorMessage;
+  }
+};
+
+export const getHouseBooking = async (ctx: Context) => {
   const { bookingId } = ctx.params;
   try {
     const booking = await retrieveBookingById(bookingId);
@@ -89,10 +136,11 @@ export const getBooking = async (ctx: Context) => {
   }
 };
 
-export const getBookingsByInterval = async (ctx: Context) => {
-  try {
-    const { start, end } = ctx.query;
+export const getHouseBookingsByInterval = async (ctx: Context) => {
+  const { houseId } = ctx.params;
+  const { start, end } = ctx.query;
 
+  try {
     if (!start || !end) {
       const errorMessage = "Could not find query parameters";
       logger.error(errorMessage);
@@ -104,9 +152,10 @@ export const getBookingsByInterval = async (ctx: Context) => {
 
     const formattedEnd = format(new Date(end), "y/MM/dd");
 
-    const bookings = await retrieveBookingsByInterval(
+    const bookings = await retrieveHouseBookingsByInterval(
       formattedStart,
       formattedEnd,
+      houseId,
     );
 
     const serializedBookings = bookings.map(serializeBookingForClient);
@@ -125,42 +174,12 @@ export const getBookingsByInterval = async (ctx: Context) => {
   }
 };
 
-export const getBookings = async (ctx: Context) => {
-  try {
-    const bookings = await retrieveAllBookings();
-
-    const serializedBookings = bookings.map(serializeBookingForClient);
-
-    ctx.status = 200;
-    ctx.body = { bookings: serializedBookings };
-  } catch (error) {
-    const errorMessage = "Error while retrieving all bookings";
-
-    logger.error(errorMessage, {
-      error: sanitizeError(error),
-    });
-
-    ctx.status = 500;
-    ctx.message = errorMessage;
-  }
-};
-
 export const updateBooking = async (ctx: Context) => {
-  const { accountId, bookingId } = ctx.params;
-
+  const { accountId, booking } = ctx.state;
   const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
 
   try {
-    const bookingToBeUpdated = await retrieveBookingById(bookingId);
-
-    if (accountId !== bookingToBeUpdated.booker_id) {
-      const errorMessage =
-        "Impossible to update this booking - Invalid booking owner";
-      logger.error(errorMessage);
-      ctx.status = 403;
-      ctx.message = errorMessage;
-      return;
-    }
+    const bookingToBeUpdated = booking;
 
     if (
       haveBookingDatesChanged(bookingToBeUpdated, departureTime, arrivalTime)
@@ -176,12 +195,12 @@ export const updateBooking = async (ctx: Context) => {
         bookingDataToUpdate,
       );
 
-      await updateBookingById(bookingId, serializedBooking);
+      await updateBookingById(bookingToBeUpdated.booking_id, serializedBooking);
 
       const successMessage = "Booking updated";
       logger.info(successMessage, {
         accountId: accountId,
-        bookingId: bookingId,
+        bookingId: bookingToBeUpdated.bookingId,
       });
       ctx.status = 200;
       ctx.message = successMessage;
@@ -195,12 +214,12 @@ export const updateBooking = async (ctx: Context) => {
 
     const serializedBooking = serializeBookingForDBUpdate(bookingDataToUpdate);
 
-    await updateBookingById(bookingId, serializedBooking);
+    await updateBookingById(bookingToBeUpdated.booking_id, serializedBooking);
 
     const successMessage = "Booking updated";
     logger.info(successMessage, {
       accountId: accountId,
-      bookingId: bookingId,
+      bookingId: bookingToBeUpdated.bookingId,
     });
     ctx.status = 200;
     ctx.message = successMessage;
@@ -208,7 +227,7 @@ export const updateBooking = async (ctx: Context) => {
     const errorMessage = "Error while updating a booking";
 
     logger.error(errorMessage, {
-      bookingId: bookingId,
+      bookingId: booking.bookingId,
       error: sanitizeError(error),
     });
 

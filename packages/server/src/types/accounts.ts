@@ -7,8 +7,6 @@ export interface AccountFromDB {
   updated_at: Date;
   account_id: string;
   password: string;
-  is_member: boolean;
-  is_admin: boolean;
 }
 
 export interface NewAccountProperties {
@@ -23,6 +21,4 @@ export interface AccountForClient {
   firstName: AccountFromDB["first_name"];
   lastName: AccountFromDB["last_name"];
   email: AccountFromDB["email"];
-  isMember: AccountFromDB["is_member"];
-  isAdmin: AccountFromDB["is_admin"];
 }

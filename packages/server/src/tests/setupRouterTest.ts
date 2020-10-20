@@ -1,6 +1,7 @@
 import * as Koa from "koa";
 import * as bodyParser from "koa-bodyparser";
 import { router } from "../router";
+import { logger } from "../logger";
 
 export const setupTest = () => {
   const app = new Koa();
@@ -8,7 +9,7 @@ export const setupTest = () => {
     try {
       await next();
     } catch (err) {
-      console.log("An unexpected error occured", err);
+      logger.error("An unexpected error occured", err);
       ctx.status = err.status || 500;
       ctx.body = err.message;
       return;

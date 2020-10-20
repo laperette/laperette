@@ -8,13 +8,11 @@ export async function up(knex: Knex): Promise<any> {
       .unique()
       .notNullable()
       .alter();
-    table.uuid("account_id").notNullable().alter();
   });
 }
 
 export async function down(knex: Knex): Promise<any> {
-  return knex.schema.alterTable("accounts", (table) => {
+  await knex.schema.alterTable("sessions", (table) => {
     table.string("session_id").notNullable().alter();
-    table.string("account_id").notNullable().alter();
   });
 }

@@ -2,6 +2,7 @@ import { addDays } from "date-fns";
 import { insertAccountSession, retrieveActiveSession } from "../db/sessions";
 import { hash, compare } from "bcrypt";
 import { AccountFromDB } from "../types/accounts";
+import { Session } from "../types/auth";
 
 export const createAccountSession = async (
   accountId: string,
@@ -15,9 +16,9 @@ export const createAccountSession = async (
 
 export const verifySession = async (
   sessionCookie: string,
-): Promise<boolean> => {
+): Promise<Session> => {
   const activeSession = await retrieveActiveSession(sessionCookie);
-  return !!activeSession;
+  return activeSession;
 };
 
 export const hashPassword = async (password: string): Promise<string> => {

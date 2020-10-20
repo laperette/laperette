@@ -5,7 +5,9 @@ import {
   BookingForDBUpdate,
 } from "../types/bookings";
 
-export const retrieveAllBookings = async (): Promise<BookingFromDB[]> => {
+export const retrieveBookingsByAccountId = async (
+  accountId: string,
+): Promise<BookingFromDB[]> => {
   const bookings = await knex("bookings")
     .select(
       "bookings.booking_id",
@@ -16,8 +18,10 @@ export const retrieveAllBookings = async (): Promise<BookingFromDB[]> => {
       "bookings.status",
       "bookings.comments",
       "bookings.companions",
+      "bookings.house_id",
     )
-    .join("accounts", "accounts.account_id", "bookings.booker_id");
+    .join("accounts", "accounts.account_id", "bookings.booker_id")
+    .where({ account_id: accountId });
   return bookings;
 };
 
@@ -35,6 +39,7 @@ export const retrieveBookingById = async (
       "bookings.status",
       "bookings.comments",
       "bookings.companions",
+      "bookings.house_id",
     )
     .join("accounts", "accounts.account_id", "bookings.booker_id")
     .where("booking_id", bookingId)
@@ -42,9 +47,10 @@ export const retrieveBookingById = async (
   return booking;
 };
 
-export const retrieveBookingsByInterval = async (
+export const retrieveHouseBookingsByInterval = async (
   start: string,
   end: string,
+  houseId: string,
 ): Promise<BookingFromDB[]> => {
   const bookings = await knex("bookings")
     .select(
@@ -56,12 +62,13 @@ export const retrieveBookingsByInterval = async (
       "bookings.status",
       "bookings.comments",
       "bookings.companions",
+      "bookings.house_id",
     )
     .join("accounts", "accounts.account_id", "bookings.booker_id")
     .where(
       knex.raw(
-        "bookings.arrival_time BETWEEN  ? AND ? OR bookings.departure_time BETWEEN  ? AND ? ",
-        [start, end, start, end],
+        "house_id = ? AND bookings.arrival_time BETWEEN  ? AND ? OR house_id = ? AND bookings.departure_time BETWEEN  ? AND ?",
+        [houseId, start, end, houseId, start, end],
       ),
     );
 
@@ -81,5 +88,13 @@ export const updateBookingById = async (
   bookingId: string,
   dataToUpdate: BookingForDBUpdate,
 ): Promise<void> => {
-  await knex("bookings").where({ booking_id: bookingId }).update(dataToUpdate);
+  console.log("HEELEEELO", bookingId);
+  console.log(
+    knex("bookings")
+      .where({ booking_id: bookingId })
+      .update(dataToUpdate)
+      .toSQL(),
+  );
+
+  await knex("bookings").update(dataToUpdate).where({ booking_id: bookingId });
 };

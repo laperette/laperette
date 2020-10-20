@@ -1,8 +1,9 @@
 import * as Koa from "koa";
 import * as cors from "@koa/cors";
-import { router } from "./router";
 import * as bodyParser from "koa-bodyparser";
 import { config } from "./config";
+import { publicRouter } from "./routers/publicRouter";
+import { privateRouter } from "./routers/privateRouter";
 
 const app = new Koa();
 
@@ -18,7 +19,8 @@ app.use(async (ctx: Koa.Context, next) => {
 
 app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(bodyParser());
-app.use(router.routes());
+app.use(publicRouter.routes());
+app.use(privateRouter.routes());
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
