@@ -4,7 +4,7 @@ import {
   insertOneHouse,
   insertNewHouseMembership,
   retrieveHouseById,
-  validateMembership,
+  checkExistingMembership,
   validateAdminStatus,
 } from "../db/houses";
 import { logger, sanitizeError } from "../logger";
@@ -43,7 +43,7 @@ export const createHouse = async (ctx: Context) => {
       accountId: accountId,
       houseId: houseId,
     });
-    ctx.status = 200;
+    ctx.status = 201;
     ctx.body = { houseId: houseId };
   } catch (error) {
     const errorMessage = "Error while creating a house for the account";
@@ -125,9 +125,9 @@ export const addNewHouseMember = async (ctx: Context) => {
   const { houseId } = ctx.params;
 
   try {
-    const newAccount = await retrieveAccountByEmail(newMemberEmail);
+    const account = await retrieveAccountByEmail(newMemberEmail);
 
-    if (!newAccount) {
+    if (!account) {
       const errorMessage = "Unknown account";
 
       logger.error(errorMessage, {
@@ -139,61 +139,64 @@ export const addNewHouseMember = async (ctx: Context) => {
       return;
     }
 
-    const doesHouseExist = await retrieveHouseById(houseId);
+    const house = await retrieveHouseById(houseId);
 
-    if (!doesHouseExist) {
+    if (!house) {
       const errorMessage = "Unknown house";
 
       logger.error(errorMessage, {
         houseId: houseId,
       });
 
-      ctx.status = 400;
+      ctx.status = 404;
       ctx.message = errorMessage;
       return;
     }
 
-    const isAdmin = await validateAdminStatus(accountId, houseId);
+    const [{ is_admin: isLoggedAccountAdmin }] = await validateAdminStatus(
+      accountId,
+      houseId,
+    );
 
-    if (!isAdmin) {
+    if (!isLoggedAccountAdmin) {
       const errorMessage =
-        "Unauthorized - You need to be an administrator of this house for this operation";
+        "Forbidden - You need to be an administrator of this house for this operation";
 
       logger.info(errorMessage, {
         accountId: accountId,
-        newMemberId: newAccount.account_id,
+        newMemberId: account.account_id,
         houseId: houseId,
       });
 
       ctx.message = errorMessage;
-      ctx.status = 400;
+      ctx.status = 403;
       return;
     }
 
-    const isNewMemberAlreadyMember = await validateMembership(
-      newAccount.account_id,
+    const isNewMemberAlreadyMember = !!(await checkExistingMembership(
+      account.account_id,
       houseId,
-    );
+    ));
 
     if (isNewMemberAlreadyMember) {
       const errorMessage = "Account already a member";
 
       logger.info(errorMessage, {
-        newMemberId: newAccount.account_id,
+        newMemberId: account.account_id,
         houseId: houseId,
       });
 
       ctx.message = errorMessage;
-      ctx.status = 400;
+      ctx.status = 409;
       return;
     }
 
-    await insertNewHouseMembership(newAccount.account_id, houseId);
+    await insertNewHouseMembership(account.account_id, houseId, false);
 
     const successMessage = "New house membership created";
 
     logger.info(successMessage, {
-      newMemberId: newAccount.account_id,
+      newMemberId: account.account_id,
       houseId: houseId,
     });
 

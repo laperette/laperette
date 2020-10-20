@@ -1,6 +1,4 @@
-import * as Knex from "knex";
-
-export async function up(knex: Knex): Promise<any> {
+exports.up = async (knex) => {
   return knex.schema.alterTable("sessions", (table) => {
     table
       .uuid("session_id")
@@ -9,10 +7,10 @@ export async function up(knex: Knex): Promise<any> {
       .notNullable()
       .alter();
   });
-}
+};
 
-export async function down(knex: Knex): Promise<any> {
+exports.down = async (knex) => {
   await knex.schema.alterTable("sessions", (table) => {
     table.string("session_id").notNullable().alter();
   });
-}
+};

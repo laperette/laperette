@@ -88,13 +88,5 @@ export const updateBookingById = async (
   bookingId: string,
   dataToUpdate: BookingForDBUpdate,
 ): Promise<void> => {
-  console.log("HEELEEELO", bookingId);
-  console.log(
-    knex("bookings")
-      .where({ booking_id: bookingId })
-      .update(dataToUpdate)
-      .toSQL(),
-  );
-
   await knex("bookings").update(dataToUpdate).where({ booking_id: bookingId });
 };

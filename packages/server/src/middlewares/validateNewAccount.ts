@@ -10,7 +10,7 @@ export const validateCreateAccountData = async (
 
   if (error) {
     ctx.status = 400;
-    ctx.message = "Missing parameters";
+    ctx.message = "Incorrect parameters";
     return;
   }
 

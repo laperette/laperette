@@ -78,6 +78,63 @@ export const validateNewBookingData = async (
   return true;
 };
 
+export const validateUpdatedBookingData = (
+  updatedBookingData: UpdatedBookingProperties,
+) => {
+  const {
+    arrivalTime,
+    departureTime,
+    comments,
+    companions,
+  } = updatedBookingData;
+
+  if (arrivalTime) {
+    const isArrivalTimeValid = !!validateArrivalTime(arrivalTime);
+
+    if (!isArrivalTimeValid) {
+      logger.error("Invalid arrival time", {
+        arrivalTime: arrivalTime,
+      });
+      return false;
+    }
+  }
+
+  if (departureTime) {
+    const isDepartureTimeValid = !!validateDepartureTime(
+      departureTime,
+      arrivalTime,
+    );
+
+    if (!isDepartureTimeValid) {
+      logger.error("Invalid departure time", {
+        arrivalTime: arrivalTime,
+        departureTime: departureTime,
+      });
+      return false;
+    }
+  }
+
+  const isValidComments = !!validateComments(comments);
+
+  if (!isValidComments) {
+    logger.error("Invalid comments", {
+      comments: comments,
+    });
+    return false;
+  }
+
+  const isValidCompanions = !!validateCompanions(companions);
+
+  if (!isValidCompanions) {
+    logger.error("Invalid companions", {
+      companions: companions,
+    });
+    return false;
+  }
+
+  return true;
+};
+
 const validateArrivalTime = (
   arrivalTime: NewBookingProperties["arrivalTime"],
 ): boolean => {
@@ -127,11 +184,7 @@ const validateComments = (
 const validateCompanions = (
   companions: NewBookingProperties["companions"],
 ): boolean => {
-  if (companions.constructor !== Array) {
-    return false;
-  }
-
-  if (!companions.every((companion) => typeof companion === "string")) {
+  if (typeof companions !== "number") {
     return false;
   }
 

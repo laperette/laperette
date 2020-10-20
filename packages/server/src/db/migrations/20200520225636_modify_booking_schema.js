@@ -1,6 +1,4 @@
-import * as Knex from "knex";
-
-export async function up(knex: Knex): Promise<any> {
+exports.up = async (knex) => {
   return knex.schema.alterTable("bookings", (table) => {
     table.dropColumn("first_name");
     table.dropColumn("last_name");
@@ -15,9 +13,9 @@ export async function up(knex: Knex): Promise<any> {
     table.text("comments");
     table.string("companions");
   });
-}
+};
 
-export async function down(knex: Knex): Promise<any> {
+exports.down = async (knex) => {
   return knex.schema.alterTable("bookings", (table) => {
     table.string("first_name").notNullable();
     table.string("last_name").notNullable();
@@ -31,4 +29,4 @@ export async function down(knex: Knex): Promise<any> {
     table.dropColumn("comments");
     table.dropColumn("companions");
   });
-}
+};

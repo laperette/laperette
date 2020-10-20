@@ -1,6 +1,4 @@
-import * as Knex from "knex";
-
-export async function up(knex: Knex): Promise<any> {
+exports.up = async (knex) => {
   return knex.schema.alterTable("accounts", (table) => {
     table
       .uuid("account_id")
@@ -9,10 +7,10 @@ export async function up(knex: Knex): Promise<any> {
       .notNullable()
       .alter();
   });
-}
+};
 
-export async function down(knex: Knex): Promise<any> {
+exports.down = async (knex) => {
   return knex.schema.alterTable("accounts", (table) => {
     table.uuid("account_id").defaultTo(knex.raw("uuid_generate_v4()")).alter();
   });
-}
+};

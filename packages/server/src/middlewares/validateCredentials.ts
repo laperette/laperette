@@ -6,6 +6,12 @@ import { serializeAccountForClient } from "../utils/account";
 export const validateCredentials = async (ctx: Context, next: () => void) => {
   const { email, password } = ctx.request.body;
 
+  if (!email || !password) {
+    ctx.status = 401;
+    ctx.message = "Unauthorized";
+    return;
+  }
+
   const account = await retrieveAccountByEmail(email);
 
   if (!account) {

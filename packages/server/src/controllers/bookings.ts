@@ -12,6 +12,7 @@ import {
   serializeBookingForClient,
   serializeBookingForDBInsert,
   serializeBookingForDBUpdate,
+  validateUpdatedBookingData,
 } from "../utils/booking";
 import { format } from "date-fns";
 import { UpdatedBookingProperties } from "../types/bookings";
@@ -179,6 +180,27 @@ export const updateBooking = async (ctx: Context) => {
   const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
 
   try {
+    const updatedBookingData = {
+      arrivalTime,
+      departureTime,
+      comments,
+      companions,
+    };
+
+    const isValidData = !!(await validateUpdatedBookingData(
+      updatedBookingData,
+    ));
+
+    if (!isValidData) {
+      const errorMessage = "Impossible to update the booking - Invalid data";
+      logger.error(errorMessage, {
+        accountId: accountId,
+        bookingId: booking.booking_id,
+      });
+      ctx.status = 400;
+      ctx.message = errorMessage;
+      return;
+    }
     const bookingToBeUpdated = booking;
 
     if (

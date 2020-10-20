@@ -1,13 +1,12 @@
-import * as Knex from "knex";
-import { config } from "../config";
+import Knex from "knex";
+import knexConfig from "../../knexfile";
 
-export const knex = Knex({
-  client: config.database_client,
-  connection: config.database_url,
-  migrations: {
-    tableName: "knex_migrations",
-    directory: "./src/db/migrations",
-  },
-});
+export const knex = Knex(knexConfig);
 
-export const tables = ["accounts"];
+export const tables = [
+  "accounts",
+  "bookings",
+  "houses",
+  "house_memberships",
+  "sessions",
+];

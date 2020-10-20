@@ -1,6 +1,4 @@
-import * as Knex from "knex";
-
-export async function up(knex: Knex): Promise<any> {
+exports.up = async (knex) => {
   await knex.schema.createTable("houses", (table) => {
     table.increments();
     table.uuid("house_id").defaultTo(knex.raw("uuid_generate_v4()")).unique();
@@ -19,9 +17,9 @@ export async function up(knex: Knex): Promise<any> {
     table.uuid("house_id").notNullable();
     table.foreign("house_id").references("house_id").inTable("houses");
   });
-}
+};
 
-export async function down(knex: Knex): Promise<any> {
+exports.down = async (knex) => {
   await knex.schema.alterTable("bookings", (table) => {
     table.dropForeign(["house_id"]);
     table.dropColumn("house_id");
@@ -30,4 +28,4 @@ export async function down(knex: Knex): Promise<any> {
   await knex.schema.dropTableIfExists("house_memberships");
 
   await knex.schema.dropTableIfExists("houses");
-}
+};
