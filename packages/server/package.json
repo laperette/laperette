@@ -27,6 +27,7 @@
     "seed": "knex seed:run",
     "rollback": "knex migrate:rollback",
     "lint": "eslint . --ext .ts",
+    "test": "yarn test:integration",
     "test:unit": "NODE_ENV=test jest -c jest.unit.config.js",
     "test:integration": "NODE_ENV=test jest -c jest.integration.config.js --runInBand"
   },

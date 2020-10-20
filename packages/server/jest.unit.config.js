@@ -8,4 +8,5 @@ module.exports = {
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.test.ts"],
   testPathIgnorePatterns: ["/dist/", "/node_modules/"],
   setupFilesAfterEnv: ["<rootDir>/src/setupTests/setupAfterEnv.ts"],
+  testRegex: ".*(?<!integration).test.ts",
 };
