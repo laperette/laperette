@@ -4,9 +4,8 @@ import {
   retrieveSessionsByUser,
   retrieveSessionById,
 } from "../db/sessions";
-import { createAccountSession } from "../utils/auth";
+import { createAccountSession, extractSessionId } from "../utils/auth";
 import { config } from "../config";
-import { extractSessionId } from "../middlewares/authenticate";
 import { logger, sanitizeError } from "../logger";
 
 export const login = async (ctx: Context) => {
