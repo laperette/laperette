@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request from "supertest";
 import { createMockAccount, createMockSession } from "../utils/tests";
 import { knex } from "../db/db";
 import app from "../app";

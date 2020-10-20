@@ -4,7 +4,7 @@ import {
   createMockSession,
 } from "../utils/tests";
 
-import * as request from "supertest";
+import request from "supertest";
 import { knex } from "../db/db";
 import { HouseForClient } from "../types/houses";
 import app from "../app";

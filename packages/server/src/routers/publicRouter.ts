@@ -1,4 +1,4 @@
-import * as Router from "koa-router";
+import Router from "koa-router";
 import { createAccount } from "../controllers/accounts";
 import { login } from "../controllers/auth";
 import { validateCreateAccountData } from "../middlewares/validateNewAccount";

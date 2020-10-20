@@ -1,4 +1,4 @@
-import * as Joi from "@hapi/joi";
+import Joi from "@hapi/joi";
 
 export const accountSchema = Joi.object({
   firstName: Joi.string().alphanum().min(3).max(30).required(),

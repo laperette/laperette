@@ -1,6 +1,6 @@
 import { config } from "./src/config";
 
-module.exports = {
+export default {
   client: config.database.database_client,
   connection: config.database.database_url,
   pool: {

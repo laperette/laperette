@@ -1,4 +1,4 @@
-import * as Knex from "knex";
+import Knex from "knex";
 import { logger } from "../src/logger";
 import {
   addMockAccountToMockHouse,

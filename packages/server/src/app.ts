@@ -1,6 +1,6 @@
-import * as Koa from "koa";
-import * as cors from "@koa/cors";
-import * as bodyParser from "koa-bodyparser";
+import Koa from "koa";
+import cors from "@koa/cors";
+import bodyParser from "koa-bodyparser";
 import { config } from "./config";
 import { publicRouter } from "./routers/publicRouter";
 import { privateRouter } from "./routers/privateRouter";

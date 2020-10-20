@@ -1,6 +1,6 @@
 import { knex } from "../db/db";
 import { verifyPassword } from "../utils/auth";
-import * as request from "supertest";
+import request from "supertest";
 import { createMockAccount, createMockSession } from "../utils/tests";
 import app from "../app";
 import { Server } from "http";
