@@ -54,27 +54,4 @@ describe(Cell.name, () => {
       expect(dateText).toEqual(plainBlackClass);
     });
   });
-
-  describe("when the day displayed is the first day of the month", () => {
-    it("should display the month in the cell", async () => {
-      const currentMonthBeingDisplayed = "Août";
-
-      const firstDayOfTheMonth = new Date("Sat Aug 01 2020");
-
-      const dayNumber = 6;
-
-      render(
-        <Cell
-          day={firstDayOfTheMonth}
-          dayNumber={dayNumber}
-          currentMonth={currentMonthBeingDisplayed}
-          setSelectedBooking={mockSetSelectedBooking}
-        />,
-      );
-
-      const dateText = screen.getByTestId("day-text");
-
-      expect(dateText.textContent?.includes("August")).toBeTruthy();
-    });
-  });
 });

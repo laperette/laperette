@@ -21,28 +21,39 @@ export const Cell = ({
   const today = new Date();
   const date = getDate(day);
   const month = MONTHS_NAMES[getMonth(day)];
-  const dayColor = isSameDay(day, today) ? "brand" : "light-3";
 
   return (
-    <Box border={{ side: "all", color: dayColor }} key={date} pad="xxsmall">
+    <Box border={{ side: "all", color: "light-3" }} key={date} pad="xxsmall">
       <Text
         id={`${dayNumber}-${day.toString()}`}
         color={month === currentMonth ? "dark-1" : "dark-4"}
-        size={date === 1 ? "large" : "medium"}
+        size="medium"
         textAlign="end"
         data-testid="day-text"
+        style={{
+          textDecoration: isSameDay(day, today) ? "underline" : "none",
+          WebkittextUnderlinePosition: "2px",
+          textDecorationColor: "light-3",
+        }}
       >
-        {date === 1 ? `${date} ${month}` : date}
+        {date === 1 ? `${date}st` : date}
       </Text>
 
       {booking && (
         <Box
           background={booking.status === "pending" ? "light-3" : "dark-4"}
           onClick={() => setSelectedBooking(booking)}
-          pad="xxsmall"
+          pad="xxxsmall"
+          round="xlarge"
+          fill="horizontal"
         >
-          <Text size="small">
-            {booking.firstName} {booking.lastName}
+          <Text
+            size="small"
+            margin={{
+              "left": "5px",
+            }}
+          >
+            {booking.firstName[0]} {booking.lastName[0]}
           </Text>
         </Box>
       )}

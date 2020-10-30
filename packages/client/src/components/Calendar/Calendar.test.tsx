@@ -93,7 +93,7 @@ describe("Calendar", () => {
 
       await wait();
 
-      const firstDayInMonthFromCalendar = screen.getAllByText(/1\s/)[0];
+      const firstDayInMonthFromCalendar = screen.getAllByText(/1st/)[0];
 
       const positionFirstDayInMonthFromCalendar = parseInt(
         firstDayInMonthFromCalendar.id.split("-")[0],
@@ -142,7 +142,7 @@ describe("Calendar", () => {
       await wait();
 
       const firstDayInMonthBeforeClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       const nextButton = screen.getByLabelText(/next/);
@@ -150,7 +150,7 @@ describe("Calendar", () => {
       userEvent.click(nextButton);
 
       const firstDayInMonthAfterClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       expect(addMonths(firstDayInMonthBeforeClick, 1)).toEqual(
@@ -165,7 +165,7 @@ describe("Calendar", () => {
       await wait();
 
       const firstDayInMonthBeforeClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       const previousButton = screen.getByLabelText(/previous/);
@@ -173,7 +173,7 @@ describe("Calendar", () => {
       userEvent.click(previousButton);
 
       const firstDayInMonthAfterClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       expect(subMonths(firstDayInMonthBeforeClick, 1)).toEqual(
@@ -198,7 +198,7 @@ describe("Calendar", () => {
       userEvent.click(todayButton);
 
       const firstDayInMonthAfterClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       expect(isThisMonth(firstDayInMonthAfterClick)).toBeTruthy();
