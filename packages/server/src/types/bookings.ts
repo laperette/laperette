@@ -11,6 +11,7 @@ export interface BookingFromDB {
   comments: string;
   companions: number;
   house_id: string;
+  name?: string;
 }
 
 export interface BookingForClient {
@@ -23,6 +24,7 @@ export interface BookingForClient {
   comments: BookingFromDB["comments"];
   companions: BookingFromDB["companions"];
   houseId: BookingFromDB["house_id"];
+  houseName?: BookingFromDB["name"];
 }
 
 export interface NewBookingProperties {

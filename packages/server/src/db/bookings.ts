@@ -19,8 +19,10 @@ export const retrieveBookingsByAccountId = async (
       "bookings.comments",
       "bookings.companions",
       "bookings.house_id",
+      "houses.name",
     )
     .join("accounts", "accounts.account_id", "bookings.booker_id")
+    .join("houses", "houses.house_id", "bookings.house_id")
     .where({ account_id: accountId });
   return bookings;
 };
@@ -40,8 +42,10 @@ export const retrieveBookingById = async (
       "bookings.comments",
       "bookings.companions",
       "bookings.house_id",
+      "houses.name",
     )
     .join("accounts", "accounts.account_id", "bookings.booker_id")
+    .join("houses", "houses.house_id", "bookings.house_id")
     .where("booking_id", bookingId)
     .first();
   return booking;
@@ -63,6 +67,7 @@ export const retrieveHouseBookingsByInterval = async (
       "bookings.comments",
       "bookings.companions",
       "bookings.house_id",
+      // TODO: Add house name using join
     )
     .join("accounts", "accounts.account_id", "bookings.booker_id")
     .where(

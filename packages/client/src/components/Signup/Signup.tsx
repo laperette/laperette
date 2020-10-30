@@ -51,8 +51,7 @@ export const Signup = () => {
       .then(() => {
         setAccountCreationSuccess(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setAccountCreationError(true);
       });
   };

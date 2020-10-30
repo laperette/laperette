@@ -132,6 +132,11 @@ describe("Bookings", () => {
     });
   });
 
+  /**
+   * TODO:
+   * Add Get One Booking of an account and validate all the fields of the booking
+   */
+
   describe("Get all the bookings of an account: /bookings", () => {
     it("should return all the bookings of an account", async () => {
       const [accountId] = await createMockAccount(

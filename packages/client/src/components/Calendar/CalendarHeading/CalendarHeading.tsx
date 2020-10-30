@@ -6,7 +6,7 @@ export const CalendarHeading = () => {
   return (
     <React.Fragment>
       {WEEK_DAYS_NAMES.map((name) => (
-        <Box alignSelf="center" gridArea={name} key={name}>
+        <Box alignSelf="center" key={name}>
           <Heading alignSelf="center" level="5">
             {name}
           </Heading>

@@ -6,13 +6,13 @@ describe(CalendarHeading.name, () => {
   it("should display all the days of the week", async () => {
     const { findByText } = render(<CalendarHeading />);
 
-    const monday = await findByText(/Lundi/);
-    const tuesday = await findByText(/Mardi/);
-    const wednesday = await findByText(/Mercredi/);
-    const thursday = await findByText(/Jeudi/);
-    const friday = await findByText(/Vendredi/);
-    const saturday = await findByText(/Samedi/);
-    const sunday = await findByText(/Dimanche/);
+    const monday = await findByText(/Monday/);
+    const tuesday = await findByText(/Tuesday/);
+    const wednesday = await findByText(/Wednesday/);
+    const thursday = await findByText(/Thursday/);
+    const friday = await findByText(/Friday/);
+    const saturday = await findByText(/Saturday/);
+    const sunday = await findByText(/Sunday/);
 
     expect(monday).toBeInTheDocument();
     expect(tuesday).toBeInTheDocument();
