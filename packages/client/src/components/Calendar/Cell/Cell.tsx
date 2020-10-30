@@ -53,7 +53,8 @@ export const Cell = ({
               "left": "5px",
             }}
           >
-            {booking.firstName[0]} {booking.lastName[0]}
+            {booking.firstName[0]}
+            {booking.lastName[0]}
           </Text>
         </Box>
       )}
