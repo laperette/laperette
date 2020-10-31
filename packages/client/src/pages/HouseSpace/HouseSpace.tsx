@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 import Grid from "@material-ui/core/Grid";
-import { Calendar } from "../Calendar/Calendar";
-import { SelectedBooking } from "../SelectedBooking";
+import { Calendar } from "../../components/Calendar/Calendar";
+import { SelectedBooking } from "../../components/SelectedBooking";
 import { Booking } from "../../types";
 
 export const HouseSpace = () => {

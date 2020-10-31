@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
   gridList: {
     width: 500,
-    height: 450,
+    height: 300,
   },
   icon: {
     color: "rgba(255, 255, 255, 0.54)",
@@ -71,7 +71,7 @@ export const HousesList = () => {
 
   return (
     <>
-      <Typography component="h1" align="center">
+      <Typography variant="h4" align="left" gutterBottom>
         Your houses
       </Typography>
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>

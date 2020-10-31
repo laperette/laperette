@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
   },
   gridList: {
     width: 500,
-    height: 400,
+    height: 300,
   },
   icon: {
     color: "rgba(255, 255, 255, 0.54)",
@@ -73,7 +73,9 @@ export const BookingsList = () => {
 
   return (
     <>
-      <h1>Your bookings</h1>
+      <Typography variant="h4" align="left" gutterBottom>
+        Your bookings
+      </Typography>
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
         {bookings.map((booking) => {
           return (
