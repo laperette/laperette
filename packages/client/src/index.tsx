@@ -8,7 +8,7 @@ import { AuthClient } from "./utils/authClient";
 
 ReactDOM.render(
   <React.StrictMode>
-    <AppProviders authClient={AuthClient()}>
+    <AppProviders authClient={AuthClient}>
       <App />
     </AppProviders>
   </React.StrictMode>,

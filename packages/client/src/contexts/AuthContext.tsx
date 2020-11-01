@@ -1,23 +1,27 @@
-import React, {
-  useCallback,
-  useMemo,
-  useContext,
-  useLayoutEffect,
-} from "react";
-import { User, AuthClient, Credentials } from "../utils/authClient";
-import { useAsync } from "../hooks/useAsync";
+import React, { useCallback, useMemo, useContext, useEffect } from "react";
+import { User, AuthClientType } from "../utils/authClient";
 import { FullPageSpinner } from "../components/FullPageSpinner";
+import useSWR from "swr";
+import { mutateCallback } from "swr/dist/types";
 
 type AuthContextValue = {
-  user: User | null;
-  login: (form: Credentials) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
+  user?: User | null;
+  mutate: (
+    data?:
+      | User
+      | Promise<User | null>
+      | mutateCallback<User | null>
+      | null
+      | undefined,
+    shouldRevalidate?: boolean | undefined,
+  ) => Promise<User | undefined | null>;
 };
 
 const AuthContext = React.createContext<AuthContextValue>({
-  user: null,
-  login: () => {},
-  logout: () => {},
+  logout: () => Promise.resolve(),
+  user: undefined,
+  mutate: () => Promise.resolve(undefined),
 });
 AuthContext.displayName = "AuthContext";
 
@@ -26,55 +30,39 @@ export const AuthProvider = ({
   authClient,
 }: {
   children: React.ReactNode;
-  authClient: AuthClient;
+  authClient: AuthClientType;
 }) => {
-  const {
-    data,
-    status,
-    isLoading,
-    isIdle,
-    isError,
-    isSuccess,
-    run,
-    setData,
-  } = useAsync<{ user: User }>();
-
-  useLayoutEffect(() => {
-    run(authClient.fetchUser());
-  }, [run, authClient]);
-
-  const login = useCallback(
-    async (credentials: Credentials) => {
-      const user = await authClient.login(credentials);
-      setData({ user });
+  const { data: user, isValidating, mutate, error } = useSWR<User | null>(
+    "/accounts/current",
+    {
+      revalidateOnMount: true,
+      shouldRetryOnError: false,
+      revalidateOnFocus: false,
     },
-    [setData, authClient],
   );
 
+  useEffect(() => {
+    if (user && error && error.response && error.response.status !== 200) {
+      mutate(null, false);
+    }
+  }, [error, mutate, user]);
+
   const logout = useCallback(async () => {
+    await mutate(null, false);
     await authClient.logout();
-    setData(null);
-  }, [setData, authClient]);
+  }, [authClient, mutate]);
 
-  const user = data?.user ?? null;
+  const value = useMemo(() => ({ user, logout, mutate }), [
+    user,
+    logout,
+    mutate,
+  ]);
 
-  const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
-
-  // Normally provider components render the context provider with a value.
-  // But we postpone rendering any of the children until after we've determined
-  // whether or not we have a user and we render a spinner
-  // while we go retrieve that user's information.
-  if (isLoading || isIdle) {
+  if (isValidating && !user) {
     return <FullPageSpinner />;
   }
 
-  if (isSuccess || isError) {
-    return (
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    );
-  }
-
-  throw new Error(`Unhandled status: ${status}`);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

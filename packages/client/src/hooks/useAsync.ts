@@ -26,17 +26,17 @@ enum STATUS {
   RESOLVED = "resolved",
 }
 
-type State<T> = {
+type State<T, E> = {
   status: STATUS;
   data: T | null;
-  error: Error | null;
+  error: E | null;
 };
 
 const initialState = { status: STATUS.IDLE, data: null, error: null };
 
-export const useAsync = <T>() => {
+export const useAsync = <T, E = Error>() => {
   const [{ status, data, error }, setState] = useReducer(
-    (s: State<T>, a: Partial<State<T>>) => ({ ...s, ...a }),
+    (s: State<T, E>, a: Partial<State<T, E>>) => ({ ...s, ...a }),
     initialState,
   );
 
