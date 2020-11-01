@@ -43,7 +43,7 @@ export const AuthClient: AuthClientType = {
       email: data.account.email,
     };
   },
-  logout: async () => axios.get("/logout"),
+  logout: async () => axios.post("/logout"),
 };
 
 export const fieldsErrorsMapping: { [key: string]: string } = {

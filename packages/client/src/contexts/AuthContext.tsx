@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useContext, useEffect } from "react";
 import { User, AuthClientType } from "../utils/authClient";
 import { FullPageSpinner } from "../components/FullPageSpinner";
-import useSWR from "swr";
+import useSWR, { cache } from "swr";
 import { mutateCallback } from "swr/dist/types";
 
 type AuthContextValue = {
@@ -57,6 +57,12 @@ export const AuthProvider = ({
     logout,
     mutate,
   ]);
+
+  useEffect(() => {
+    return cache.subscribe(() => {
+      console.log(cache.get("/accounts/current"));
+    });
+  }, []);
 
   if (isValidating && !user) {
     return <FullPageSpinner />;
