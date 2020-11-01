@@ -61,4 +61,5 @@ jobs:
       - run: yarn install
       - run: yarn server lint
       - run: yarn server build
+      - run: yarn server migrate
       - run: yarn server test
