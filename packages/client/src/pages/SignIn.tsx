@@ -36,14 +36,13 @@ export const SignIn = () => {
   const { mutate } = useAuth();
   const classes = useStyles();
   const { register, handleSubmit } = useForm<Credentials>();
-  const { data, isLoading, run, error } = useAsync<any, AxiosError>();
+  const { data, isLoading, run } = useAsync<any, AxiosError>();
 
   const signIn: SubmitHandler<Credentials> = useCallback(
     (credentials) =>
       run(axios.post("/login", credentials).then((res) => res.data)),
     [run],
   );
-  console.log(data, error?.response?.status);
 
   useEffect(() => {
     if (data) {
