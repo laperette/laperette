@@ -1,23 +1,51 @@
 import React from "react";
 
-import { Login } from "./components/Login";
 import { Switch, Route, Redirect } from "react-router-dom";
-import { Signup } from "./components/Signup";
-import { PendingValidation } from "./pages/PendingValidation/PendingValidation";
+import { makeStyles, Grid, Paper, Box } from "@material-ui/core";
+import { Copyright } from "./components/Copyright";
+import { SignIn, SignUp } from "./pages";
 
-const UnauthenticatedApp = () => (
-  <Switch>
-    <Route path="/login">
-      <Login />
-    </Route>
-    <Route path="/signup">
-      <Signup />
-    </Route>
-    <Route path="/pending-validation">
-      <PendingValidation />
-    </Route>
-    <Redirect to="/login" />
-  </Switch>
-);
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: "100vh",
+  },
+  paper: {
+    margin: theme.spacing(8, 4),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+}));
+
+const UnauthenticatedApp = () => {
+  const classes = useStyles();
+
+  return (
+    <Grid
+      container
+      component="main"
+      className={classes.root}
+      alignItems="center"
+      justify="center"
+    >
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <Switch>
+            <Route path="/signin">
+              <SignIn />
+            </Route>
+            <Route path="/signup">
+              <SignUp />
+            </Route>
+            <Redirect to="/signin" />
+          </Switch>
+          <Box mt={5}>
+            <Copyright />
+          </Box>
+        </div>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default UnauthenticatedApp;
