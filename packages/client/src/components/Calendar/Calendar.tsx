@@ -1,32 +1,57 @@
 import React, { useLayoutEffect } from "react";
-import { Grid } from "grommet";
-import range from "lodash/range";
+
 import Axios from "axios";
 
 import { useAsync } from "../../hooks/useAsync";
 import { useCalendarActions } from "../../hooks/useCalendarAction";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
-import { WEEK_DAYS_NAMES, MONTHS_NAMES } from "../../utils/constants";
+import { MONTHS_NAMES } from "../../utils/constants";
 import { serializeBooking } from "../../utils/bookings";
-import { Navigation } from "./Navigation/Navigation";
 import { Days } from "./Days/Days";
 import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
 import { useCalendarData } from "../../hooks/useCalendarData";
-import { repeat } from "../../utils/calendar";
+import { Chip, IconButton } from "@material-ui/core";
+import ArrowBackIosRoundedIcon from "@material-ui/icons/ArrowBackIosRounded";
+import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
+import styled from "styled-components";
+import { Booking } from "../../types";
 
-export interface Booking {
-  arrivalTime: Date;
-  departureTime: Date;
-  firstName: string;
-  lastName: string;
-  bookingId: string;
-  status: string;
-  comments: string;
-  companions: number;
+const Layout = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Chips = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 9fr;
+  grid-column-gap: 5px;
+  grid-column-start: 2;
+`;
+
+const Display = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 10fr 1fr;
+  justify-items: center;
+`;
+
+const Arrow = styled.div`
+  align-self: center;
+  justify-self: center;
+`;
+
+const CalendarGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  min-width: 100%;
+`;
+
+interface Props {
+  setSelectedBooking: (booking: Booking) => void;
 }
 
-export const Calendar = () => {
+export const Calendar = ({ setSelectedBooking }: Props) => {
   const { data: bookings, run, isIdle, isLoading, isError, error } = useAsync<
     Booking[] | null
   >();
@@ -74,30 +99,34 @@ export const Calendar = () => {
   }
 
   return (
-    <Grid
-      fill
-      columns={repeat(7, "1fr")}
-      rows={["xxsmall", "xxsmall", ...repeat(6, "1fr")]}
-      gap={undefined}
-      areas={[
-        repeat(7, "header"),
-        WEEK_DAYS_NAMES,
-        ...range(6).map((_, row) =>
-          range(7).map((_, col) => `day-${row * 7 + col + 1}`),
-        ),
-      ]}
-    >
-      <Navigation
-        decrementMonth={decrementMonth}
-        resetToDate={resetToDate}
-        incrementMonth={incrementMonth}
-      />
-      <CalendarHeading />
-      <Days
-        daysToDisplay={daysToDisplay}
-        currentMonthName={currentMonthName}
-        bookings={bookings}
-      />
-    </Grid>
+    <Layout>
+      <Chips>
+        <div></div>
+        <Chip label="Today" onClick={resetToDate} />
+        <Chip label={`${currentMonthName} ${currentYear}`} />
+      </Chips>
+      <Display>
+        <Arrow>
+          <IconButton aria-label="previous" onClick={decrementMonth}>
+            <ArrowBackIosRoundedIcon />
+          </IconButton>
+        </Arrow>
+
+        <CalendarGrid>
+          <CalendarHeading />
+          <Days
+            daysToDisplay={daysToDisplay}
+            currentMonthName={currentMonthName}
+            bookings={bookings}
+            setSelectedBooking={setSelectedBooking}
+          />
+        </CalendarGrid>
+        <Arrow>
+          <IconButton aria-label="next" onClick={incrementMonth}>
+            <ArrowForwardIosRoundedIcon />
+          </IconButton>
+        </Arrow>
+      </Display>
+    </Layout>
   );
 };

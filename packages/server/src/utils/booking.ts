@@ -244,4 +244,5 @@ export const serializeBookingForClient = (
   comments: booking.comments,
   companions: booking.companions,
   houseId: booking.house_id,
+  houseName: booking.name,
 });

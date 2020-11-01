@@ -1,69 +1,60 @@
-import { Booking } from "..";
-import {
-  getDate,
-  getMonth,
-  isSameDay,
-  eachDayOfInterval,
-  format,
-} from "date-fns";
+import { getDate, getMonth, isSameDay } from "date-fns";
 import { Box, Text } from "grommet";
 import React from "react";
+import { Booking } from "../../../types";
 import { MONTHS_NAMES } from "../../../utils/constants";
+interface Props {
+  day: Date;
+  booking?: Booking;
+  dayNumber: number;
+  currentMonth: string;
+  setSelectedBooking: (booking: Booking) => void;
+}
 
 export const Cell = ({
   day,
   booking,
   dayNumber,
   currentMonth,
-}: {
-  day: Date;
-  booking?: Booking;
-  dayNumber: number;
-  currentMonth: string;
-}) => {
+  setSelectedBooking,
+}: Props) => {
   const today = new Date();
   const date = getDate(day);
   const month = MONTHS_NAMES[getMonth(day)];
-  const dayColor = isSameDay(day, today) ? "brand" : "light-3";
-  const DATE_FORMAT = "dd/MM/yyyy 'à' H 'heures'";
 
   return (
-    <Box
-      border={{ side: "all", color: dayColor }}
-      gridArea={`day-${dayNumber}`}
-      key={date}
-      pad="xxsmall"
-    >
+    <Box border={{ side: "all", color: "light-3" }} key={date} pad="xxsmall">
       <Text
         id={`${dayNumber}-${day.toString()}`}
         color={month === currentMonth ? "dark-1" : "dark-4"}
-        size={date === 1 ? "large" : "medium"}
+        size="medium"
         textAlign="end"
         data-testid="day-text"
+        style={{
+          textDecoration: isSameDay(day, today) ? "underline" : "none",
+          WebkittextUnderlinePosition: "2px",
+          textDecorationColor: "light-3",
+        }}
       >
-        {date === 1 ? `${date} ${month}` : date}
+        {date === 1 ? `${date}st` : date}
       </Text>
 
       {booking && (
         <Box
           background={booking.status === "pending" ? "light-3" : "dark-4"}
-          onClick={() => {
-            alert(
-              `${booking.firstName} ${booking.lastName} a réservé pour ${
-                eachDayOfInterval({
-                  start: booking.arrivalTime,
-                  end: booking.departureTime,
-                }).length
-              } jours, du ${format(
-                booking.arrivalTime,
-                DATE_FORMAT,
-              )} au ${format(booking.departureTime, DATE_FORMAT)}`,
-            );
-          }}
-          pad="xxsmall"
+          onClick={() => setSelectedBooking(booking)}
+          pad="xxxsmall"
+          round="xlarge"
+          fill="horizontal"
         >
-          <Text size="small">
-            {booking.firstName} {booking.lastName}
+          <Text
+            size="small"
+            margin={{
+              "left": "5px",
+            }}
+          >
+            {booking.firstName[0]}
+            {booking.lastName[0]}
           </Text>
         </Box>
       )}

@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import range from "lodash/range";
 
 export const getRandomIntegerInclusive = (min: number, max: number) => {
@@ -7,3 +8,5 @@ export const getRandomIntegerInclusive = (min: number, max: number) => {
 };
 export const repeat = (length: number, ret: string) =>
   range(length).map(() => ret);
+
+export const formatDate = (date: Date) => format(date, "EEEE dd MMM yyyy");

@@ -15,6 +15,8 @@ import {
 } from "date-fns";
 import userEvent from "@testing-library/user-event";
 
+const mockSetSelectedBooking = jest.fn();
+
 jest.mock("axios");
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;
 
@@ -33,15 +35,15 @@ describe("Calendar", () => {
   describe("Loader", () => {
     it("should display a loader while fetching the bookings, and then, the calendar", async () => {
       mockSuccessCall();
-      render(<Calendar />);
+      render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
       expect(screen.getByText(/loading.../i)).toBeInTheDocument();
       await wait();
-      expect(screen.getByText(/lundi/i)).toBeInTheDocument();
+      expect(screen.getByText(/Monday/i)).toBeInTheDocument();
     });
 
     it("should display a loader while fetching the bookings, and then, the error page if fetching the bookings failed", async () => {
       mockFailedCall();
-      render(<Calendar />);
+      render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
       expect(screen.getByText(/loading.../i)).toBeInTheDocument();
       await wait();
       expect(screen.getByText(/Unable to fetch bookings/i)).toBeInTheDocument();
@@ -69,7 +71,7 @@ describe("Calendar", () => {
 
     it("should display the correct number of days in the calendar", async () => {
       mockSuccessCall();
-      await render(<Calendar />);
+      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
 
       await wait();
 
@@ -87,11 +89,11 @@ describe("Calendar", () => {
         dayNumberFirstDayInMonth === 0 ? 7 : dayNumberFirstDayInMonth;
 
       mockSuccessCall();
-      await render(<Calendar />);
+      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
 
       await wait();
 
-      const firstDayInMonthFromCalendar = screen.getAllByText(/1\s/)[0];
+      const firstDayInMonthFromCalendar = screen.getAllByText(/1st/)[0];
 
       const positionFirstDayInMonthFromCalendar = parseInt(
         firstDayInMonthFromCalendar.id.split("-")[0],
@@ -105,7 +107,7 @@ describe("Calendar", () => {
 
     it("should display a Monday as the first day of the calendar", async () => {
       mockSuccessCall();
-      await render(<Calendar />);
+      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
 
       await wait();
 
@@ -118,7 +120,7 @@ describe("Calendar", () => {
 
     it("should display a Sunday as the last day of the calendar", async () => {
       mockSuccessCall();
-      await render(<Calendar />);
+      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
 
       await wait();
 
@@ -135,20 +137,20 @@ describe("Calendar", () => {
   describe("Navigation buttons", () => {
     it("should display next month's days when clicking on Next button", async () => {
       mockSuccessCall();
-      await render(<Calendar />);
+      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
 
       await wait();
 
       const firstDayInMonthBeforeClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
-      const nextButton = screen.getByText(/Next/);
+      const nextButton = screen.getByLabelText(/next/);
 
       userEvent.click(nextButton);
 
       const firstDayInMonthAfterClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       expect(addMonths(firstDayInMonthBeforeClick, 1)).toEqual(
@@ -158,20 +160,20 @@ describe("Calendar", () => {
 
     it("should display previous month's days when clicking on Previous button", async () => {
       mockSuccessCall();
-      await render(<Calendar />);
+      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
 
       await wait();
 
       const firstDayInMonthBeforeClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
-      const previousButton = screen.getByText(/Previous/);
+      const previousButton = screen.getByLabelText(/previous/);
 
       userEvent.click(previousButton);
 
       const firstDayInMonthAfterClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       expect(subMonths(firstDayInMonthBeforeClick, 1)).toEqual(
@@ -181,11 +183,11 @@ describe("Calendar", () => {
 
     it("should display today's month's days when clicking on Today button", async () => {
       mockSuccessCall();
-      await render(<Calendar />);
+      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
 
       await wait();
 
-      const previousButton = screen.getByText(/Previous/);
+      const previousButton = screen.getByLabelText(/previous/);
 
       userEvent.click(previousButton);
       userEvent.click(previousButton);
@@ -196,7 +198,7 @@ describe("Calendar", () => {
       userEvent.click(todayButton);
 
       const firstDayInMonthAfterClick = new Date(
-        screen.getAllByText(/1\s/)[0].id.split("-")[1],
+        screen.getAllByText(/1st/)[0].id.split("-")[1],
       );
 
       expect(isThisMonth(firstDayInMonthAfterClick)).toBeTruthy();

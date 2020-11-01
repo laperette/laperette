@@ -1,5 +1,5 @@
-import { Booking } from "../components/Calendar/Calendar";
 import { parseISO } from "date-fns";
+import { Booking } from "../types";
 
 export const serializeBooking = (rawBooking: Record<string, any>): Booking => ({
   arrivalTime: parseISO(rawBooking.arrivalTime),
@@ -10,4 +10,5 @@ export const serializeBooking = (rawBooking: Record<string, any>): Booking => ({
   status: rawBooking.status,
   comments: rawBooking.comments,
   companions: rawBooking.companions,
+  houseName: rawBooking.houseName,
 });
