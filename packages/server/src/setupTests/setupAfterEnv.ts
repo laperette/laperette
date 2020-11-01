@@ -1,5 +1,15 @@
+import { knex } from "../db/db";
 import { emptyTheDatabase } from "./utils";
 
-afterEach(() => {
-  return emptyTheDatabase();
+beforeAll(async () => {
+  await knex.migrate.latest();
+})
+
+afterEach(async () => {
+  await emptyTheDatabase();
 });
+
+afterAll(async () => {
+  await emptyTheDatabase();
+  await knex.destroy();
+})
