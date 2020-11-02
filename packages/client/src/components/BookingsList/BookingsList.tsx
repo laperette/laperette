@@ -12,13 +12,10 @@ import {
   Typography,
 } from "@material-ui/core";
 
-import useSWR from "swr";
-import { Booking } from "../../types";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { formatDate } from "../../utils/calendar";
-import { serializeBooking } from "../../utils/bookings";
-import { axios } from "../../utils/fetcher";
+import { useBookings } from "../../hooks/useBookings";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -39,12 +36,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const BookingsList = () => {
-  const { data: bookings, error } = useSWR<Booking[] | null>("/bookings", {
-    fetcher: (url) =>
-      axios
-        .get(url)
-        .then((response) => response.data.bookings.map(serializeBooking)),
-  });
+  const { data: bookings, error } = useBookings();
 
   const classes = useStyles();
 

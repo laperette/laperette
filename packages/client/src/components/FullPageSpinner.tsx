@@ -16,7 +16,7 @@ export const FullPageSpinner = () => {
       alignItems="center"
       className={styles.root}
     >
-      <CircularProgress />
+      <CircularProgress data-testid="full-page-spinner" />
     </Grid>
   );
 };

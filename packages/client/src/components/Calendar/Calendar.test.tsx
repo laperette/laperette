@@ -1,6 +1,6 @@
 import React from "react";
 import Axios from "axios";
-import { render, wait, screen } from "@testing-library/react";
+import { render, screen, waitForDomChange } from "@testing-library/react";
 import { Calendar } from "./Calendar";
 import { getRandomIntegerInclusive } from "../../utils/calendar";
 import * as MockDate from "mockdate";
@@ -14,11 +14,12 @@ import {
   isThisMonth,
 } from "date-fns";
 import userEvent from "@testing-library/user-event";
-
+import { cache } from "swr";
 const mockSetSelectedBooking = jest.fn();
 
 jest.mock("axios");
 const mockedAxios = Axios as jest.Mocked<typeof Axios>;
+mockedAxios.create.mockImplementation(() => Axios);
 
 const mockSuccessCall = () => {
   mockedAxios.get.mockResolvedValueOnce({ data: { bookings: [] } });
@@ -31,22 +32,28 @@ const mockFailedCall = () => {
 describe("Calendar", () => {
   afterEach(() => {
     mockedAxios.get.mockClear();
+    cache.clear();
   });
   describe("Loader", () => {
-    it("should display a loader while fetching the bookings, and then, the calendar", async () => {
-      mockSuccessCall();
-      render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
-      expect(screen.getByText(/loading.../i)).toBeInTheDocument();
-      await wait();
-      expect(screen.getByText(/Monday/i)).toBeInTheDocument();
-    });
-
     it("should display a loader while fetching the bookings, and then, the error page if fetching the bookings failed", async () => {
       mockFailedCall();
-      render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
-      expect(screen.getByText(/loading.../i)).toBeInTheDocument();
-      await wait();
-      expect(screen.getByText(/Unable to fetch bookings/i)).toBeInTheDocument();
+      const { container, getByTestId, getByText } = render(
+        <Calendar setSelectedBooking={() => {}} />,
+      );
+      expect(getByTestId("full-page-spinner")).toBeInTheDocument();
+      await waitForDomChange({ container });
+      expect(getByText(/Unable to fetch bookings/i)).toBeInTheDocument();
+    });
+
+    it("should display a loader while fetching the bookings, and then, the calendar", async () => {
+      mockSuccessCall();
+      const { getByText, container, getByTestId } = render(
+        <Calendar setSelectedBooking={() => {}} />,
+      );
+      expect(getByTestId("full-page-spinner")).toBeInTheDocument();
+      await waitForDomChange({ container });
+      expect(getByText("Today")).toBeInTheDocument();
+      expect(getByText("Monday")).toBeInTheDocument();
     });
   });
 
@@ -71,12 +78,12 @@ describe("Calendar", () => {
 
     it("should display the correct number of days in the calendar", async () => {
       mockSuccessCall();
-      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
-
-      await wait();
+      const { container } = render(
+        <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+      );
+      await waitForDomChange({ container });
 
       const daysDisplayed = screen.getAllByTestId("day-text");
-
       expect(daysDisplayed.length).toEqual(42);
     });
 
@@ -89,9 +96,11 @@ describe("Calendar", () => {
         dayNumberFirstDayInMonth === 0 ? 7 : dayNumberFirstDayInMonth;
 
       mockSuccessCall();
-      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
+      const { container } = render(
+        <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+      );
 
-      await wait();
+      await waitForDomChange({ container });
 
       const firstDayInMonthFromCalendar = screen.getAllByText(/1st/)[0];
 
@@ -107,9 +116,11 @@ describe("Calendar", () => {
 
     it("should display a Monday as the first day of the calendar", async () => {
       mockSuccessCall();
-      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
+      const { container } = render(
+        <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+      );
 
-      await wait();
+      await waitForDomChange({ container });
 
       const firstDayOfCalendar = screen.getAllByTestId("day-text")[0];
 
@@ -120,9 +131,11 @@ describe("Calendar", () => {
 
     it("should display a Sunday as the last day of the calendar", async () => {
       mockSuccessCall();
-      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
+      const { container } = render(
+        <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+      );
 
-      await wait();
+      await waitForDomChange({ container });
 
       const lastDayOfCalendar = screen
         .getAllByTestId("day-text")
@@ -137,9 +150,11 @@ describe("Calendar", () => {
   describe("Navigation buttons", () => {
     it("should display next month's days when clicking on Next button", async () => {
       mockSuccessCall();
-      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
+      const { container } = render(
+        <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+      );
 
-      await wait();
+      await waitForDomChange({ container });
 
       const firstDayInMonthBeforeClick = new Date(
         screen.getAllByText(/1st/)[0].id.split("-")[1],
@@ -160,9 +175,11 @@ describe("Calendar", () => {
 
     it("should display previous month's days when clicking on Previous button", async () => {
       mockSuccessCall();
-      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
+      const { container } = render(
+        <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+      );
 
-      await wait();
+      await waitForDomChange({ container });
 
       const firstDayInMonthBeforeClick = new Date(
         screen.getAllByText(/1st/)[0].id.split("-")[1],
@@ -183,9 +200,11 @@ describe("Calendar", () => {
 
     it("should display today's month's days when clicking on Today button", async () => {
       mockSuccessCall();
-      await render(<Calendar setSelectedBooking={mockSetSelectedBooking} />);
+      const { container } = render(
+        <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+      );
 
-      await wait();
+      await waitForDomChange({ container });
 
       const previousButton = screen.getByLabelText(/previous/);
 

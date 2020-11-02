@@ -13,7 +13,7 @@ import { LockOutlined } from "@material-ui/icons";
 import { Link as RouterLink } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAsync } from "../hooks/useAsync";
-import { axios } from "../utils/fetcher";
+import { getAxiosInstance } from "../utils/fetcher";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { AxiosError } from "axios";
@@ -65,7 +65,11 @@ export const SignUp = () => {
 
   const signUp: SubmitHandler<SignUpData> = useCallback(
     (signupData: SignUpData) =>
-      run(axios.post("/signup", signupData).then((res) => res.data)),
+      run(
+        getAxiosInstance()
+          .post("/signup", signupData)
+          .then((res) => res.data),
+      ),
     [run],
   );
 

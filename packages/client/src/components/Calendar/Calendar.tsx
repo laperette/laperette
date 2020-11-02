@@ -1,13 +1,9 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 
-import Axios from "axios";
-
-import { useAsync } from "../../hooks/useAsync";
 import { useCalendarActions } from "../../hooks/useCalendarAction";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { MONTHS_NAMES } from "../../utils/constants";
-import { serializeBooking } from "../../utils/bookings";
 import { Days } from "./Days/Days";
 import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
 import { useCalendarData } from "../../hooks/useCalendarData";
@@ -16,6 +12,7 @@ import ArrowBackIosRoundedIcon from "@material-ui/icons/ArrowBackIosRounded";
 import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
 import styled from "styled-components";
 import { Booking } from "../../types";
+import { useBookings } from "../../hooks/useBookings";
 
 const Layout = styled.div`
   display: flex;
@@ -52,9 +49,7 @@ interface Props {
 }
 
 export const Calendar = ({ setSelectedBooking }: Props) => {
-  const { data: bookings, run, isIdle, isLoading, isError, error } = useAsync<
-    Booking[] | null
-  >();
+  const { data: bookings, error } = useBookings();
 
   const {
     currentMonthNumber,
@@ -68,33 +63,11 @@ export const Calendar = ({ setSelectedBooking }: Props) => {
 
   const [daysToDisplay] = useCalendarData({ currentMonthNumber, currentYear });
 
-  useLayoutEffect(() => {
-    const getBookings = async (): Promise<Booking[]> => {
-      const response = await Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/bookings`,
-        {
-          params: {
-            start: daysToDisplay[0],
-            end: daysToDisplay[daysToDisplay.length - 1],
-          },
-          withCredentials: true,
-        },
-      );
-
-      if (!response?.data || !response?.data?.bookings.length) {
-        return [];
-      }
-
-      return response.data.bookings.map(serializeBooking);
-    };
-    run(getBookings());
-  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (isError) {
+  if (error) {
     return <FullPageErrorFallback error={error} />;
   }
 
-  if (isIdle || isLoading || !bookings) {
+  if (!bookings) {
     return <FullPageSpinner />;
   }
 
@@ -111,7 +84,6 @@ export const Calendar = ({ setSelectedBooking }: Props) => {
             <ArrowBackIosRoundedIcon />
           </IconButton>
         </Arrow>
-
         <CalendarGrid>
           <CalendarHeading />
           <Days

@@ -1,4 +1,4 @@
-import { axios } from "./fetcher";
+import { getAxiosInstance } from "./fetcher";
 
 export type AuthClientType = {
   login: (credentials: Credentials) => Promise<User | null>;
@@ -26,7 +26,7 @@ export type User = {
 
 export const AuthClient: AuthClientType = {
   login: async ({ email, password }) => {
-    const { data, status } = await axios.post(
+    const { data, status } = await getAxiosInstance().post(
       `/login`,
       { email, password },
       {
@@ -43,7 +43,7 @@ export const AuthClient: AuthClientType = {
       email: data.account.email,
     };
   },
-  logout: async () => axios.post("/logout"),
+  logout: async () => getAxiosInstance().post("/logout"),
 };
 
 export const fieldsErrorsMapping: { [key: string]: string } = {

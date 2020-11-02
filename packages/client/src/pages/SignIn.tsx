@@ -14,7 +14,7 @@ import { AxiosError } from "axios";
 import { Button } from "../components/Button";
 import { useAsync } from "../hooks/useAsync";
 import { useAuth } from "../contexts/AuthContext";
-import { axios } from "../utils/fetcher";
+import { getAxiosInstance } from "../utils/fetcher";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -40,7 +40,11 @@ export const SignIn = () => {
 
   const signIn: SubmitHandler<Credentials> = useCallback(
     (credentials) =>
-      run(axios.post("/login", credentials).then((res) => res.data)),
+      run(
+        getAxiosInstance()
+          .post("/login", credentials)
+          .then((res) => res.data),
+      ),
     [run],
   );
 
