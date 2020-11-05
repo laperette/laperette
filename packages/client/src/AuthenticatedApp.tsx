@@ -6,6 +6,7 @@ import { useAuth } from "./contexts/AuthContext";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { Dashboard } from "./pages/Dashboard";
 import { HouseSpace } from "./pages/HouseSpace";
+
 import {
   AppBar,
   Button,

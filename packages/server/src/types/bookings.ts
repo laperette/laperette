@@ -32,7 +32,7 @@ export interface NewBookingProperties {
   arrivalTime: string;
   departureTime: string;
   comments: string;
-  companions: number;
+  companions: string;
   houseId: string;
 }
 

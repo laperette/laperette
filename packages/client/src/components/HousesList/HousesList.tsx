@@ -11,12 +11,22 @@ import {
   CardActions,
   CardContent,
   Divider,
+  Drawer,
+  Fab,
   GridList,
   GridListTile,
   makeStyles,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
+
 import { Link } from "react-router-dom";
+import { NewHouseForm } from "../NewHouseForm";
+
+interface Props {
+  retrieveHousesForBookingForm: (houses: House[]) => void;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,13 +45,27 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: "rgba(255, 255, 255, 0.54)",
   },
+  title: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
 }));
 
-export const HousesList = () => {
+export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
   const { data: houses, run, isIdle, isLoading, isError, error } = useAsync<
     House[] | null
   >();
   const classes = useStyles();
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useLayoutEffect(() => {
     const getHouses = async (): Promise<House[]> => {
@@ -56,6 +80,7 @@ export const HousesList = () => {
         return [];
       }
 
+      retrieveHousesForBookingForm(response.data.houses);
       return response.data.houses;
     };
     run(getHouses());
@@ -71,12 +96,35 @@ export const HousesList = () => {
 
   return (
     <>
-      <Typography variant="h4" align="left" gutterBottom>
+      <Drawer
+        open={open}
+        anchor="right"
+        onClose={handleClose}
+        variant="temporary"
+      >
+        <NewHouseForm handleClose={handleClose} />
+      </Drawer>
+      <Typography
+        variant="h4"
+        align="left"
+        gutterBottom
+        className={classes.title}
+      >
         Your houses
+        <Tooltip
+          title="Add"
+          aria-label="add"
+          placement="right"
+          onClick={handleClickOpen}
+        >
+          <Fab color="primary" size="small">
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       </Typography>
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
         {houses.map((house) => (
-          <GridListTile>
+          <GridListTile key={house.houseId}>
             <Card>
               <CardContent>
                 <Typography
