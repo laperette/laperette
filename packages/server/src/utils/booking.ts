@@ -184,11 +184,18 @@ const validateComments = (
 const validateCompanions = (
   companions: NewBookingProperties["companions"],
 ): boolean => {
-  if (typeof companions !== "number") {
-    return false;
+  if (typeof companions === "number") {
+    return true;
   }
 
-  return true;
+  if (
+    typeof companions === "string" &&
+    typeof parseInt(companions, 10) === "number"
+  ) {
+    return true;
+  }
+
+  return false;
 };
 
 export const haveBookingDatesChanged = (
@@ -217,7 +224,7 @@ export const serializeBookingForDBInsert = (
   arrival_time: bookingProperties.arrivalTime,
   departure_time: bookingProperties.departureTime,
   comments: bookingProperties.comments,
-  companions: bookingProperties.companions,
+  companions: parseInt(bookingProperties.companions, 10),
   status: "pending" as BookingStatus,
   house_id: bookingProperties.houseId,
 });
@@ -228,7 +235,7 @@ export const serializeBookingForDBUpdate = (
   arrival_time: bookingProperties.arrivalTime,
   departure_time: bookingProperties.departureTime,
   comments: bookingProperties.comments,
-  companions: bookingProperties.companions,
+  companions: parseInt(bookingProperties.companions, 10),
   status: "pending" as BookingStatus,
 });
 

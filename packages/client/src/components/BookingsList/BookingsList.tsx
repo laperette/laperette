@@ -1,21 +1,29 @@
-import React from "react";
-
 import {
   Button,
   Card,
   CardActions,
   CardContent,
   Divider,
+  Drawer,
+  Fab,
   GridList,
   GridListTile,
   makeStyles,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
-
+import AddIcon from "@material-ui/icons/Add";
+import React from "react";
+import { useBookings } from "../../hooks/useBookings";
+import { House } from "../../types";
+import { formatDate } from "../../utils/calendar";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
-import { formatDate } from "../../utils/calendar";
-import { useBookings } from "../../hooks/useBookings";
+import { NewBookingForm } from "../NewBookingForm";
+
+interface Props {
+  houses?: House[];
+}
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -33,12 +41,26 @@ const useStyles = makeStyles(() => ({
   icon: {
     color: "rgba(255, 255, 255, 0.54)",
   },
+  title: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
 }));
 
-export const BookingsList = () => {
+export const BookingsList = ({ houses }: Props) => {
+  const classes = useStyles();
+
   const { data: bookings, error } = useBookings();
 
-  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   if (error) {
     return <FullPageErrorFallback error={error} />;
@@ -49,13 +71,37 @@ export const BookingsList = () => {
 
   return (
     <>
-      <Typography variant="h4" align="left" gutterBottom>
+      <Drawer
+        open={open}
+        anchor="right"
+        onClose={handleClose}
+        variant="temporary"
+      >
+        <NewBookingForm handleClose={handleClose} houses={houses} />
+      </Drawer>
+      <Typography
+        className={classes.title}
+        variant="h4"
+        align="left"
+        gutterBottom
+      >
         Your bookings
+        <Tooltip
+          title="Add"
+          aria-label="add"
+          placement="right"
+          onClick={handleClickOpen}
+        >
+          <Fab color="primary" size="small">
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       </Typography>
+
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
         {bookings.map((booking) => {
           return (
-            <GridListTile>
+            <GridListTile key={booking.bookingId}>
               <Card>
                 <CardContent>
                   <Typography gutterBottom component="h5" align="center">
@@ -67,7 +113,6 @@ export const BookingsList = () => {
                     component="p"
                   >
                     {formatDate(booking.arrivalTime)}
-                    {/* {formatDate(booking.departureTime)} */}
                   </Typography>
                   <Typography
                     variant="body2"
