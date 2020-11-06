@@ -22,12 +22,13 @@ export const createMockAccount = async (
 
 export const createMockHouse = async (
   houseName: string,
+  houseId: string,
   accountId: string,
-): Promise<string | undefined> => {
+): Promise<void> => {
   const trx = await knex.transaction();
   try {
-    const [houseId]: string = await trx("houses")
-      .insert({ name: houseName })
+    await trx("houses")
+      .insert({ house_id: houseId, name: houseName })
       .returning("house_id");
     await trx("house_memberships").insert({
       account_id: accountId,
@@ -35,7 +36,6 @@ export const createMockHouse = async (
       is_admin: true,
     });
     trx.commit();
-    return houseId;
   } catch (error) {
     logger.error(error);
     trx.rollback();

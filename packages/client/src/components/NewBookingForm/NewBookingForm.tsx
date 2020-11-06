@@ -9,22 +9,17 @@ import {
   Typography,
 } from "@material-ui/core";
 import { useForm, OnSubmit, Controller } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import Axios from "axios";
-import { House } from "../../types";
+import { Booking, House, NewBookingData } from "../../types";
 import { createNewDateFromString } from "../../utils/calendar";
 import { newBookingFieldsErrorsMapping } from "../../utils/bookings";
-
-interface NewBookingData {
-  houseId: string;
-  arrivalTime: string;
-  departureTime: string;
-  comments: string;
-  numberOfPeople: string;
-}
+import { useAuth } from "../../contexts/AuthContext";
 
 interface Props {
   handleClose: () => void;
+  addNewBookingToDisplayList: (newBooking: Booking) => void;
   houses?: House[];
 }
 
@@ -44,19 +39,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const NewBookingForm = ({ handleClose, houses }: Props) => {
+export const NewBookingForm = ({
+  houses,
+  handleClose,
+  addNewBookingToDisplayList,
+}: Props) => {
   const classes = useStyles();
+
+  const { user } = useAuth();
 
   const { handleSubmit, setError, errors, control } = useForm<NewBookingData>();
 
   const onSubmit: OnSubmit<NewBookingData> = async (data) => {
     try {
+      const bookingId = uuidv4();
       const newBookingData = {
+        bookingId,
         arrivalTime: createNewDateFromString(data.arrivalTime),
         departureTime: createNewDateFromString(data.departureTime),
         comments: data.comments,
-        companions: parseInt(data.numberOfPeople, 10),
+        companions: parseInt(data.companions, 10),
       };
+
+      addNewBookingToDisplayList(
+        Object.assign(newBookingData, {
+          status: "pending",
+          firstName: user?.firstName || "User",
+          lastName: user?.lastName || "User",
+        }),
+      );
 
       await Axios(
         `${process.env.REACT_APP_SERVER_URL}/houses/${data.houseId}/bookings/booking`,
@@ -71,7 +82,7 @@ export const NewBookingForm = ({ handleClose, houses }: Props) => {
       setError("departureTime", "generalInvalidMessage");
       setError("arrivalTime", "generalInvalidMessage");
       setError("comments", "generalInvalidMessage");
-      setError("numberOfPeople", "generalInvalidMessage");
+      setError("companions", "generalInvalidMessage");
       setError("houseId", "generalInvalidMessage");
     }
   };
@@ -130,11 +141,11 @@ export const NewBookingForm = ({ handleClose, houses }: Props) => {
           as={TextField}
           variant="outlined"
           label="Number of people"
-          name="numberOfPeople"
+          name="companions"
           control={control}
-          error={!!errors.numberOfPeople}
+          error={!!errors.companions}
           helperText={
-            !!errors.numberOfPeople
+            !!errors.companions
               ? newBookingFieldsErrorsMapping["generalInvalidMessage"]
               : ""
           }

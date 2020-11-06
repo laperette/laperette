@@ -17,8 +17,7 @@ import {
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 
-import { useAsync } from "../../hooks/useAsync";
-import { Booking, House } from "../../types";
+import { Booking, House, NewBookingBody } from "../../types";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { formatDate } from "../../utils/calendar";
@@ -52,13 +51,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const BookingsList = ({ houses }: Props) => {
-  const { data: bookings, run, isIdle, isLoading, isError, error } = useAsync<
-    Booking[] | null
-  >();
-
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [bookingsToDisplay, setBookingsToDisplay] = React.useState<Booking[]>(
+    [],
+  );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -68,15 +68,29 @@ export const BookingsList = ({ houses }: Props) => {
     setOpen(false);
   };
 
+  const addNewBookingToDisplayList = (newBooking: Booking) => {
+    setBookingsToDisplay([...bookingsToDisplay, newBooking]);
+  };
+
   const handleBookingCancellation = async (
-    bookingId: string,
+    bookingToDeleteId: string,
   ): Promise<void> => {
-    await Axios.delete(
-      `${process.env.REACT_APP_SERVER_URL}/bookings/${bookingId}`,
-      {
-        withCredentials: true,
-      },
-    );
+    try {
+      const remainingBookingsToDisplay = bookingsToDisplay.filter(
+        (booking) => booking.bookingId !== bookingToDeleteId,
+      );
+      setBookingsToDisplay(remainingBookingsToDisplay);
+      await Axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/bookings/${bookingToDeleteId}`,
+        {
+          withCredentials: true,
+        },
+      );
+    } catch (error) {
+      console.error("Could not cancel booking - Please try again", {
+        bookingToDeleteId,
+      });
+    }
   };
 
   useLayoutEffect(() => {
@@ -94,14 +108,21 @@ export const BookingsList = ({ houses }: Props) => {
 
       return response.data.bookings.map(serializeBooking);
     };
-    run(getBookings());
-  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
+    getBookings()
+      .then((res) => {
+        setBookingsToDisplay(res);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setIsError(true);
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isError) {
-    return <FullPageErrorFallback error={error} />;
+    return <FullPageErrorFallback error={null} />;
   }
 
-  if (isIdle || isLoading || !bookings) {
+  if (isLoading || !bookingsToDisplay) {
     return <FullPageSpinner />;
   }
 
@@ -113,7 +134,11 @@ export const BookingsList = ({ houses }: Props) => {
         onClose={handleClose}
         variant="temporary"
       >
-        <NewBookingForm handleClose={handleClose} houses={houses} />
+        <NewBookingForm
+          handleClose={handleClose}
+          houses={houses}
+          addNewBookingToDisplayList={addNewBookingToDisplayList}
+        />
       </Drawer>
       <Typography
         className={classes.title}
@@ -135,7 +160,7 @@ export const BookingsList = ({ houses }: Props) => {
       </Typography>
 
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
-        {bookings.map((booking) => {
+        {bookingsToDisplay.map((booking) => {
           return (
             <GridListTile key={booking.bookingId}>
               <Card>

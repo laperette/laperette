@@ -10,12 +10,14 @@ import {
   BookingForDBUpdate,
 } from "../types/bookings";
 import { logger } from "../logger";
+import { isUuid } from "./regexp";
 
 export const validateNewBookingData = async (
   newBookingData: NewBookingProperties,
 ): Promise<boolean> => {
   const {
     accountId,
+    bookingId,
     arrivalTime,
     departureTime,
     comments,
@@ -27,6 +29,16 @@ export const validateNewBookingData = async (
   if (!isAccounValid) {
     logger.error("Invalid account id", {
       accountId: accountId,
+    });
+    return false;
+  }
+
+  const isBookingIdValid = !!validateBookingId(bookingId);
+
+  if (!isBookingIdValid) {
+    logger.error("Invalid booking id", {
+      accountId: accountId,
+      bookingId: bookingId,
     });
     return false;
   }
@@ -198,6 +210,19 @@ const validateCompanions = (
   return false;
 };
 
+const validateBookingId = (bookingId: string) => {
+  /**
+   * Reflection needed over houseId uniqueness validation since houseId uuid is client generated.
+   * Possibility to query DB to check uuid not in DB yet but would impact perfomance
+   */
+
+  if (isUuid(bookingId)) {
+    return true;
+  }
+
+  return false;
+};
+
 export const haveBookingDatesChanged = (
   bookingToBeUpdated: BookingFromDB,
   departureTime: string,
@@ -221,6 +246,7 @@ export const serializeBookingForDBInsert = (
   bookingProperties: NewBookingProperties,
 ): BookingForDBInsert => ({
   booker_id: bookingProperties.accountId,
+  booking_id: bookingProperties.bookingId,
   arrival_time: bookingProperties.arrivalTime,
   departure_time: bookingProperties.departureTime,
   comments: bookingProperties.comments,

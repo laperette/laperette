@@ -3,17 +3,17 @@ import { HouseFromDB, HouseForDBInsert } from "../types/houses";
 
 export const insertOneHouse = async (
   newHouseProperties: HouseForDBInsert,
-): Promise<string> => {
-  let houseId;
+): Promise<void> => {
   const trx = await knex.transaction();
   try {
-    [houseId] = await trx("houses")
-      .returning("house_id")
-      .insert({ name: newHouseProperties.name });
+    await trx("houses").insert({
+      house_id: newHouseProperties.house_id,
+      name: newHouseProperties.name,
+    });
 
     await trx("house_memberships").insert({
       account_id: newHouseProperties.account_id,
-      house_id: houseId,
+      house_id: newHouseProperties.house_id,
       is_admin: true,
     });
 
@@ -22,7 +22,6 @@ export const insertOneHouse = async (
     trx.rollback();
     throw error;
   }
-  return houseId;
 };
 
 export const retrieveHousesByAccountId = (

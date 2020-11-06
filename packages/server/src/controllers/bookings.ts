@@ -23,11 +23,18 @@ export const createBooking = async (ctx: Context) => {
   const { accountId } = ctx.state;
   const { houseId } = ctx.params;
 
-  const { arrivalTime, departureTime, comments, companions } = ctx.request.body;
+  const {
+    bookingId,
+    arrivalTime,
+    departureTime,
+    comments,
+    companions,
+  } = ctx.request.body;
 
   try {
     const newBookingData = {
       accountId,
+      bookingId,
       arrivalTime,
       departureTime,
       comments,
@@ -47,17 +54,17 @@ export const createBooking = async (ctx: Context) => {
 
     const serializedBooking = serializeBookingForDBInsert(newBookingData);
 
-    const newBookingId = await insertOneBooking(serializedBooking);
+    await insertOneBooking(serializedBooking);
 
     const successMessage = "New booking created";
     logger.info(successMessage, {
       accountId: accountId,
-      bookingId: newBookingId,
+      bookingId: bookingId,
     });
     ctx.status = 201;
     ctx.message = successMessage;
     ctx.body = {
-      bookingId: newBookingId,
+      bookingId: bookingId,
     };
   } catch (error) {
     const errorMessage = "Error while creating a booking";

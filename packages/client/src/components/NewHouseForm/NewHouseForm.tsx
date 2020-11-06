@@ -7,14 +7,17 @@ import {
   Typography,
 } from "@material-ui/core";
 import { useForm, OnSubmit, Controller } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import Axios from "axios";
 import { newHouseFieldsErrorsMapping } from "../../utils/houses";
+import { House } from "../../types";
 
 type NewHouseData = { name: string };
 
 interface Props {
   handleClose: () => void;
+  addNewHouseToDisplayList: (newHouse: House) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -33,18 +36,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const NewHouseForm = ({ handleClose }: Props) => {
+export const NewHouseForm = ({
+  handleClose,
+  addNewHouseToDisplayList,
+}: Props) => {
   const classes = useStyles();
 
   const { handleSubmit, setError, errors, control } = useForm<NewHouseData>();
 
   const onSubmit: OnSubmit<NewHouseData> = async (data) => {
     try {
+      const houseId = uuidv4();
+      const newHouse = {
+        houseId,
+        name: data.name,
+      };
+      addNewHouseToDisplayList(newHouse);
       await Axios(`${process.env.REACT_APP_SERVER_URL}/houses/house`, {
         method: "post",
-        data: {
-          name: data.name,
-        },
+        data: newHouse,
         withCredentials: true,
       });
       handleClose();

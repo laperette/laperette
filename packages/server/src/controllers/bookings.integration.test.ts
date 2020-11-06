@@ -38,11 +38,13 @@ describe("Bookings", () => {
     password: "password",
   };
 
-  const mockHouseData = {
+  const mockHouseData1 = {
+    houseId: "a5d72994-80eb-45c7-8351-c3e0fa3c3d80",
     name: "Longwood House",
   };
 
   const mockHouseData2 = {
+    houseId: "a5d72994-80eb-45c7-8351-c3e0fa3c3d81",
     name: "La Confiance",
   };
 
@@ -55,11 +57,18 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId,
+      );
 
       const [sessionToken] = await createMockSession(accountId, 1);
 
+      const mockBookingId = "a5d72994-80eb-45c7-8351-c3e0fa3c3d20";
+
       const mockBookingData = {
+        bookingId: mockBookingId,
         arrivalTime: addDays(new Date(), 1),
         departureTime: addDays(new Date(), 5),
         comments: "Eager to be there!",
@@ -67,14 +76,15 @@ describe("Bookings", () => {
       };
 
       const response = await request(server)
-        .post(`/houses/${houseId}/bookings/booking`)
+        .post(`/houses/${mockHouseData1.houseId}/bookings/booking`)
         .send(mockBookingData)
         .set("Cookie", [`laperette_session=${sessionToken}`]);
 
       const newBookingRow = await knex("bookings")
         .where({
+          booking_id: mockBookingId,
           booker_id: accountId,
-          house_id: houseId,
+          house_id: mockHouseData1.houseId,
           comments: mockBookingData.comments,
           companions: mockBookingData.companions,
         })
@@ -94,7 +104,11 @@ describe("Bookings", () => {
           mockNewAccountData.password,
         );
 
-        const houseId = await createMockHouse(mockHouseData.name, accountId);
+        await createMockHouse(
+          mockHouseData1.name,
+          mockHouseData1.houseId,
+          accountId,
+        );
 
         const [sessionToken] = await createMockSession(accountId, 1);
 
@@ -112,14 +126,14 @@ describe("Bookings", () => {
         };
 
         const response = await request(server)
-          .post(`/houses/${houseId}/bookings/booking`)
+          .post(`/houses/${mockHouseData1.houseId}/bookings/booking`)
           .send(mockInvalidBookingData)
           .set("Cookie", [`laperette_session=${sessionToken}`]);
 
         const newBookingRow = await knex("bookings")
           .where({
             booker_id: accountId,
-            house_id: houseId,
+            house_id: mockHouseData1.houseId,
             comments: mockInvalidBookingData.comments,
             companions: mockInvalidBookingData.companions,
           })
@@ -146,12 +160,16 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId,
+      );
 
       const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
         createMockSession(accountId, 1),
-        createMockBooking(accountId, 3, 3, "pending", houseId),
-        createMockBooking(accountId, 6, 3, "pending", houseId),
+        createMockBooking(accountId, 3, 3, "pending", mockHouseData1.houseId),
+        createMockBooking(accountId, 6, 3, "pending", mockHouseData1.houseId),
       ]);
 
       const response = await request(server)
@@ -177,9 +195,9 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const [houseId1, houseId2] = await Promise.all([
-        createMockHouse(mockHouseData.name, accountId), // House 1
-        createMockHouse(mockHouseData2.name, accountId), // House 2
+      await Promise.all([
+        createMockHouse(mockHouseData1.name, mockHouseData1.houseId, accountId), // House 1
+        createMockHouse(mockHouseData2.name, mockHouseData2.houseId, accountId), // House 2
       ]);
 
       const [
@@ -189,9 +207,9 @@ describe("Bookings", () => {
         [bookingId3],
       ] = await Promise.all([
         createMockSession(accountId, 1),
-        createMockBooking(accountId, 3, 3, "pending", houseId1), // House 1 booking
-        createMockBooking(accountId, 6, 3, "pending", houseId1), // House 1 booking
-        createMockBooking(accountId, 6, 3, "pending", houseId2), // House 2 booking
+        createMockBooking(accountId, 3, 3, "pending", mockHouseData1.houseId), // House 1 booking
+        createMockBooking(accountId, 6, 3, "pending", mockHouseData1.houseId), // House 1 booking
+        createMockBooking(accountId, 6, 3, "pending", mockHouseData2.houseId), // House 2 booking
       ]);
 
       const response = await request(server)
@@ -227,9 +245,17 @@ describe("Bookings", () => {
         ),
       ]);
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId1);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId1,
+      );
 
-      await addMockAccountToMockHouse(accountId2, houseId, false);
+      await addMockAccountToMockHouse(
+        accountId2,
+        mockHouseData1.houseId,
+        false,
+      );
 
       const [
         [sessionToken],
@@ -238,9 +264,9 @@ describe("Bookings", () => {
         [bookingId3],
       ] = await Promise.all([
         createMockSession(accountId1, 1),
-        createMockBooking(accountId1, 3, 3, "pending", houseId), // Account 1 booking
-        createMockBooking(accountId1, 1, 3, "pending", houseId), // Account 1 booking
-        createMockBooking(accountId2, 8, 3, "pending", houseId), // Account 2 booking
+        createMockBooking(accountId1, 3, 3, "pending", mockHouseData1.houseId), // Account 1 booking
+        createMockBooking(accountId1, 1, 3, "pending", mockHouseData1.houseId), // Account 1 booking
+        createMockBooking(accountId2, 8, 3, "pending", mockHouseData1.houseId), // Account 2 booking
       ]);
 
       const response = await request(server)
@@ -269,12 +295,16 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId,
+      );
 
       const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
         createMockSession(accountId, 1),
-        createMockBooking(accountId, 0, 3, "pending", houseId),
-        createMockBooking(accountId, 0, 3, "pending", houseId),
+        createMockBooking(accountId, 0, 3, "pending", mockHouseData1.houseId),
+        createMockBooking(accountId, 0, 3, "pending", mockHouseData1.houseId),
       ]);
 
       const today = new Date();
@@ -282,7 +312,7 @@ describe("Bookings", () => {
       const intervalEnd = lastDayOfMonth(today);
 
       const response = await request(server)
-        .get(`/houses/${houseId}/bookings`)
+        .get(`/houses/${mockHouseData1.houseId}/bookings`)
         .query({
           start: intervalStart,
           end: intervalEnd,
@@ -308,14 +338,24 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId,
+      );
 
       const twoMonthsAwayDate = 65;
 
       const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
         createMockSession(accountId, 1),
-        createMockBooking(accountId, 1, 3, "pending", houseId), // Inside interval booking
-        createMockBooking(accountId, twoMonthsAwayDate, 3, "pending", houseId), // Outside interval booking
+        createMockBooking(accountId, 1, 3, "pending", mockHouseData1.houseId), // Inside interval booking
+        createMockBooking(
+          accountId,
+          twoMonthsAwayDate,
+          3,
+          "pending",
+          mockHouseData1.houseId,
+        ), // Outside interval booking
       ]);
 
       const today = new Date();
@@ -324,7 +364,7 @@ describe("Bookings", () => {
       const intervalEnd = lastDayOfMonth(today);
 
       const response = await request(server)
-        .get(`/houses/${houseId}/bookings`)
+        .get(`/houses/${mockHouseData1.houseId}/bookings`)
         .query({
           start: intervalStart,
           end: intervalEnd,
@@ -350,13 +390,21 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const houseId1 = await createMockHouse(mockHouseData.name, accountId);
-      const houseId2 = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId,
+      );
+      await createMockHouse(
+        mockHouseData2.name,
+        mockHouseData2.houseId,
+        accountId,
+      );
 
       const [[sessionToken], [bookingId1], [bookingId2]] = await Promise.all([
         createMockSession(accountId, 1),
-        createMockBooking(accountId, 1, 3, "pending", houseId1), // First house booking
-        createMockBooking(accountId, 1, 3, "pending", houseId2), // Second house booking
+        createMockBooking(accountId, 1, 3, "pending", mockHouseData1.houseId), // First house booking
+        createMockBooking(accountId, 1, 3, "pending", mockHouseData2.houseId), // Second house booking
       ]);
 
       const today = new Date();
@@ -365,7 +413,7 @@ describe("Bookings", () => {
       const intervalEnd = lastDayOfMonth(today);
 
       const response = await request(server)
-        .get(`/houses/${houseId1}/bookings`)
+        .get(`/houses/${mockHouseData1.houseId}/bookings`)
         .query({
           start: intervalStart,
           end: intervalEnd,
@@ -393,11 +441,15 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId,
+      );
 
       const [[sessionToken], [bookingId]] = await Promise.all([
         createMockSession(accountId, 1),
-        createMockBooking(accountId, 0, 3, "accepted", houseId),
+        createMockBooking(accountId, 0, 3, "accepted", mockHouseData1.houseId),
       ]);
 
       const mockNewData = {
@@ -431,11 +483,21 @@ describe("Bookings", () => {
           mockNewAccountData.password,
         );
 
-        const houseId = await createMockHouse(mockHouseData.name, accountId);
+        await createMockHouse(
+          mockHouseData1.name,
+          mockHouseData1.houseId,
+          accountId,
+        );
 
         const [[sessionToken], [bookingId]] = await Promise.all([
           createMockSession(accountId, 1),
-          createMockBooking(accountId, 0, 3, "accepted", houseId),
+          createMockBooking(
+            accountId,
+            0,
+            3,
+            "accepted",
+            mockHouseData1.houseId,
+          ),
         ]);
 
         const mockInvalidNewData = {
@@ -471,11 +533,15 @@ describe("Bookings", () => {
         mockNewAccountData.password,
       );
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId,
+      );
 
       const [[sessionToken], [bookingId]] = await Promise.all([
         createMockSession(accountId, 1),
-        createMockBooking(accountId, 0, 3, "accepted", houseId),
+        createMockBooking(accountId, 0, 3, "accepted", mockHouseData1.houseId),
       ]);
 
       const response = await request(server)

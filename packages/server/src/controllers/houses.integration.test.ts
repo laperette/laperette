@@ -32,14 +32,17 @@ const mockNewAccountData3 = {
 };
 
 const mockHouseData1 = {
+  houseId: "a5d72994-80eb-45c7-8351-c3e0fa3c3d80",
   name: "Longwood House",
 };
 
 const mockInvalidHouseData = {
+  houseId: "invaliduuid",
   name: "    ",
 };
 
 const mockHouseData2 = {
+  houseId: "a5d72994-80eb-45c7-8351-c3e0fa3c3d81",
   name: "La Confiance",
 };
 
@@ -72,13 +75,14 @@ describe("Houses", () => {
 
       const newHouseRow = await knex("houses")
         .where({
+          house_id: mockHouseData1.houseId,
           name: mockHouseData1.name,
         })
         .first();
 
       const newHouseMembershipRow = await knex("house_memberships")
         .where({
-          house_id: newHouseRow.house_id,
+          house_id: mockHouseData1.houseId,
           account_id: accountId,
           is_admin: true,
         })
@@ -107,6 +111,7 @@ describe("Houses", () => {
 
         const newHouseRow = await knex("houses")
           .where({
+            // house_id: mockInvalidHouseData.houseId,
             name: mockInvalidHouseData.name,
           })
           .first();
@@ -134,9 +139,9 @@ describe("Houses", () => {
         mockNewAccountData1.password,
       );
 
-      const [houseId1, houseId2] = await Promise.all([
-        createMockHouse(mockHouseData1.name, accountId),
-        createMockHouse(mockHouseData2.name, accountId),
+      await Promise.all([
+        createMockHouse(mockHouseData1.name, mockHouseData1.houseId, accountId),
+        createMockHouse(mockHouseData2.name, mockHouseData2.houseId, accountId),
       ]);
 
       const [sessionToken] = await createMockSession(accountId, 1);
@@ -153,8 +158,8 @@ describe("Houses", () => {
         (house: HouseForClient) => house.houseId,
       );
 
-      expect(houseIds.includes(houseId1)).toBeTruthy();
-      expect(houseIds.includes(houseId2)).toBeTruthy();
+      expect(houseIds.includes(mockHouseData1.houseId)).toBeTruthy();
+      expect(houseIds.includes(mockHouseData2.houseId)).toBeTruthy();
     });
 
     it("should not return houses from another account", async () => {
@@ -173,9 +178,19 @@ describe("Houses", () => {
         ),
       ]);
 
-      const [houseId1, houseId2] = await Promise.all([
-        createMockHouse(mockHouseData1.name, accountId1), // Account 1 house
-        createMockHouse(mockHouseData1.name, accountId2), // Account 2 house
+      await Promise.all([
+        // Account 1 house
+        createMockHouse(
+          mockHouseData1.name,
+          mockHouseData1.houseId,
+          accountId1,
+        ),
+        // Account 2 house
+        createMockHouse(
+          mockHouseData2.name,
+          mockHouseData2.houseId,
+          accountId2,
+        ),
       ]);
 
       const [sessionToken] = await createMockSession(accountId1, 1); // Account 1 session
@@ -192,8 +207,8 @@ describe("Houses", () => {
         (house: HouseForClient) => house.houseId,
       );
 
-      expect(houseIds.includes(houseId1)).toBeTruthy(); // Account 1 house
-      expect(houseIds.includes(houseId2)).toBeFalsy(); // Account 2 house
+      expect(houseIds.includes(mockHouseData1.houseId)).toBeTruthy(); // Account 1 house
+      expect(houseIds.includes(mockHouseData2.houseId)).toBeFalsy(); // Account 2 house
     });
   });
 
@@ -214,12 +229,16 @@ describe("Houses", () => {
         ),
       ]);
 
-      const houseId1 = await createMockHouse(mockHouseData1.name, accountId1);
+      await createMockHouse(
+        mockHouseData1.name,
+        mockHouseData1.houseId,
+        accountId1,
+      );
 
       const [sessionToken] = await createMockSession(accountId1, 1);
 
       const response = await request(server)
-        .post(`/houses/${houseId1}/members/member`)
+        .post(`/houses/${mockHouseData1.houseId}/members/member`)
         .send({
           newMemberEmail: mockNewAccountData2.email,
         })
@@ -228,7 +247,7 @@ describe("Houses", () => {
       const newMembershipRow = await knex("house_memberships")
         .where({
           account_id: accountId2,
-          house_id: houseId1,
+          house_id: mockHouseData1.houseId,
         })
         .first();
 
@@ -245,12 +264,16 @@ describe("Houses", () => {
           mockNewAccountData1.password,
         );
 
-        const houseId1 = await createMockHouse(mockHouseData1.name, accountId1);
+        await createMockHouse(
+          mockHouseData1.name,
+          mockHouseData1.houseId,
+          accountId1,
+        );
 
         const [sessionToken] = await createMockSession(accountId1, 1);
 
         const response = await request(server)
-          .post(`/houses/${houseId1}/members/member`)
+          .post(`/houses/${mockHouseData1.houseId}/members/member`)
           .send({
             newMemberEmail: mockNewAccountData2.email,
           })
@@ -290,18 +313,22 @@ describe("Houses", () => {
           ),
         ]);
 
-        const houseId1 = await createMockHouse(mockHouseData1.name, accountId1);
+        await createMockHouse(
+          mockHouseData1.name,
+          mockHouseData1.houseId,
+          accountId1,
+        );
 
         await knex("house_memberships").insert({
           account_id: accountId3,
-          house_id: houseId1,
+          house_id: mockHouseData1.houseId,
           is_admin: false,
         });
 
         const [sessionToken] = await createMockSession(accountId3, 1); // Logged in account not admin
 
         const response = await request(server)
-          .post(`/houses/${houseId1}/members/member`)
+          .post(`/houses/${mockHouseData1.houseId}/members/member`)
           .send({
             newMemberEmail: mockNewAccountData2.email,
           })
@@ -332,18 +359,22 @@ describe("Houses", () => {
           ),
         ]);
 
-        const houseId1 = await createMockHouse(mockHouseData1.name, accountId1);
+        await createMockHouse(
+          mockHouseData1.name,
+          mockHouseData1.houseId,
+          accountId1,
+        );
 
         await knex("house_memberships").insert({
           account_id: accountId2,
-          house_id: houseId1,
+          house_id: mockHouseData1.houseId,
           is_admin: false,
         });
 
         const [sessionToken] = await createMockSession(accountId1, 1);
 
         const response = await request(server)
-          .post(`/houses/${houseId1}/members/member`)
+          .post(`/houses/${mockHouseData1.houseId}/members/member`)
           .send({
             newMemberEmail: mockNewAccountData2.email,
           })

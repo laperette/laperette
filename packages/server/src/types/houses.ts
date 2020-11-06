@@ -10,10 +10,12 @@ export interface HouseForClient {
 
 export interface NewHouseProperties {
   accountId: string;
+  houseId: string;
   name: string;
 }
 
 export interface HouseForDBInsert {
   account_id: NewHouseProperties["accountId"];
+  house_id: NewHouseProperties["houseId"];
   name: NewHouseProperties["name"];
 }

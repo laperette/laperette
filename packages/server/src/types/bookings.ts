@@ -28,6 +28,7 @@ export interface BookingForClient {
 }
 
 export interface NewBookingProperties {
+  bookingId: string;
   accountId: string;
   arrivalTime: string;
   departureTime: string;
@@ -44,6 +45,7 @@ export interface UpdatedBookingProperties {
 }
 
 export interface BookingForDBInsert {
+  booking_id: NewBookingProperties["bookingId"];
   booker_id: BookingFromDB["booking_id"];
   arrival_time: string;
   departure_time: string;

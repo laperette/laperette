@@ -82,11 +82,8 @@ export const retrieveHouseBookingsByInterval = async (
 
 export const insertOneBooking = async (
   newBooking: BookingForDBInsert,
-): Promise<string> => {
-  const [bookingId] = await knex("bookings")
-    .insert(newBooking)
-    .returning("booking_id");
-  return bookingId;
+): Promise<void> => {
+  await knex("bookings").insert(newBooking);
 };
 
 export const updateBookingById = async (

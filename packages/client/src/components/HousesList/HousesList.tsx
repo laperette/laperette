@@ -1,7 +1,6 @@
 import Axios from "axios";
 import React, { useLayoutEffect } from "react";
 
-import { useAsync } from "../../hooks/useAsync";
 import { House } from "../../types";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
@@ -52,19 +51,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
-  const { data: houses, run, isIdle, isLoading, isError, error } = useAsync<
-    House[] | null
-  >();
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
-
+  const [isError, setIsError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [housesToDisplay, setHousesToDisplay] = React.useState<House[]>([]);
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const addNewHouseToDisplayList = (newHouse: House) => {
+    setHousesToDisplay([...housesToDisplay, newHouse]);
   };
 
   useLayoutEffect(() => {
@@ -83,14 +85,22 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
       retrieveHousesForBookingForm(response.data.houses);
       return response.data.houses;
     };
-    run(getHouses());
-  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    getHouses()
+      .then((res) => {
+        setHousesToDisplay(res);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setIsError(true);
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isError) {
-    return <FullPageErrorFallback error={error} />;
+    return <FullPageErrorFallback error={null} />;
   }
 
-  if (isIdle || isLoading || !houses) {
+  if (isLoading || !housesToDisplay) {
     return <FullPageSpinner />;
   }
 
@@ -102,7 +112,10 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
         onClose={handleClose}
         variant="temporary"
       >
-        <NewHouseForm handleClose={handleClose} />
+        <NewHouseForm
+          handleClose={handleClose}
+          addNewHouseToDisplayList={addNewHouseToDisplayList}
+        />
       </Drawer>
       <Typography
         variant="h4"
@@ -123,7 +136,7 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
         </Tooltip>
       </Typography>
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
-        {houses.map((house) => (
+        {housesToDisplay.map((house) => (
           <GridListTile key={house.houseId}>
             <Card>
               <CardContent>

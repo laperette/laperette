@@ -19,6 +19,7 @@ const mockNewAccountData2 = {
 };
 
 const mockHouseData = {
+  houseId: "a5d72994-80eb-45c7-8351-c3e0fa3c3d80",
   name: "Longwood House",
 };
 
@@ -32,14 +33,18 @@ describe(validateHouseMembership.name, () => {
         mockNewAccountData1.password,
       );
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId);
+      await createMockHouse(
+        mockHouseData.name,
+        mockHouseData.houseId,
+        accountId,
+      );
 
       const ctx = createMockContext({
         state: { accountId: accountId },
       });
 
       ctx.params = {
-        houseId,
+        houseId: mockHouseData.houseId,
       };
 
       await validateHouseMembership(ctx, mockNext);
@@ -64,14 +69,18 @@ describe(validateHouseMembership.name, () => {
         ),
       ]);
 
-      const houseId = await createMockHouse(mockHouseData.name, accountId1);
+      await createMockHouse(
+        mockHouseData.name,
+        mockHouseData.houseId,
+        accountId1,
+      );
 
       const ctx = createMockContext({
         state: { accountId: accountId2 }, // Second account is logged in
       });
 
       ctx.params = {
-        houseId,
+        houseId: mockHouseData.houseId,
       };
 
       await validateHouseMembership(ctx, mockNext);

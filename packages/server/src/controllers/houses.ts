@@ -17,9 +17,9 @@ import { retrieveAccountByEmail } from "../db/accounts";
 
 export const createHouse = async (ctx: Context) => {
   const { accountId } = ctx.state;
-  const { name } = ctx.request.body;
+  const { name, houseId } = ctx.request.body;
 
-  const newHouseData = { accountId, name };
+  const newHouseData = { accountId, name, houseId };
 
   try {
     const isValidData = !!(await validateNewHouseData(newHouseData));
@@ -36,7 +36,7 @@ export const createHouse = async (ctx: Context) => {
 
     const serializedHouse = serializeHouseForDBInsert(newHouseData);
 
-    const houseId = await insertOneHouse(serializedHouse);
+    await insertOneHouse(serializedHouse);
 
     const successMessage = "New house created";
     logger.info(successMessage, {
