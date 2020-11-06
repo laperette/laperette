@@ -95,3 +95,7 @@ export const updateBookingById = async (
 ): Promise<void> => {
   await knex("bookings").update(dataToUpdate).where({ booking_id: bookingId });
 };
+
+export const deleteBookingById = async (bookingId: string): Promise<void> => {
+  await knex("bookings").del().where({ booking_id: bookingId });
+};

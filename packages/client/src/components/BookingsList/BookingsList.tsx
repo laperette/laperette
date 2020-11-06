@@ -124,7 +124,12 @@ export const BookingsList = ({ houses }: Props) => {
                 </CardContent>
                 <Divider light />
                 <CardActions>
-                  <Button size="small" color="primary" fullWidth>
+                  <Button
+                    size="small"
+                    color="primary"
+                    fullWidth
+                    onClick={() => handleBookingCancellation(booking.bookingId)}
+                  >
                     Cancel
                   </Button>
                 </CardActions>

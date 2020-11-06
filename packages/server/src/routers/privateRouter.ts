@@ -10,6 +10,7 @@ import {
   updateBooking,
   getHouseBookingsByInterval,
   getHouseBooking,
+  deleteBooking,
 } from "../controllers/bookings";
 import { getCurrentAccount } from "../controllers/accounts";
 import {
@@ -40,6 +41,12 @@ privateRouter.put(
   "/bookings/:bookingId",
   validateBookingOwnership,
   updateBooking,
+);
+
+privateRouter.del(
+  "/bookings/:bookingId",
+  validateBookingOwnership,
+  deleteBooking,
 );
 
 privateRouter.get("/houses", getAccountHouses);
