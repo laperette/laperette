@@ -68,6 +68,17 @@ export const BookingsList = ({ houses }: Props) => {
     setOpen(false);
   };
 
+  const handleBookingCancellation = async (
+    bookingId: string,
+  ): Promise<void> => {
+    await Axios.delete(
+      `${process.env.REACT_APP_SERVER_URL}/bookings/${bookingId}`,
+      {
+        withCredentials: true,
+      },
+    );
+  };
+
   useLayoutEffect(() => {
     const getBookings = async (): Promise<Booking[]> => {
       const response = await Axios.get(
@@ -149,7 +160,12 @@ export const BookingsList = ({ houses }: Props) => {
                 </CardContent>
                 <Divider light />
                 <CardActions>
-                  <Button size="small" color="primary" fullWidth>
+                  <Button
+                    size="small"
+                    color="primary"
+                    fullWidth
+                    onClick={() => handleBookingCancellation(booking.bookingId)}
+                  >
                     Cancel
                   </Button>
                 </CardActions>

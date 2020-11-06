@@ -461,4 +461,35 @@ describe("Bookings", () => {
       });
     });
   });
+
+  describe("Delete a booking: /bookings/:bookingId", () => {
+    it("should delete the booking", async () => {
+      const [accountId] = await createMockAccount(
+        mockNewAccountData.firstName,
+        mockNewAccountData.lastName,
+        mockNewAccountData.email,
+        mockNewAccountData.password,
+      );
+
+      const houseId = await createMockHouse(mockHouseData.name, accountId);
+
+      const [[sessionToken], [bookingId]] = await Promise.all([
+        createMockSession(accountId, 1),
+        createMockBooking(accountId, 0, 3, "accepted", houseId),
+      ]);
+
+      const response = await request(server)
+        .del(`/bookings/${bookingId}`)
+        .set("Cookie", [`laperette_session=${sessionToken}`]);
+
+      const deletedBookingRow = await knex("bookings")
+        .where({
+          booking_id: bookingId,
+        })
+        .first();
+
+      expect(response.status).toStrictEqual(204);
+      expect(deletedBookingRow).toBeUndefined();
+    });
+  });
 });
