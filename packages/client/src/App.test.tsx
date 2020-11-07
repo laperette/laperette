@@ -1,60 +1,52 @@
+import { render, waitFor } from "@testing-library/react";
+import Axios from "axios";
 import React from "react";
-import { render, wait } from "@testing-library/react";
+import { cache } from "swr";
 import { App } from "./App";
 import { AppProviders } from "./contexts/AppProviders";
-import { AuthClient } from "./utils/authClient";
+import { authClientFactory, userFactory } from "./utils/factories";
+
+jest.mock("axios");
+const mockedAxios = Axios as jest.Mocked<typeof Axios>;
+mockedAxios.create.mockImplementation(() => Axios);
+
+const mockSuccessCall = () => {
+  mockedAxios.get.mockResolvedValueOnce({ data: userFactory() });
+};
+
+const mockFailedCall = () => {
+  mockedAxios.get.mockRejectedValueOnce({ response: { status: 401 } });
+};
 
 describe("App", () => {
-  it("should display a temporary dumb test while we update the real one", () => {
-    expect(true).toBeTruthy();
+  afterEach(() => {
+    mockedAxios.get.mockClear();
+    cache.clear();
   });
-  // it("should display a loading spinner and then the login page if not authenticated", async () => {
-  //   const { getByText } = render(<App />, {
-  //     wrapper: ({ children }) => (
-  //       <AppProviders
-  //         authClient={AuthClient({
-  //           fetchUser: () => Promise.resolve({ user: null }),
-  //         })}
-  //       >
-  //         {children}
-  //       </AppProviders>
-  //     ),
-  //   });
-  //   expect(getByText(/loading/i)).toBeInTheDocument();
-  //   await wait();
-  //   expect(getByText(/log in/i)).toBeInTheDocument();
-  // });
-  // it("should display a loading spinner and then the error page if the fetch user request failed", async () => {
-  //   const { getByText } = render(<App />, {
-  //     wrapper: ({ children }) => (
-  //       <AppProviders
-  //         authClient={AuthClient({
-  //           fetchUser: () =>
-  //             Promise.reject(new Error("Unable to reach the server")),
-  //         })}
-  //       >
-  //         {children}
-  //       </AppProviders>
-  //     ),
-  //   });
-  //   expect(getByText(/loading/i)).toBeInTheDocument();
-  //   await wait();
-  //   expect(getByText(/Unable to reach the server/i)).toBeInTheDocument();
-  // });
-  // it("should display a loading spinner and then the authenticated page if authenticated", async () => {
-  //   const { getByText } = render(<App />, {
-  //     wrapper: ({ children }) => (
-  //       <AppProviders
-  //         authClient={AuthClient({
-  //           fetchUser: () => Promise.resolve({ user: userFactory() }),
-  //         })}
-  //       >
-  //         {children}
-  //       </AppProviders>
-  //     ),
-  //   });
-  //   expect(getByText(/loading/i)).toBeInTheDocument();
-  //   await wait();
-  //   expect(getByText(/laperette/i)).toBeInTheDocument();
-  // });
+  it("should display a loading spinner and then the login page if not authenticated or if an error occured", async () => {
+    mockFailedCall();
+    const { getByTestId, getByText } = render(<App />, {
+      wrapper: ({ children }) => (
+        <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
+      ),
+    });
+    expect(getByTestId("full-page-spinner")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByTestId("full-page-spinner")).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(getByText(/log in/i)).toBeInTheDocument();
+    });
+  });
+  it("should display a loading spinner and then the authenticated page if authenticated", async () => {
+    mockSuccessCall();
+    const { getByText } = render(<App />, {
+      wrapper: ({ children }) => (
+        <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
+      ),
+    });
+    await waitFor(() => {
+      expect(getByText(/La Perette/i)).toBeInTheDocument();
+    });
+  });
 });

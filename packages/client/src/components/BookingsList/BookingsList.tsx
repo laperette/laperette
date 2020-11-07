@@ -1,5 +1,4 @@
-import Axios from "axios";
-import React, { useLayoutEffect } from "react";
+import React from "react";
 
 import {
   Button,
@@ -13,12 +12,10 @@ import {
   Typography,
 } from "@material-ui/core";
 
-import { useAsync } from "../../hooks/useAsync";
-import { Booking } from "../../types";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { formatDate } from "../../utils/calendar";
-import { serializeBooking } from "../../utils/bookings";
+import { useBookings } from "../../hooks/useBookings";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -39,35 +36,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const BookingsList = () => {
-  const { data: bookings, run, isIdle, isLoading, isError, error } = useAsync<
-    Booking[] | null
-  >();
+  const { data: bookings, error } = useBookings();
 
   const classes = useStyles();
 
-  useLayoutEffect(() => {
-    const getBookings = async (): Promise<Booking[]> => {
-      const response = await Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/bookings`,
-        {
-          withCredentials: true,
-        },
-      );
-
-      if (!response?.data || !response?.data?.bookings.length) {
-        return [];
-      }
-
-      return response.data.bookings.map(serializeBooking);
-    };
-    run(getBookings());
-  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (isError) {
+  if (error) {
     return <FullPageErrorFallback error={error} />;
   }
-
-  if (isIdle || isLoading || !bookings) {
+  if (!bookings) {
     return <FullPageSpinner />;
   }
 

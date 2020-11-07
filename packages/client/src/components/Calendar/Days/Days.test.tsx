@@ -51,11 +51,12 @@ describe(Days.name, () => {
 
     const mockCurrentMonthName = "Août";
 
-    await render(
+    render(
       <Days
         daysToDisplay={mockDaysToDisplay}
         currentMonthName={mockCurrentMonthName}
         bookings={[]}
+        setSelectedBooking={() => {}}
       />,
     );
 

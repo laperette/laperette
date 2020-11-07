@@ -17,9 +17,7 @@
   "[typescriptreact]": {
     "editor.formatOnSave": true
   },
-  "prettier.jsxSingleQuote": false,
   "prettier.singleQuote": true,
-  "eslint.enable": true,
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.packageManager": "yarn",
   "eslint.alwaysShowStatus": true,
@@ -28,5 +26,8 @@
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "prettier.configPath": ".prettierrc",
-  "yaml.format.singleQuote": true
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "yaml.format.singleQuote": true,
+  "eslint.format.enable": true,
+  "prettier.packageManager": "yarn"
 }

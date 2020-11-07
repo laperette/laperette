@@ -1,11 +1,22 @@
 import React from "react";
-import { Box, Text } from "grommet";
-import { Sync } from "grommet-icons";
+import { CircularProgress, Grid, makeStyles } from "@material-ui/core";
 
-export const FullPageSpinner = () => (
-  <Box fill justify="center" align="center">
-    <Text size="xxlarge">
-      <Sync /> loading...
-    </Text>
-  </Box>
-);
+const useStyles = makeStyles({
+  root: {
+    height: "100vh",
+  },
+});
+
+export const FullPageSpinner = () => {
+  const styles = useStyles();
+  return (
+    <Grid
+      container
+      justify="center"
+      alignItems="center"
+      className={styles.root}
+    >
+      <CircularProgress data-testid="full-page-spinner" />
+    </Grid>
+  );
+};

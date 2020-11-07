@@ -1,12 +1,8 @@
-import Axios from "axios";
+import { getAxiosInstance } from "./fetcher";
 
-export type AuthClient = {
-  fetchUser: () => Promise<{ user: User } | null>;
-  login: (credentials: Credentials) => Promise<User>;
+export type AuthClientType = {
+  login: (credentials: Credentials) => Promise<User | null>;
   logout: () => Promise<void>;
-  signup: (
-    credentials: SignUpCredentials,
-  ) => Promise<{ firstName: string; lastName: string }>;
 };
 
 export interface Credentials {
@@ -28,60 +24,27 @@ export type User = {
   email: string;
 };
 
-export const AuthClient = ({
-  fetchUser = () => {
-    return Axios({
-      method: "get",
-      url: `${process.env.REACT_APP_SERVER_URL}/accounts/current`,
-      withCredentials: true,
-    }).then((res) =>
-      Promise.resolve(res.data).catch(() => Promise.reject(null)),
+export const AuthClient: AuthClientType = {
+  login: async ({ email, password }) => {
+    const { data, status } = await getAxiosInstance().post(
+      `/login`,
+      { email, password },
+      {
+        validateStatus: (status) => status <= 200 || status === 401,
+      },
     );
+    if (status === 401) {
+      return null;
+    }
+    return {
+      accountId: data.account.accountId,
+      firstName: data.account.firstName,
+      lastName: data.account.lastName,
+      email: data.account.email,
+    };
   },
-  login = ({ email, password }) => {
-    return Axios({
-      method: "post",
-      url: `${process.env.REACT_APP_SERVER_URL}/login`,
-      data: { email, password },
-      withCredentials: true,
-    }).then((result) =>
-      Promise.resolve({
-        accountId: result.data.account.accountId,
-        firstName: result.data.account.firstName,
-        lastName: result.data.account.lastName,
-        email: result.data.account.email,
-      }),
-    );
-  },
-  logout = async () => {
-    return Axios({
-      method: "post",
-      url: `${process.env.REACT_APP_SERVER_URL}/logout`,
-      withCredentials: true,
-    })
-      .then(() => Promise.resolve())
-      .catch(() => Promise.reject());
-  },
-  signup = ({ firstName, lastName, email, password }) => {
-    return Axios({
-      method: "post",
-      url: `${process.env.REACT_APP_SERVER_URL}/signup`,
-      data: { firstName, lastName, email, password },
-    })
-      .then((result) =>
-        Promise.resolve({
-          firstName: result.data.account.firstName,
-          lastName: result.data.account.lastName,
-        }),
-      )
-      .catch(() => Promise.reject());
-  },
-}: Partial<AuthClient> = {}): AuthClient => ({
-  fetchUser,
-  login,
-  logout,
-  signup,
-});
+  logout: async () => getAxiosInstance().post("/logout"),
+};
 
 export const fieldsErrorsMapping: { [key: string]: string } = {
   "required": "Ce champ ne peut être vide",
