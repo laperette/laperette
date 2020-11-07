@@ -1,13 +1,26 @@
 import React from "react";
-import { Box, Text } from "grommet";
+import { Grid, makeStyles, Typography } from "@material-ui/core";
+
+const useStyles = makeStyles({
+  root: {
+    height: "100vh",
+  },
+});
 
 export const FullPageErrorFallback = ({ error }: { error: Error | null }) => {
+  const styles = useStyles();
   return (
-    <Box fill justify="center" align="center">
-      <Text size="xxlarge">
+    <Grid
+      container
+      justify="center"
+      alignItems="center"
+      direction="column"
+      className={styles.root}
+    >
+      <Typography variant="h5" paragraph>
         Uh oh... There's a problem. Try refreshing the app.
-      </Text>
-      <pre>{error?.message}</pre>
-    </Box>
+      </Typography>
+      <Typography variant="caption">{error?.message}</Typography>
+    </Grid>
   );
 };
