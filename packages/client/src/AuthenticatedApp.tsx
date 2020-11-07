@@ -1,7 +1,6 @@
 import React from "react";
-import { Main } from "grommet";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
-
+import { Box } from "@material-ui/core";
 import { useAuth } from "./contexts/AuthContext";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { Dashboard } from "./pages/Dashboard";
@@ -13,7 +12,12 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+} from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,6 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const AuthenticatedApp = () => {
   const { logout } = useAuth();
+  const theme = useTheme();
   const classes = useStyles();
 
   return (
@@ -54,7 +59,7 @@ const AuthenticatedApp = () => {
           </Button>
         </Toolbar>
       </AppBar>
-      <Main gridArea="main" background="light-1" pad="medium">
+      <Box padding={theme.spacing(1)}>
         <Switch>
           <Route path="/dashboard">
             <Dashboard />
@@ -64,7 +69,7 @@ const AuthenticatedApp = () => {
           </Route>
           <Redirect to="/dashboard" />
         </Switch>
-      </Main>
+      </Box>
     </div>
   );
 };
