@@ -5,6 +5,7 @@ import { AuthClientType } from "../utils/authClient";
 import { SWRConfig } from "swr";
 import { fetcher } from "../utils/fetcher";
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 const theme = createMuiTheme({
   overrides: {
@@ -28,12 +29,14 @@ export const AppProviders = ({
   children: React.ReactNode;
   authClient: AuthClientType;
 }) => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <SWRConfig value={{ fetcher }}>
-      <Router>
-        <AuthProvider authClient={authClient}>{children}</AuthProvider>
-      </Router>
-    </SWRConfig>
-  </ThemeProvider>
+  <ErrorBoundary>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <SWRConfig value={{ fetcher }}>
+        <Router>
+          <AuthProvider authClient={authClient}>{children}</AuthProvider>
+        </Router>
+      </SWRConfig>
+    </ThemeProvider>
+  </ErrorBoundary>
 );
