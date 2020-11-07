@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo, useContext, useEffect } from "react";
-import { User, AuthClientType } from "../utils/authClient";
-import { FullPageSpinner } from "../components/FullPageSpinner";
-import useSWR, { cache } from "swr";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import useSWR from "swr";
 import { mutateCallback } from "swr/dist/types";
+import { FullPageSpinner } from "../components/FullPageSpinner";
+import { AuthClientType, User } from "../utils/authClient";
 
 type AuthContextValue = {
   logout: () => Promise<void>;
@@ -58,13 +58,7 @@ export const AuthProvider = ({
     mutate,
   ]);
 
-  useEffect(() => {
-    return cache.subscribe(() => {
-      console.log(cache.get("/accounts/current"));
-    });
-  }, []);
-
-  if (isValidating && !user) {
+  if (isValidating || (!user && !error)) {
     return <FullPageSpinner />;
   }
 
