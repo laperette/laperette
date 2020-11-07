@@ -81,7 +81,7 @@ export const SignIn = () => {
           fullWidth
           id="password"
           inputRef={register({ required: true })}
-          label="Mot de passe"
+          label="password"
           margin="normal"
           name="password"
           required
@@ -96,13 +96,13 @@ export const SignIn = () => {
           className={classes.submit}
           loading={isLoading}
         >
-          Se connecter !
+          Log in
         </Button>
         <Grid container>
           <Grid item>
-            Pas encore inscrit ?{" "}
+            Need an account?{" "}
             <Link to="/signup" variant="body2" component={RouterLink}>
-              Créer un compte
+              Sign up
             </Link>
           </Grid>
         </Grid>

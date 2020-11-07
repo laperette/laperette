@@ -112,7 +112,7 @@ export const SignUp = () => {
               fullWidth
               id="firstName"
               inputRef={register({ required: true })}
-              label="Prénom"
+              label="Firstname"
               name="firstName"
               required
               variant="outlined"
@@ -122,11 +122,11 @@ export const SignUp = () => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              autoComplete="family-nname"
+              autoComplete="family-name"
               fullWidth
               id="lastName"
               inputRef={register({ required: true })}
-              label="Nom de famille"
+              label="Lastname"
               name="lastName"
               required
               variant="outlined"
@@ -140,7 +140,8 @@ export const SignUp = () => {
               fullWidth
               id="password"
               inputRef={register({ required: true })}
-              label="Choisissez un mot de passe"
+              placeholder="Choose a password"
+              label="Password"
               name="password"
               required
               type="password"
@@ -163,7 +164,7 @@ export const SignUp = () => {
           className={classes.submit}
           loading={isLoading}
         >
-          S'inscrire !
+          Sign up
         </Button>
         <Grid container justify="flex-end">
           <Grid item>
