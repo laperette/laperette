@@ -1,5 +1,3 @@
-import React from "react";
-
 import {
   Button,
   Card,
@@ -11,11 +9,10 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-
-import { FullPageErrorFallback } from "../FullPageErrorCallback";
-import { FullPageSpinner } from "../FullPageSpinner";
-import { formatDate } from "../../utils/calendar";
+import React from "react";
 import { useBookings } from "../../hooks/useBookings";
+import { formatDate } from "../../utils/calendar";
+import { FullPageSpinner } from "../FullPageSpinner";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -36,13 +33,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const BookingsList = () => {
-  const { data: bookings, error } = useBookings();
+  const { bookings } = useBookings();
 
   const classes = useStyles();
 
-  if (error) {
-    return <FullPageErrorFallback error={error} />;
-  }
   if (!bookings) {
     return <FullPageSpinner />;
   }

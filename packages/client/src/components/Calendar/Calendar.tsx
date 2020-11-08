@@ -1,18 +1,16 @@
-import React from "react";
-
-import { useCalendarActions } from "../../hooks/useCalendarAction";
-import { FullPageSpinner } from "../FullPageSpinner";
-import { FullPageErrorFallback } from "../FullPageErrorCallback";
-import { MONTHS_NAMES } from "../../utils/constants";
-import { Days } from "./Days/Days";
-import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
-import { useCalendarData } from "../../hooks/useCalendarData";
 import { Chip, IconButton } from "@material-ui/core";
 import ArrowBackIosRoundedIcon from "@material-ui/icons/ArrowBackIosRounded";
 import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
+import React from "react";
 import styled from "styled-components";
-import { Booking } from "../../types";
 import { useBookings } from "../../hooks/useBookings";
+import { useCalendarActions } from "../../hooks/useCalendarAction";
+import { useCalendarData } from "../../hooks/useCalendarData";
+import { Booking } from "../../types";
+import { MONTHS_NAMES } from "../../utils/constants";
+import { FullPageSpinner } from "../FullPageSpinner";
+import { CalendarHeading } from "./CalendarHeading/CalendarHeading";
+import { Days } from "./Days/Days";
 
 const Layout = styled.div`
   display: flex;
@@ -49,7 +47,7 @@ interface Props {
 }
 
 export const Calendar = ({ setSelectedBooking }: Props) => {
-  const { data: bookings, error } = useBookings();
+  const { bookings } = useBookings();
 
   const {
     currentMonthNumber,
@@ -62,10 +60,6 @@ export const Calendar = ({ setSelectedBooking }: Props) => {
   const currentMonthName = MONTHS_NAMES[currentMonthNumber];
 
   const [daysToDisplay] = useCalendarData({ currentMonthNumber, currentYear });
-
-  if (error) {
-    return <FullPageErrorFallback error={error} />;
-  }
 
   if (!bookings) {
     return <FullPageSpinner />;

@@ -1,10 +1,3 @@
-import Axios from "axios";
-import React, { useLayoutEffect } from "react";
-
-import { useAsync } from "../../hooks/useAsync";
-import { House } from "../../types";
-import { FullPageErrorFallback } from "../FullPageErrorCallback";
-import { FullPageSpinner } from "../FullPageSpinner";
 import {
   Button,
   Card,
@@ -16,7 +9,12 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
+import Axios from "axios";
+import React, { useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAsync } from "../../hooks/useAsync";
+import { House } from "../../types";
+import { FullPageSpinner } from "../FullPageSpinner";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const HousesList = () => {
-  const { data: houses, run, isIdle, isLoading, isError, error } = useAsync<
+  const { data: houses, run, isIdle, isLoading, error } = useAsync<
     House[] | null
   >();
   const classes = useStyles();
@@ -61,8 +59,8 @@ export const HousesList = () => {
     run(getHouses());
   }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (isError) {
-    return <FullPageErrorFallback error={error} />;
+  if (error) {
+    throw error;
   }
 
   if (isIdle || isLoading || !houses) {

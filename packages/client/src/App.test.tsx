@@ -1,30 +1,46 @@
 import { act, fireEvent, render, waitFor } from "@testing-library/react";
-import Axios from "axios";
+import { AxiosError } from "axios";
 import React from "react";
 import { cache } from "swr";
 import { App } from "./App";
 import { AppProviders } from "./contexts/AppProviders";
+import * as useBookings from "./hooks/useBookings";
+import * as useCurrentAccount from "./hooks/useCurrentAccount";
 import { authClientFactory, userFactory } from "./utils/factories";
 
-jest.mock("axios");
-const mockedAxios = Axios as jest.Mocked<typeof Axios>;
-mockedAxios.create.mockImplementation(() => Axios);
+jest.mock("./hooks/useCurrentAccount");
+const mockedUseCurrentAccount = useCurrentAccount as jest.Mocked<
+  typeof useCurrentAccount
+>;
+mockedUseCurrentAccount.useCurrentAccount.mockImplementation(() => ({
+  revalidate: async () => false,
+  mutate: async () => null,
+  isValidating: false,
+  data: userFactory(),
+}));
 
-const mockSuccessCall = () => {
-  mockedAxios.get.mockResolvedValueOnce({ data: userFactory() });
-};
-
-const mockFailedCall = () => {
-  mockedAxios.get.mockRejectedValueOnce({ response: { status: 401 } });
-};
+jest.mock("./hooks/useBookings");
+const mockedUseBookings = useBookings as jest.Mocked<typeof useBookings>;
+mockedUseBookings.useBookings.mockImplementation(() => ({
+  revalidate: async () => false,
+  mutate: async () => null,
+  isValidating: false,
+  bookings: [],
+}));
 
 describe("App", () => {
   afterEach(() => {
-    mockedAxios.get.mockClear();
+    mockedUseCurrentAccount.useCurrentAccount.mockClear();
     cache.clear();
   });
   it("should display a loading spinner and then the login page if not authenticated or if an error occured", async () => {
-    mockFailedCall();
+    mockedUseCurrentAccount.useCurrentAccount.mockReturnValueOnce({
+      revalidate: async () => false,
+      mutate: async () => null,
+      isValidating: false,
+      data: null,
+      error: { response: { status: 401 } } as AxiosError,
+    });
     const { getByTestId, getByText } = render(<App />, {
       wrapper: ({ children }) => (
         <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
@@ -39,18 +55,18 @@ describe("App", () => {
     });
   });
   it("should display a loading spinner and then the authenticated page if authenticated", async () => {
-    mockSuccessCall();
-    const { getByText } = render(<App />, {
+    const { getByText, getByTestId } = render(<App />, {
       wrapper: ({ children }) => (
         <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
       ),
     });
+    expect(getByTestId("full-page-spinner")).toBeInTheDocument();
     await waitFor(() => {
       expect(getByText(/La Perette/i)).toBeInTheDocument();
     });
+    expect(getByText(/Logout/i)).toBeInTheDocument();
   });
   it("should render the login page on click on logout", async () => {
-    mockSuccessCall();
     const { getByText } = render(<App />, {
       wrapper: ({ children }) => (
         <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
@@ -67,7 +83,6 @@ describe("App", () => {
     });
   });
   it("should render the authenticated page if login was successful", async () => {
-    mockFailedCall();
     const { getByText, getByLabelText, getByTestId } = render(<App />, {
       wrapper: ({ children }) => (
         <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
@@ -76,7 +91,6 @@ describe("App", () => {
     await waitFor(() => {
       expect(getByText(/log in/i)).toBeInTheDocument();
     });
-    mockFailedCall();
     act(() => {
       fireEvent.change(getByLabelText(/email/i), {
         target: { value: "admin@mail.fr" },
