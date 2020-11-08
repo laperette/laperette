@@ -9,11 +9,9 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import Axios from "axios";
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { useAsync } from "../../hooks/useAsync";
-import { House } from "../../types";
+import { useHouses } from "../../hooks/useHouses";
 import { FullPageSpinner } from "../FullPageSpinner";
 
 const useStyles = makeStyles((theme) => ({
@@ -36,34 +34,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const HousesList = () => {
-  const { data: houses, run, isIdle, isLoading, error } = useAsync<
-    House[] | null
-  >();
+  const { houses } = useHouses();
   const classes = useStyles();
 
-  useLayoutEffect(() => {
-    const getHouses = async (): Promise<House[]> => {
-      const response = await Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/houses`,
-        {
-          withCredentials: true,
-        },
-      );
-
-      if (!response?.data || !response?.data?.houses.length) {
-        return [];
-      }
-
-      return response.data.houses;
-    };
-    run(getHouses());
-  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (error) {
-    throw error;
-  }
-
-  if (isIdle || isLoading || !houses) {
+  if (!houses) {
     return <FullPageSpinner />;
   }
 
