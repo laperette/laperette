@@ -31,8 +31,8 @@ type Credentials = { email: string; password: string };
 
 export const SignIn = () => {
   const { login, isValidating } = useAuth();
-  const classes = useStyles();
   const { register, handleSubmit } = useForm<Credentials>();
+  const classes = useStyles();
 
   return (
     <>
