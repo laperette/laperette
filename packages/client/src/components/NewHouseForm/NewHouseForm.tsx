@@ -11,10 +11,8 @@ import { useForm, OnSubmit, Controller } from "react-hook-form";
 import Axios from "axios";
 import { newHouseFieldsErrorsMapping } from "../../utils/houses";
 
-type NewHouseData = { name: string };
-
 interface Props {
-  handleClose: () => void;
+  handleCloseDrawer: () => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -33,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const NewHouseForm = ({ handleClose }: Props) => {
+export const NewHouseForm = ({ handleCloseDrawer }: Props) => {
   const classes = useStyles();
 
   const { handleSubmit, setError, errors, control } = useForm<NewHouseData>();
@@ -47,7 +45,7 @@ export const NewHouseForm = ({ handleClose }: Props) => {
         },
         withCredentials: true,
       });
-      handleClose();
+      handleCloseDrawer();
     } catch (error) {
       setError("name", "wrongHouseName");
     }

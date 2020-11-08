@@ -50,21 +50,27 @@ const useStyles = makeStyles(() => ({
 export const BookingsList = ({ houses }: Props) => {
   const classes = useStyles();
 
-  const { data: bookings, error } = useBookings();
+  const {
+    bookings,
+    error,
+    handleBookingCancellation,
+    handleBookingCreation,
+  } = useBookings();
 
   const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
+  const handleOpenDrawer = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleCloseDrawer = () => {
     setOpen(false);
   };
 
   if (error) {
     return <FullPageErrorFallback error={error} />;
   }
+
   if (!bookings) {
     return <FullPageSpinner />;
   }
@@ -74,10 +80,14 @@ export const BookingsList = ({ houses }: Props) => {
       <Drawer
         open={open}
         anchor="right"
-        onClose={handleClose}
+        onClose={handleCloseDrawer}
         variant="temporary"
       >
-        <NewBookingForm handleClose={handleClose} houses={houses} />
+        <NewBookingForm
+          houses={houses}
+          handleCloseDrawer={handleCloseDrawer}
+          handleBookingCreation={handleBookingCreation}
+        />
       </Drawer>
       <Typography
         className={classes.title}
@@ -90,7 +100,7 @@ export const BookingsList = ({ houses }: Props) => {
           title="Add"
           aria-label="add"
           placement="right"
-          onClick={handleClickOpen}
+          onClick={handleOpenDrawer}
         >
           <Fab color="primary" size="small">
             <AddIcon />
@@ -105,7 +115,7 @@ export const BookingsList = ({ houses }: Props) => {
               <Card>
                 <CardContent>
                   <Typography gutterBottom component="h5" align="center">
-                    {booking.houseName}
+                    {booking.status}
                   </Typography>
                   <Typography
                     variant="body2"

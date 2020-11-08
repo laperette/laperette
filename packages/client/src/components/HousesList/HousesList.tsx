@@ -1,7 +1,6 @@
 import Axios from "axios";
 import React, { useLayoutEffect } from "react";
 
-import { useAsync } from "../../hooks/useAsync";
 import { House } from "../../types";
 import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
@@ -23,6 +22,7 @@ import AddIcon from "@material-ui/icons/Add";
 
 import { Link } from "react-router-dom";
 import { NewHouseForm } from "../NewHouseForm";
+import useSWR from "swr";
 
 interface Props {
   retrieveHousesForBookingForm: (houses: House[]) => void;
@@ -52,45 +52,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
-  const { data: houses, run, isIdle, isLoading, isError, error } = useAsync<
-    House[] | null
-  >();
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
+  const handleOpenDrawer = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleCloseDrawer = () => {
     setOpen(false);
   };
 
-  useLayoutEffect(() => {
-    const getHouses = async (): Promise<House[]> => {
-      const response = await Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/houses`,
-        {
-          withCredentials: true,
-        },
-      );
-
-      if (!response?.data || !response?.data?.houses.length) {
-        return [];
-      }
-
-      retrieveHousesForBookingForm(response.data.houses);
-      return response.data.houses;
-    };
-    run(getHouses());
-  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (isError) {
+  if (error) {
     return <FullPageErrorFallback error={error} />;
   }
 
-  if (isIdle || isLoading || !houses) {
+  if (!houses) {
     return <FullPageSpinner />;
   }
 
@@ -99,10 +77,10 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
       <Drawer
         open={open}
         anchor="right"
-        onClose={handleClose}
+        onClose={handleCloseDrawer}
         variant="temporary"
       >
-        <NewHouseForm handleClose={handleClose} />
+        <NewHouseForm handleCloseDrawer={handleCloseDrawer} />
       </Drawer>
       <Typography
         variant="h4"
@@ -115,7 +93,7 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
           title="Add"
           aria-label="add"
           placement="right"
-          onClick={handleClickOpen}
+          onClick={handleOpenDrawer}
         >
           <Fab color="primary" size="small">
             <AddIcon />

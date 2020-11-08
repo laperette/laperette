@@ -10,21 +10,12 @@ import {
 } from "@material-ui/core";
 import { useForm, OnSubmit, Controller } from "react-hook-form";
 
-import Axios from "axios";
-import { House } from "../../types";
-import { createNewDateFromString } from "../../utils/calendar";
+import { House, NewBookingData } from "../../types";
 import { newBookingFieldsErrorsMapping } from "../../utils/bookings";
 
-interface NewBookingData {
-  houseId: string;
-  arrivalTime: string;
-  departureTime: string;
-  comments: string;
-  numberOfPeople: string;
-}
-
 interface Props {
-  handleClose: () => void;
+  handleCloseDrawer: () => void;
+  handleBookingCreation: (data: NewBookingData) => void;
   houses?: House[];
 }
 
@@ -44,34 +35,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const NewBookingForm = ({ handleClose, houses }: Props) => {
+export const NewBookingForm = ({
+  houses,
+  handleCloseDrawer,
+  handleBookingCreation,
+}: Props) => {
   const classes = useStyles();
 
   const { handleSubmit, setError, errors, control } = useForm<NewBookingData>();
 
   const onSubmit: OnSubmit<NewBookingData> = async (data) => {
     try {
-      const newBookingData = {
-        arrivalTime: createNewDateFromString(data.arrivalTime),
-        departureTime: createNewDateFromString(data.departureTime),
-        comments: data.comments,
-        companions: parseInt(data.numberOfPeople, 10),
-      };
-
-      await Axios(
-        `${process.env.REACT_APP_SERVER_URL}/houses/${data.houseId}/bookings/booking`,
-        {
-          method: "post",
-          data: newBookingData,
-          withCredentials: true,
-        },
-      );
-      handleClose();
+      handleBookingCreation(data);
+      handleCloseDrawer();
     } catch (error) {
       setError("departureTime", "generalInvalidMessage");
       setError("arrivalTime", "generalInvalidMessage");
       setError("comments", "generalInvalidMessage");
-      setError("numberOfPeople", "generalInvalidMessage");
+      setError("companions", "generalInvalidMessage");
       setError("houseId", "generalInvalidMessage");
     }
   };
@@ -130,11 +111,11 @@ export const NewBookingForm = ({ handleClose, houses }: Props) => {
           as={TextField}
           variant="outlined"
           label="Number of people"
-          name="numberOfPeople"
+          name="companions"
           control={control}
-          error={!!errors.numberOfPeople}
+          error={!!errors.companions}
           helperText={
-            !!errors.numberOfPeople
+            !!errors.companions
               ? newBookingFieldsErrorsMapping["generalInvalidMessage"]
               : ""
           }
