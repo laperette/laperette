@@ -16,8 +16,6 @@
     "@material-ui/lab": "^4.0.0-alpha.56",
     "axios": "^0.19.2",
     "date-fns": "^2.12.0",
-    "grommet": "^2.13.0",
-    "grommet-icons": "^4.4.0",
     "joi": "^17.3.0",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
