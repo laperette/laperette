@@ -12,6 +12,7 @@ import {
 import * as MockDate from "mockdate";
 import React from "react";
 import { cache } from "swr";
+import { TestWrapper } from "../../contexts/TestWrapper";
 import * as useBookings from "../../hooks/useBookings";
 import { getRandomIntegerInclusive } from "../../utils/calendar";
 import { Calendar } from "./Calendar";
@@ -29,6 +30,7 @@ const setupTest = async () => {
   const mockSetSelectedBooking = jest.fn();
   const renderResult = render(
     <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+    { wrapper: (props) => <TestWrapper {...props} /> },
   );
 
   return { ...renderResult, mockSetSelectedBooking };
@@ -57,7 +59,7 @@ describe("Calendar", () => {
       const { getByText } = await setupTest();
 
       expect(getByText("Today")).toBeInTheDocument();
-      expect(getByText("Monday")).toBeInTheDocument();
+      expect(getByText("MON")).toBeInTheDocument();
     });
   });
 
