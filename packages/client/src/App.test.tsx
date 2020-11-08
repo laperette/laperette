@@ -1,4 +1,4 @@
-import { render, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, waitFor } from "@testing-library/react";
 import Axios from "axios";
 import React from "react";
 import { cache } from "swr";
@@ -44,6 +44,47 @@ describe("App", () => {
       wrapper: ({ children }) => (
         <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
       ),
+    });
+    await waitFor(() => {
+      expect(getByText(/La Perette/i)).toBeInTheDocument();
+    });
+  });
+  it("should render the login page on click on logout", async () => {
+    mockSuccessCall();
+    const { getByText } = render(<App />, {
+      wrapper: ({ children }) => (
+        <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
+      ),
+    });
+    await waitFor(() => {
+      expect(getByText(/La Perette/i)).toBeInTheDocument();
+    });
+    act(() => {
+      fireEvent.click(getByText(/Logout/i));
+    });
+    await waitFor(() => {
+      expect(getByText(/log in/i)).toBeInTheDocument();
+    });
+  });
+  it("should render the authenticated page if login was successful", async () => {
+    mockFailedCall();
+    const { getByText, getByLabelText, getByTestId } = render(<App />, {
+      wrapper: ({ children }) => (
+        <AppProviders authClient={authClientFactory()}>{children}</AppProviders>
+      ),
+    });
+    await waitFor(() => {
+      expect(getByText(/log in/i)).toBeInTheDocument();
+    });
+    mockFailedCall();
+    act(() => {
+      fireEvent.change(getByLabelText(/email/i), {
+        target: { value: "admin@mail.fr" },
+      });
+      fireEvent.change(getByLabelText(/password/i), {
+        target: { value: "password" },
+      });
+      fireEvent.submit(getByTestId("signin-form"));
     });
     await waitFor(() => {
       expect(getByText(/La Perette/i)).toBeInTheDocument();

@@ -25,24 +25,7 @@ export type User = {
 };
 
 export const AuthClient: AuthClientType = {
-  login: async ({ email, password }) => {
-    const { data, status } = await getAxiosInstance().post(
-      `/login`,
-      { email, password },
-      {
-        validateStatus: (status) => status <= 200 || status === 401,
-      },
-    );
-    if (status === 401) {
-      return null;
-    }
-    return {
-      accountId: data.account.accountId,
-      firstName: data.account.firstName,
-      lastName: data.account.lastName,
-      email: data.account.email,
-    };
-  },
+  login: async (credentials) => getAxiosInstance().post(`/login`, credentials),
   logout: async () => getAxiosInstance().post("/logout"),
 };
 

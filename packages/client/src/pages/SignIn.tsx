@@ -1,20 +1,17 @@
-import React, { useCallback, useEffect } from "react";
 import {
   Avatar,
-  TextField,
-  Link,
   Grid,
-  Typography,
+  Link,
   makeStyles,
+  TextField,
+  Typography,
 } from "@material-ui/core";
 import { LockOutlined } from "@material-ui/icons";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { AxiosError } from "axios";
 import { Button } from "../components/Button";
-import { useAsync } from "../hooks/useAsync";
 import { useAuth } from "../contexts/AuthContext";
-import { getAxiosInstance } from "../utils/fetcher";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -33,26 +30,9 @@ const useStyles = makeStyles((theme) => ({
 type Credentials = { email: string; password: string };
 
 export const SignIn = () => {
-  const { mutate } = useAuth();
+  const { login, isValidating } = useAuth();
   const classes = useStyles();
   const { register, handleSubmit } = useForm<Credentials>();
-  const { data, isLoading, run } = useAsync<any, AxiosError>();
-
-  const signIn: SubmitHandler<Credentials> = useCallback(
-    (credentials) =>
-      run(
-        getAxiosInstance()
-          .post("/login", credentials)
-          .then((res) => res.data),
-      ),
-    [run],
-  );
-
-  useEffect(() => {
-    if (data) {
-      mutate(data, false);
-    }
-  }, [data, mutate]);
 
   return (
     <>
@@ -62,7 +42,12 @@ export const SignIn = () => {
       <Typography component="h1" variant="h5">
         Sign in
       </Typography>
-      <form onSubmit={handleSubmit(signIn)} className={classes.form} noValidate>
+      <form
+        onSubmit={handleSubmit(login)}
+        className={classes.form}
+        noValidate
+        data-testid="signin-form"
+      >
         <TextField
           autoComplete="email"
           autoFocus
@@ -94,7 +79,7 @@ export const SignIn = () => {
           variant="contained"
           color="primary"
           className={classes.submit}
-          loading={isLoading}
+          loading={isValidating}
         >
           Log in
         </Button>
