@@ -4,23 +4,10 @@ import { AuthProvider } from "./AuthContext";
 import { AuthClientType } from "../utils/authClient";
 import { SWRConfig } from "swr";
 import { fetcher } from "../utils/fetcher";
-import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
+import { CssBaseline, ThemeProvider } from "@material-ui/core";
+import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { ErrorBoundary } from "../components/ErrorBoundary";
-
-const theme = createMuiTheme({
-  overrides: {
-    MuiCssBaseline: {
-      "@global": {
-        html: {
-          backgroundColor: "rgb(245, 245, 245);",
-        },
-        body: {
-          backgroundColor: "rgb(245, 245, 245);",
-        },
-      },
-    },
-  },
-});
+import { theme } from "./theme";
 
 export const AppProviders = ({
   children,
@@ -30,13 +17,15 @@ export const AppProviders = ({
   authClient: AuthClientType;
 }) => (
   <ErrorBoundary>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <SWRConfig value={{ fetcher }}>
-        <Router>
-          <AuthProvider authClient={authClient}>{children}</AuthProvider>
-        </Router>
-      </SWRConfig>
-    </ThemeProvider>
+    <StyledThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <SWRConfig value={{ fetcher }}>
+          <Router>
+            <AuthProvider authClient={authClient}>{children}</AuthProvider>
+          </Router>
+        </SWRConfig>
+      </ThemeProvider>
+    </StyledThemeProvider>
   </ErrorBoundary>
 );

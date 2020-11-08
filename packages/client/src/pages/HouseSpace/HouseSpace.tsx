@@ -15,10 +15,10 @@ export const HouseSpace = () => {
         justify="space-evenly"
         align-self="center"
       >
-        <Grid item xs={12} sm={6}>
+        <Grid item sm={12} md={9}>
           <Calendar setSelectedBooking={setSelectedBooking} />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item container justify="center" sm={12} md={3}>
           <SelectedBooking selectedBooking={selectedBooking} />
         </Grid>
       </Grid>

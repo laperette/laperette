@@ -1,10 +1,3 @@
-import React from "react";
-import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
-import { Box } from "@material-ui/core";
-import { useAuth } from "./contexts/AuthContext";
-import { Switch, Route, Redirect } from "react-router-dom";
-import { Dashboard } from "./pages/Dashboard";
-import { HouseSpace } from "./pages/HouseSpace";
 import {
   AppBar,
   Button,
@@ -12,12 +5,13 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  useTheme,
-} from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
+import React from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
+import { useAuth } from "./contexts/AuthContext";
+import { Dashboard } from "./pages/Dashboard";
+import { HouseSpace } from "./pages/HouseSpace";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,12 +24,14 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       flexGrow: 1,
     },
+    main: {
+      padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`,
+    },
   }),
 );
 
 const AuthenticatedApp = () => {
   const { logout } = useAuth();
-  const theme = useTheme();
   const classes = useStyles();
 
   return (
@@ -59,7 +55,7 @@ const AuthenticatedApp = () => {
           </Button>
         </Toolbar>
       </AppBar>
-      <Box padding={theme.spacing(1)}>
+      <main className={classes.main}>
         <Switch>
           <Route path="/dashboard">
             <Dashboard />
@@ -69,7 +65,7 @@ const AuthenticatedApp = () => {
           </Route>
           <Redirect to="/dashboard" />
         </Switch>
-      </Box>
+      </main>
     </div>
   );
 };

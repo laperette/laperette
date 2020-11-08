@@ -6,8 +6,16 @@ export const CalendarHeading = () => {
   return (
     <>
       {WEEK_DAYS_NAMES.map((name) => (
-        <Box key={name} alignSelf="center" textAlign="center">
-          <Typography>{name}</Typography>
+        <Box
+          key={name}
+          display="flex"
+          justifyContent="center"
+          bgcolor="rgb(245, 245, 245)"
+          padding={1}
+        >
+          <Typography variant="body2">
+            {name.slice(0, 3).toUpperCase()}
+          </Typography>
         </Box>
       ))}
     </>

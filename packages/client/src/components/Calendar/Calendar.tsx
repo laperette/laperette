@@ -15,6 +15,7 @@ import { Days } from "./Days/Days";
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const Chips = styled.div`
@@ -22,12 +23,14 @@ const Chips = styled.div`
   grid-template-columns: 1fr 1fr 1fr 9fr;
   grid-column-gap: 5px;
   grid-column-start: 2;
+  margin-bottom: ${({ theme }) => theme.spacing(1)}px;
 `;
 
 const Display = styled.div`
   display: grid;
   grid-template-columns: 1fr 10fr 1fr;
   justify-items: center;
+  height: 100%;
 `;
 
 const Arrow = styled.div`
@@ -38,8 +41,10 @@ const Arrow = styled.div`
 const CalendarGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-rows: 1fr repeat(6, 2fr);
   min-width: 100%;
+  grid-gap: 2px;
+  background-color: white;
 `;
 
 interface Props {
