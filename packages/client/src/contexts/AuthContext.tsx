@@ -36,17 +36,14 @@ export const AuthProvider = ({
   children: React.ReactNode;
   authClient: AuthClientType;
 }) => {
-  const {
-    data: user,
-    isValidating,
-    mutate,
-    error,
-    revalidate,
-  } = useSWR<User | null>("/accounts/current", {
-    revalidateOnMount: true,
-    shouldRetryOnError: false,
-    revalidateOnFocus: false,
-  });
+  const { data: user, isValidating, mutate, error } = useSWR<User | null>(
+    "/accounts/current",
+    {
+      revalidateOnMount: true,
+      shouldRetryOnError: false,
+      revalidateOnFocus: false,
+    },
+  );
 
   useEffect(() => {
     if (user && error && error.response && error.response.status !== 200) {
@@ -61,10 +58,10 @@ export const AuthProvider = ({
 
   const login = useCallback(
     async (credentials: Credentials) => {
-      await authClient.login(credentials);
-      await revalidate();
+      const user = await authClient.login(credentials);
+      await mutate(user, true);
     },
-    [authClient, revalidate],
+    [authClient, mutate],
   );
 
   const value = useMemo(() => ({ user, logout, mutate, login, isValidating }), [
