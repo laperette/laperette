@@ -49,7 +49,7 @@ export const BookingsList = () => {
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
         {bookings.map((booking) => {
           return (
-            <GridListTile>
+            <GridListTile key={booking.bookingId}>
               <Card>
                 <CardContent>
                   <Typography gutterBottom component="h5" align="center">

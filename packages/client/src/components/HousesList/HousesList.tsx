@@ -48,7 +48,7 @@ export const HousesList = () => {
       </Typography>
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
         {houses.map((house) => (
-          <GridListTile>
+          <GridListTile key={house.houseId}>
             <Card>
               <CardContent>
                 <Typography
