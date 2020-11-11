@@ -16,13 +16,9 @@ import AddIcon from "@material-ui/icons/Add";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useHouses } from "../../hooks/useHouses";
-import { House } from "../../types";
+import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
 import { NewHouseForm } from "../NewHouseForm";
-
-interface Props {
-  retrieveHousesForBookingForm: (houses: House[]) => void;
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,12 +43,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
+export const HousesList = () => {
   const classes = useStyles();
+  const { houses, error } = useHouses();
 
   const [open, setOpen] = React.useState(false);
-
-  const { houses } = useHouses();
 
   const handleOpenDrawer = () => {
     setOpen(true);
@@ -61,6 +56,10 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
   const handleCloseDrawer = () => {
     setOpen(false);
   };
+
+  if (error) {
+    return <FullPageErrorFallback error={error} />;
+  }
 
   if (!houses) {
     return <FullPageSpinner />;

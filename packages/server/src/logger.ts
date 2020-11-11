@@ -10,9 +10,21 @@ const getLogLevel = () => {
       return "info";
   }
 };
+
+const myFormat = format.printf(({ level, message, timestamp, ...rest }) => {
+  return `${timestamp} ${level}: ${message}${
+    Object.keys(rest).length !== 0 ? ` - ${JSON.stringify(rest)}` : ""
+  }`;
+});
+
 export const logger = createLogger({
   level: getLogLevel(),
-  format: format.combine(format.colorize(), format.timestamp(), format.json()),
+  format: format.combine(
+    format.colorize(),
+    format.timestamp(),
+    format.prettyPrint(),
+    myFormat,
+  ),
   transports: [new transports.Console()],
   silent: process.env.NODE_ENV === "test",
 });

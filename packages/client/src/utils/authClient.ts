@@ -25,7 +25,10 @@ export type User = {
 };
 
 export const AuthClient: AuthClientType = {
-  login: async (credentials) => getAxiosInstance().post(`/login`, credentials),
+  login: async (credentials) =>
+    getAxiosInstance()
+      .post<{ account: User }>(`/login`, credentials)
+      .then(({ data: { account } }) => account),
   logout: async () => getAxiosInstance().post("/logout"),
 };
 

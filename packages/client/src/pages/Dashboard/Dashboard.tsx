@@ -4,14 +4,10 @@ import { HousesList } from "../../components/HousesList/HousesList";
 import { BookingsList } from "../../components/BookingsList/BookingsList";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
-import { House } from "../../types";
+import { useHouses } from "../../hooks/useHouses";
 
 export const Dashboard = () => {
-  const [houses, setHouses] = React.useState<House[]>();
-
-  const retrieveHousesForBookingForm = (houses: House[]) => {
-    setHouses(houses);
-  };
+  const { houses } = useHouses();
 
   return (
     <>
@@ -20,9 +16,7 @@ export const Dashboard = () => {
       </Typography>
       <Grid container justify="space-evenly" spacing={3}>
         <Grid item>
-          <HousesList
-            retrieveHousesForBookingForm={retrieveHousesForBookingForm}
-          />
+          <HousesList />
         </Grid>
         <Grid item>
           <BookingsList houses={houses} />

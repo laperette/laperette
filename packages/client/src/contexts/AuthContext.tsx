@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
-import useSWR from "swr";
 import { mutateCallback } from "swr/dist/types";
 import { FullPageSpinner } from "../components/FullPageSpinner";
-import { AuthClientType, User, Credentials } from "../utils/authClient";
+import { useCurrentAccount } from "../hooks/useCurrentAccount";
+import { AuthClientType, Credentials, User } from "../utils/authClient";
 
 type AuthContextValue = {
   logout: () => Promise<void>;
@@ -36,13 +36,7 @@ export const AuthProvider = ({
   children: React.ReactNode;
   authClient: AuthClientType;
 }) => {
-  const {
-    data: user,
-    isValidating,
-    mutate,
-    error,
-    revalidate,
-  } = useSWR<User | null>("/accounts/current", {
+  const { data: user, isValidating, mutate, error } = useCurrentAccount({
     revalidateOnMount: true,
     shouldRetryOnError: false,
     revalidateOnFocus: false,
@@ -61,10 +55,10 @@ export const AuthProvider = ({
 
   const login = useCallback(
     async (credentials: Credentials) => {
-      await authClient.login(credentials);
-      await revalidate();
+      const user = await authClient.login(credentials);
+      await mutate(user, true);
     },
-    [authClient, revalidate],
+    [authClient, mutate],
   );
 
   const value = useMemo(() => ({ user, logout, mutate, login, isValidating }), [
