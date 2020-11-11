@@ -1,10 +1,3 @@
-import Axios from "axios";
-import React, { useLayoutEffect } from "react";
-
-import { useAsync } from "../../hooks/useAsync";
-import { House } from "../../types";
-import { FullPageErrorFallback } from "../FullPageErrorCallback";
-import { FullPageSpinner } from "../FullPageSpinner";
 import {
   Button,
   Card,
@@ -16,7 +9,10 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useHouses } from "../../hooks/useHouses";
+import { FullPageSpinner } from "../FullPageSpinner";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,34 +34,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const HousesList = () => {
-  const { data: houses, run, isIdle, isLoading, isError, error } = useAsync<
-    House[] | null
-  >();
+  const { houses } = useHouses();
   const classes = useStyles();
 
-  useLayoutEffect(() => {
-    const getHouses = async (): Promise<House[]> => {
-      const response = await Axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/houses`,
-        {
-          withCredentials: true,
-        },
-      );
-
-      if (!response?.data || !response?.data?.houses.length) {
-        return [];
-      }
-
-      return response.data.houses;
-    };
-    run(getHouses());
-  }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (isError) {
-    return <FullPageErrorFallback error={error} />;
-  }
-
-  if (isIdle || isLoading || !houses) {
+  if (!houses) {
     return <FullPageSpinner />;
   }
 
@@ -76,7 +48,7 @@ export const HousesList = () => {
       </Typography>
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
         {houses.map((house) => (
-          <GridListTile>
+          <GridListTile key={house.houseId}>
             <Card>
               <CardContent>
                 <Typography

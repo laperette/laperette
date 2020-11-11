@@ -1,17 +1,23 @@
+import { Box, Typography } from "@material-ui/core";
 import React from "react";
-import { Box, Heading } from "grommet";
 import { WEEK_DAYS_NAMES } from "../../../utils/constants";
 
 export const CalendarHeading = () => {
   return (
-    <React.Fragment>
+    <>
       {WEEK_DAYS_NAMES.map((name) => (
-        <Box alignSelf="center" key={name}>
-          <Heading alignSelf="center" level="5">
-            {name}
-          </Heading>
+        <Box
+          key={name}
+          display="flex"
+          justifyContent="center"
+          bgcolor="rgb(245, 245, 245)"
+          padding={1}
+        >
+          <Typography variant="body2">
+            {name.slice(0, 3).toUpperCase()}
+          </Typography>
         </Box>
       ))}
-    </React.Fragment>
+    </>
   );
 };

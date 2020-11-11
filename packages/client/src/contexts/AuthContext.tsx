@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
-import useSWR from "swr";
 import { mutateCallback } from "swr/dist/types";
 import { FullPageSpinner } from "../components/FullPageSpinner";
-import { AuthClientType, User, Credentials } from "../utils/authClient";
+import { useCurrentAccount } from "../hooks/useCurrentAccount";
+import { AuthClientType, Credentials, User } from "../utils/authClient";
 
 type AuthContextValue = {
   logout: () => Promise<void>;
@@ -36,14 +36,11 @@ export const AuthProvider = ({
   children: React.ReactNode;
   authClient: AuthClientType;
 }) => {
-  const { data: user, isValidating, mutate, error } = useSWR<User | null>(
-    "/accounts/current",
-    {
-      revalidateOnMount: true,
-      shouldRetryOnError: false,
-      revalidateOnFocus: false,
-    },
-  );
+  const { data: user, isValidating, mutate, error } = useCurrentAccount({
+    revalidateOnMount: true,
+    shouldRetryOnError: false,
+    revalidateOnFocus: false,
+  });
 
   useEffect(() => {
     if (user && error && error.response && error.response.status !== 200) {

@@ -1,87 +1,65 @@
-import React from "react";
-import Axios from "axios";
-import { render, waitFor } from "@testing-library/react";
-import { Calendar } from "./Calendar";
-import { getRandomIntegerInclusive } from "../../utils/calendar";
-import * as MockDate from "mockdate";
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import {
-  startOfMonth,
+  addMonths,
   getDay,
   isMonday,
   isSunday,
-  addMonths,
-  subMonths,
   isThisMonth,
+  startOfMonth,
+  subMonths,
 } from "date-fns";
-import userEvent from "@testing-library/user-event";
+import * as MockDate from "mockdate";
+import React from "react";
 import { cache } from "swr";
+import { TestWrapper } from "../../contexts/TestWrapper";
+import * as useBookings from "../../hooks/useBookings";
+import { getRandomIntegerInclusive } from "../../utils/calendar";
+import { Calendar } from "./Calendar";
 
-jest.mock("axios");
-const mockedAxios = Axios as jest.Mocked<typeof Axios>;
-mockedAxios.create.mockImplementation(() => Axios);
+jest.mock("../../hooks/useBookings");
+const mockedUseBookings = useBookings as jest.Mocked<typeof useBookings>;
+mockedUseBookings.useBookings.mockImplementation(() => ({
+  revalidate: async () => false,
+  mutate: async () => null,
+  isValidating: false,
+  bookings: [],
+}));
 
-const mockSuccessCall = () => {
-  mockedAxios.get.mockResolvedValueOnce({
-    data: { bookings: [] },
-  });
-};
-
-const mockFailedCall = () => {
-  mockedAxios.get.mockRejectedValueOnce(new Error("Unable to fetch bookings"));
-};
-
-const setupTest = async ({
-  waitForData = true,
-}: Partial<{
-  waitForData: boolean;
-}> = {}) => {
+const setupTest = async () => {
   const mockSetSelectedBooking = jest.fn();
-  if (waitForData) {
-    mockSuccessCall();
-  }
   const renderResult = render(
     <Calendar setSelectedBooking={mockSetSelectedBooking} />,
+    { wrapper: (props) => <TestWrapper {...props} /> },
   );
-  if (waitForData) {
-    await waitFor(() => {
-      expect(renderResult.getByText("Today")).toBeInTheDocument();
-    });
-  }
 
   return { ...renderResult, mockSetSelectedBooking };
 };
 
 describe("Calendar", () => {
   afterEach(() => {
-    mockedAxios.get.mockClear();
+    mockedUseBookings.useBookings.mockClear();
     cache.clear();
   });
   describe("Loader", () => {
     it("should display a loader while fetching the bookings, and then, the error page if fetching the bookings failed", async () => {
-      mockFailedCall();
-
-      const { getByTestId, getByText } = await setupTest({
-        waitForData: false,
+      mockedUseBookings.useBookings.mockReturnValueOnce({
+        revalidate: async () => false,
+        mutate: async () => null,
+        isValidating: true,
+        bookings: null,
       });
+
+      const { getByTestId } = await setupTest();
 
       expect(getByTestId("full-page-spinner")).toBeInTheDocument();
-      await waitFor(() => {
-        expect(getByText(/Unable to fetch bookings/i)).toBeInTheDocument();
-      });
     });
 
-    it("should display a loader while fetching the bookings, and then, the calendar", async () => {
-      mockSuccessCall();
+    it("should display  the calendar", async () => {
+      const { getByText } = await setupTest();
 
-      const { getByTestId, getByText } = await setupTest({
-        waitForData: false,
-      });
-
-      expect(getByTestId("full-page-spinner")).toBeInTheDocument();
-      await waitFor(() => {
-        expect(getByText("Today")).toBeInTheDocument();
-      });
-      expect(getByText("Monday")).toBeInTheDocument();
+      expect(getByText("Today")).toBeInTheDocument();
+      expect(getByText("MON")).toBeInTheDocument();
     });
   });
 

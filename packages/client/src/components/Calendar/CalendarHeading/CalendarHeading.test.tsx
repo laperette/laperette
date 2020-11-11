@@ -6,13 +6,13 @@ describe(CalendarHeading.name, () => {
   it("should display all the days of the week", () => {
     const { getByText } = render(<CalendarHeading />);
 
-    const monday = getByText(/Monday/);
-    const tuesday = getByText(/Tuesday/);
-    const wednesday = getByText(/Wednesday/);
-    const thursday = getByText(/Thursday/);
-    const friday = getByText(/Friday/);
-    const saturday = getByText(/Saturday/);
-    const sunday = getByText(/Sunday/);
+    const monday = getByText(/mon/i);
+    const tuesday = getByText(/tue/i);
+    const wednesday = getByText(/wed/i);
+    const thursday = getByText(/thu/i);
+    const friday = getByText(/fri/i);
+    const saturday = getByText(/sat/i);
+    const sunday = getByText(/sun/i);
 
     expect(monday).toBeInTheDocument();
     expect(tuesday).toBeInTheDocument();
