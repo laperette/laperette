@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Button,
   FormControl,
@@ -6,16 +5,17 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { useForm, OnSubmit, Controller } from "react-hook-form";
-
-import Axios from "axios";
+import React from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useHouses } from "../../hooks/useHouses";
+import { NewHouseData } from "../../types";
 import { newHouseFieldsErrorsMapping } from "../../utils/houses";
 
 interface Props {
   handleCloseDrawer: () => void;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   title: {
     marginTop: "20px",
   },
@@ -35,19 +35,17 @@ export const NewHouseForm = ({ handleCloseDrawer }: Props) => {
   const classes = useStyles();
 
   const { handleSubmit, setError, errors, control } = useForm<NewHouseData>();
+  const { handleHouseCreation } = useHouses({ revalidateOnMount: false });
 
-  const onSubmit: OnSubmit<NewHouseData> = async (data) => {
+  const onSubmit: SubmitHandler<NewHouseData> = async (data) => {
     try {
-      await Axios(`${process.env.REACT_APP_SERVER_URL}/houses/house`, {
-        method: "post",
-        data: {
-          name: data.name,
-        },
-        withCredentials: true,
-      });
+      await handleHouseCreation(data);
       handleCloseDrawer();
     } catch (error) {
-      setError("name", "wrongHouseName");
+      setError("name", {
+        type: "manual",
+        message: newHouseFieldsErrorsMapping.generalInvalidMessage,
+      });
     }
   };
 
@@ -75,6 +73,7 @@ export const NewHouseForm = ({ handleCloseDrawer }: Props) => {
           name="name"
           control={control}
           error={!!errors.name}
+          rules={{ required: true }}
           helperText={
             !!errors.name
               ? newHouseFieldsErrorsMapping["generalInvalidMessage"]

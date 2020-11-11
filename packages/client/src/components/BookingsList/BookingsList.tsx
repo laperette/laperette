@@ -50,12 +50,7 @@ const useStyles = makeStyles(() => ({
 export const BookingsList = ({ houses }: Props) => {
   const classes = useStyles();
 
-  const {
-    bookings,
-    error,
-    handleBookingCancellation,
-    handleBookingCreation,
-  } = useBookings();
+  const { bookings, error, handleBookingCancellation } = useBookings();
 
   const [open, setOpen] = React.useState(false);
 
@@ -83,11 +78,7 @@ export const BookingsList = ({ houses }: Props) => {
         onClose={handleCloseDrawer}
         variant="temporary"
       >
-        <NewBookingForm
-          houses={houses}
-          handleCloseDrawer={handleCloseDrawer}
-          handleBookingCreation={handleBookingCreation}
-        />
+        <NewBookingForm houses={houses} handleCloseDrawer={handleCloseDrawer} />
       </Drawer>
       <Typography
         className={classes.title}

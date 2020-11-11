@@ -1,29 +1,50 @@
-import Axios from "axios";
+import { AxiosError } from "axios";
 import useSWR from "swr";
+import { v4 as uuidv4 } from "uuid";
 import { House, NewHouseData } from "../types";
+import { fetcher, getAxiosInstance } from "../utils/fetcher";
 
-export const useHouses = () => {
-  const housesEndpoint = `${process.env.REACT_APP_SERVER_URL}/houses`;
+export const useHouses = ({
+  revalidateOnMount = true,
+}: {
+  revalidateOnMount?: boolean;
+} = {}) => {
+  const housesEndpoint = "/houses";
+  const { data: houses, error, mutate, revalidate } = useSWR<
+    House[],
+    AxiosError
+  >(housesEndpoint, {
+    fetcher: (url) => fetcher(url).then(({ houses }) => houses),
+    initialData: [],
+    revalidateOnMount,
+  });
 
-  const getHouses = async (): Promise<House[]> => {
-    const response = await Axios.get(housesEndpoint, {
-      withCredentials: true,
+  const createHouse = async (newHouseData: NewHouseData) =>
+    getAxiosInstance().post(`${housesEndpoint}/house`, {
+      name: newHouseData.name,
     });
-    return response.data.houses;
+
+  const handleHouseCreation = async (
+    newHouseData: NewHouseData,
+  ): Promise<void> => {
+    const temporaryHouseId = uuidv4();
+
+    const newHouse = {
+      name: newHouseData.name,
+      houseId: temporaryHouseId,
+    };
+
+    let newHouseList;
+    if (houses?.length) {
+      newHouseList = [...houses, newHouse];
+    } else {
+      newHouseList = [newHouse];
+    }
+
+    await mutate(newHouseList, false);
+    await createHouse(newHouseData);
+    await revalidate();
   };
 
-  const createHouse = async (newHouseData: NewHouseData) => {
-    await Axios(`${housesEndpoint}/house`, {
-      method: "post",
-      data: {
-        name: newHouseData.name,
-      },
-      withCredentials: true,
-    });
-  };
-
-  const { data: houses, error } = useSWR<House[] | null>(
-    housesEndpoint,
-    getHouses,
-  );
+  return { houses, error, handleHouseCreation };
 };

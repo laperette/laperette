@@ -1,9 +1,3 @@
-import Axios from "axios";
-import React, { useLayoutEffect } from "react";
-
-import { House } from "../../types";
-import { FullPageErrorFallback } from "../FullPageErrorCallback";
-import { FullPageSpinner } from "../FullPageSpinner";
 import {
   Button,
   Card,
@@ -19,10 +13,12 @@ import {
   Typography,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-
+import React from "react";
 import { Link } from "react-router-dom";
+import { useHouses } from "../../hooks/useHouses";
+import { House } from "../../types";
+import { FullPageSpinner } from "../FullPageSpinner";
 import { NewHouseForm } from "../NewHouseForm";
-import useSWR from "swr";
 
 interface Props {
   retrieveHousesForBookingForm: (houses: House[]) => void;
@@ -56,6 +52,8 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
 
   const [open, setOpen] = React.useState(false);
 
+  const { houses } = useHouses();
+
   const handleOpenDrawer = () => {
     setOpen(true);
   };
@@ -63,10 +61,6 @@ export const HousesList = ({ retrieveHousesForBookingForm }: Props) => {
   const handleCloseDrawer = () => {
     setOpen(false);
   };
-
-  if (error) {
-    return <FullPageErrorFallback error={error} />;
-  }
 
   if (!houses) {
     return <FullPageSpinner />;

@@ -1,4 +1,4 @@
-import Axios from "axios";
+import { AxiosError } from "axios";
 import { v4 as uuidv4 } from "uuid";
 import useSWR from "swr";
 
@@ -6,43 +6,33 @@ import { Booking, NewBookingBody, NewBookingData } from "../types";
 import { serializeBooking } from "../utils/bookings";
 import { createNewDateFromString } from "../utils/calendar";
 import { useAuth } from "../contexts/AuthContext";
+import { fetcher, getAxiosInstance } from "../utils/fetcher";
 
-export const useBookings = () => {
+export const useBookings = ({
+  revalidateOnMount = true,
+}: {
+  revalidateOnMount?: boolean;
+} = {}) => {
   const { user } = useAuth();
-  const bookingsEndpoint = `${process.env.REACT_APP_SERVER_URL}/bookings`;
+  const bookingsEndpoint = `/bookings`;
+  const { data: bookings, error, mutate, revalidate } = useSWR<
+    Booking[],
+    AxiosError
+  >(bookingsEndpoint, {
+    fetcher: (url) =>
+      fetcher(url).then(({ bookings }) => bookings.map(serializeBooking)),
+    initialData: [],
+    revalidateOnMount,
+  });
 
-  const getBookings = async (): Promise<Booking[]> => {
-    const response = await Axios.get(bookingsEndpoint, {
-      withCredentials: true,
-    });
+  const cancelBooking = async (bookingId: string) =>
+    getAxiosInstance().delete(`/bookings/${bookingId}`);
 
-    return response.data.bookings.map(serializeBooking);
-  };
-
-  const cancelBooking = async (bookingId: string): Promise<void> => {
-    await Axios.delete(
-      `${process.env.REACT_APP_SERVER_URL}/bookings/${bookingId}`,
-      {
-        withCredentials: true,
-      },
+  const createBooking = async (newBookingData: NewBookingBody) =>
+    getAxiosInstance().post(
+      `/houses/${newBookingData.houseId}/bookings/booking`,
+      newBookingData,
     );
-  };
-
-  const createBooking = async (newBookingData: NewBookingBody) => {
-    await Axios(
-      `${process.env.REACT_APP_SERVER_URL}/houses/${newBookingData.houseId}/bookings/booking`,
-      {
-        method: "post",
-        data: newBookingData,
-        withCredentials: true,
-      },
-    );
-  };
-
-  const { data: bookings, error, mutate, revalidate } = useSWR<Booking[]>(
-    bookingsEndpoint,
-    getBookings,
-  );
 
   const handleBookingCancellation = async (
     bookingId: string,
@@ -50,10 +40,9 @@ export const useBookings = () => {
     const newBookingList = bookings?.filter(
       (booking) => booking.bookingId !== bookingId,
     );
-
+    await mutate(newBookingList, false);
     await cancelBooking(bookingId);
-
-    await mutate(newBookingList);
+    await revalidate();
   };
 
   const handleBookingCreation = async (newBookingData: NewBookingData) => {
@@ -82,9 +71,8 @@ export const useBookings = () => {
       newBookingList = [newBooking];
     }
 
-    await createBooking(newBookingBody);
-
     await mutate(newBookingList, false);
+    await createBooking(newBookingBody);
     await revalidate();
   };
 

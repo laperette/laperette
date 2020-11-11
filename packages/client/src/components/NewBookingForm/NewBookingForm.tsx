@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Button,
   FormControl,
@@ -8,18 +7,20 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { useForm, OnSubmit, Controller } from "react-hook-form";
-
+import React from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useBookings } from "../../hooks/useBookings";
+import { useHouses } from "../../hooks/useHouses";
 import { House, NewBookingData } from "../../types";
 import { newBookingFieldsErrorsMapping } from "../../utils/bookings";
 
 interface Props {
   handleCloseDrawer: () => void;
-  handleBookingCreation: (data: NewBookingData) => void;
+
   houses?: House[];
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   title: {
     marginTop: "20px",
   },
@@ -35,25 +36,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const NewBookingForm = ({
-  houses,
-  handleCloseDrawer,
-  handleBookingCreation,
-}: Props) => {
+export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
   const classes = useStyles();
+  const { houses } = useHouses();
+  const { handleBookingCreation } = useBookings({ revalidateOnMount: false });
 
   const { handleSubmit, setError, errors, control } = useForm<NewBookingData>();
 
-  const onSubmit: OnSubmit<NewBookingData> = async (data) => {
+  const onSubmit: SubmitHandler<NewBookingData> = async (data) => {
     try {
-      handleBookingCreation(data);
+      await handleBookingCreation(data);
       handleCloseDrawer();
     } catch (error) {
-      setError("departureTime", "generalInvalidMessage");
-      setError("arrivalTime", "generalInvalidMessage");
-      setError("comments", "generalInvalidMessage");
-      setError("companions", "generalInvalidMessage");
-      setError("houseId", "generalInvalidMessage");
+      setError("departureTime", {
+        type: "manual",
+        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
+      });
+      setError("arrivalTime", {
+        type: "manual",
+        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
+      });
+      setError("comments", {
+        type: "manual",
+        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
+      });
+      setError("companions", {
+        type: "manual",
+        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
+      });
+      setError("houseId", {
+        type: "manual",
+        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
+      });
     }
   };
 
@@ -98,10 +112,11 @@ export const NewBookingForm = ({
           label="House"
           name="houseId"
           control={control}
+          rules={{ required: true }}
           error={!!errors.houseId}
           helperText={
             !!errors.houseId
-              ? newBookingFieldsErrorsMapping["generalInvalidMessage"]
+              ? newBookingFieldsErrorsMapping.generalInvalidMessage
               : ""
           }
           defaultValue=""
@@ -114,9 +129,10 @@ export const NewBookingForm = ({
           name="companions"
           control={control}
           error={!!errors.companions}
+          rules={{ required: true }}
           helperText={
             !!errors.companions
-              ? newBookingFieldsErrorsMapping["generalInvalidMessage"]
+              ? newBookingFieldsErrorsMapping.generalInvalidMessage
               : ""
           }
           defaultValue=""
@@ -128,10 +144,11 @@ export const NewBookingForm = ({
           label="Comments"
           name="comments"
           control={control}
+          rules={{ required: true }}
           error={!!errors.comments}
           helperText={
             !!errors.comments
-              ? newBookingFieldsErrorsMapping["generalInvalidMessage"]
+              ? newBookingFieldsErrorsMapping.generalInvalidMessage
               : ""
           }
           defaultValue=""
@@ -143,10 +160,11 @@ export const NewBookingForm = ({
           label="Arrival Date"
           name="arrivalTime"
           control={control}
+          rules={{ required: true }}
           error={!!errors.arrivalTime}
           helperText={
             !!errors.arrivalTime
-              ? newBookingFieldsErrorsMapping["generalInvalidMessage"]
+              ? newBookingFieldsErrorsMapping.generalInvalidMessage
               : ""
           }
           placeholder="dd/mm/yyyy"
@@ -159,16 +177,16 @@ export const NewBookingForm = ({
           label="Departure Date"
           name="departureTime"
           control={control}
+          rules={{ required: true }}
           error={!!errors.departureTime}
           helperText={
             !!errors.departureTime
-              ? newBookingFieldsErrorsMapping["generalInvalidMessage"]
+              ? newBookingFieldsErrorsMapping.generalInvalidMessage
               : ""
           }
           placeholder="dd/mm/yyyy"
           defaultValue=""
         />
-
         <Button
           size="small"
           variant="outlined"
