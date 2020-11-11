@@ -106,7 +106,7 @@ export const BookingsList = ({ houses }: Props) => {
               <Card>
                 <CardContent>
                   <Typography gutterBottom component="h5" align="center">
-                    {booking.status}
+                    {booking.houseName}
                   </Typography>
                   <Typography
                     variant="body2"
