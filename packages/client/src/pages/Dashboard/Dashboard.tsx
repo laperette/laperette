@@ -4,8 +4,11 @@ import { HousesList } from "../../components/HousesList/HousesList";
 import { BookingsList } from "../../components/BookingsList/BookingsList";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
+import { useHouses } from "../../hooks/useHouses";
 
 export const Dashboard = () => {
+  const { houses } = useHouses();
+
   return (
     <>
       <Typography variant="h3" align="left" gutterBottom>
@@ -16,7 +19,7 @@ export const Dashboard = () => {
           <HousesList />
         </Grid>
         <Grid item>
-          <BookingsList />
+          <BookingsList houses={houses} />
         </Grid>
       </Grid>
     </>

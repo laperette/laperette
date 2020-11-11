@@ -4,15 +4,26 @@ import {
   CardActions,
   CardContent,
   Divider,
+  Drawer,
+  Fab,
   GridList,
   GridListTile,
   makeStyles,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
 import React from "react";
 import { useBookings } from "../../hooks/useBookings";
+import { House } from "../../types";
 import { formatDate } from "../../utils/calendar";
+import { FullPageErrorFallback } from "../FullPageErrorCallback";
 import { FullPageSpinner } from "../FullPageSpinner";
+import { NewBookingForm } from "../NewBookingForm";
+
+interface Props {
+  houses?: House[];
+}
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -30,12 +41,30 @@ const useStyles = makeStyles(() => ({
   icon: {
     color: "rgba(255, 255, 255, 0.54)",
   },
+  title: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
 }));
 
-export const BookingsList = () => {
-  const { bookings } = useBookings();
-
+export const BookingsList = ({ houses }: Props) => {
   const classes = useStyles();
+
+  const { bookings, error, handleBookingCancellation } = useBookings();
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpenDrawer = () => {
+    setOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setOpen(false);
+  };
+
+  if (error) {
+    return <FullPageErrorFallback error={error} />;
+  }
 
   if (!bookings) {
     return <FullPageSpinner />;
@@ -43,9 +72,33 @@ export const BookingsList = () => {
 
   return (
     <>
-      <Typography variant="h4" align="left" gutterBottom>
+      <Drawer
+        open={open}
+        anchor="right"
+        onClose={handleCloseDrawer}
+        variant="temporary"
+      >
+        <NewBookingForm houses={houses} handleCloseDrawer={handleCloseDrawer} />
+      </Drawer>
+      <Typography
+        className={classes.title}
+        variant="h4"
+        align="left"
+        gutterBottom
+      >
         Your bookings
+        <Tooltip
+          title="Add"
+          aria-label="add"
+          placement="right"
+          onClick={handleOpenDrawer}
+        >
+          <Fab color="primary" size="small">
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       </Typography>
+
       <GridList cellHeight={180} className={classes.gridList} spacing={15}>
         {bookings.map((booking) => {
           return (
@@ -61,7 +114,6 @@ export const BookingsList = () => {
                     component="p"
                   >
                     {formatDate(booking.arrivalTime)}
-                    {/* {formatDate(booking.departureTime)} */}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -73,7 +125,12 @@ export const BookingsList = () => {
                 </CardContent>
                 <Divider light />
                 <CardActions>
-                  <Button size="small" color="primary" fullWidth>
+                  <Button
+                    size="small"
+                    color="primary"
+                    fullWidth
+                    onClick={() => handleBookingCancellation(booking.bookingId)}
+                  >
                     Cancel
                   </Button>
                 </CardActions>

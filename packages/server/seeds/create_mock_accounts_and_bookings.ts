@@ -44,11 +44,11 @@ export async function seed(knex: Knex): Promise<void> {
 
     logger.info("Inserting house");
     const houseId1 = await createMockHouse("Le Marjolet", adminId);
-    logger.info("Inserted house");
+    logger.info(`Inserted house, houseId: ${houseId1}`);
 
     logger.info("Inserting house");
     const houseId2 = await createMockHouse("La Perette", adminId);
-    logger.info("Inserted house");
+    logger.info(`Inserted house, houseId: ${houseId2}`);
 
     logger.info("Adding member account to first house");
     await addMockAccountToMockHouse(memberId, houseId1, false);

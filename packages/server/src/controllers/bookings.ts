@@ -5,6 +5,7 @@ import {
   retrieveHouseBookingsByInterval,
   insertOneBooking,
   retrieveBookingsByAccountId,
+  deleteBookingById,
 } from "../db/bookings";
 import {
   validateNewBookingData,
@@ -250,6 +251,26 @@ export const updateBooking = async (ctx: Context) => {
 
     logger.error(errorMessage, {
       bookingId: booking.bookingId,
+      error: sanitizeError(error),
+    });
+
+    ctx.status = 500;
+    ctx.message = errorMessage;
+  }
+};
+
+export const deleteBooking = async (ctx: Context) => {
+  const { bookingId } = ctx.params;
+  try {
+    await deleteBookingById(bookingId);
+
+    ctx.status = 204;
+    ctx.message = "Booking deleted";
+  } catch (error) {
+    const errorMessage = "Error while deleting a booking";
+
+    logger.error(errorMessage, {
+      bookingId: bookingId,
       error: sanitizeError(error),
     });
 
