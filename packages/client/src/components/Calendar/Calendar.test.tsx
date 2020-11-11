@@ -19,15 +19,15 @@ import { Calendar } from "./Calendar";
 
 jest.mock("../../hooks/useBookings");
 const mockedUseBookings = useBookings as jest.Mocked<typeof useBookings>;
-mockedUseBookings.useBookings.mockImplementation(() => ({
-  revalidate: async () => false,
-  mutate: async () => null,
-  isValidating: false,
-  bookings: [],
-}));
 
 const setupTest = async () => {
   const mockSetSelectedBooking = jest.fn();
+  mockedUseBookings.useBookings.mockImplementation(() => ({
+    revalidate: async () => false,
+    mutate: async () => null,
+    isValidating: false,
+    bookings: [],
+  }));
   const renderResult = render(
     <Calendar setSelectedBooking={mockSetSelectedBooking} />,
     { wrapper: (props) => <TestWrapper {...props} /> },
