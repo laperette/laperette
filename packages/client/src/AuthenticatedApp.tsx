@@ -1,13 +1,18 @@
 import {
   AppBar,
-  Button,
+  Avatar,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
 } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
-import React from "react";
+import React, { useState } from "react";
 import { Link, Redirect, Route, Switch } from "react-router-dom";
 import { useAuth } from "./contexts/AuthContext";
 import { Dashboard } from "./pages/Dashboard";
@@ -31,9 +36,18 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const AuthenticatedApp = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const classes = useStyles();
-
+  const [anchorEl, setAnchorEl] = useState<(EventTarget & Element) | null>(
+    null,
+  );
+  const handleProfileMenuOpen = (event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const menuId = "account-menu";
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -51,9 +65,42 @@ const AuthenticatedApp = () => {
           <Typography variant="h6" className={classes.title}>
             La Perette
           </Typography>
-          <Button onClick={logout} color={"inherit"}>
-            Logout
-          </Button>
+          <IconButton
+            edge="end"
+            aria-label="account of current user"
+            aria-controls={menuId}
+            aria-haspopup="true"
+            onClick={handleProfileMenuOpen}
+            color="inherit"
+          >
+            <Avatar>{`${user?.firstName?.[0]}${user?.lastName?.[0]}`}</Avatar>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            id={menuId}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <MenuItem button={false} autoFocus={false}>
+              <ListItemIcon>
+                <Avatar>{`${user?.firstName?.[0]}${user?.lastName?.[0]}`}</Avatar>
+              </ListItemIcon>
+              <ListItemText
+                primary={`${user?.firstName} ${user?.lastName}`}
+                secondary={user?.email}
+              />
+            </MenuItem>
+            <MenuItem onClick={logout}>
+              <ListItemIcon>
+                <ExitToAppIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <main className={classes.main}>
