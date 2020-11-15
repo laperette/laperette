@@ -6,7 +6,7 @@ import { publicRouter } from "./routers/publicRouter";
 import { privateRouter } from "./routers/privateRouter";
 
 const app = new Koa();
-
+app.proxy = true;
 app.use(async (ctx: Koa.Context, next) => {
   try {
     await next();
