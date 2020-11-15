@@ -5,12 +5,15 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import React from "react";
+import { KeyboardDatePicker } from "@material-ui/pickers";
+import { format } from "date-fns";
+import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useBookings } from "../../hooks/useBookings";
 import { useHouses } from "../../hooks/useHouses";
 import { House, NewBookingData } from "../../types";
 import { newBookingFieldsErrorsMapping } from "../../utils/bookings";
+import { createNewDateFromString } from "../../utils/calendar";
 
 interface Props {
   handleCloseDrawer: () => void;
@@ -38,7 +41,12 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
   const classes = useStyles();
   const { houses } = useHouses();
   const { handleBookingCreation } = useBookings({ revalidateOnMount: false });
-
+  const [isArrivalDatePickerOpen, setIsArrivalDatePickerOpen] = useState<
+    boolean
+  >(false);
+  const [isDepartureDatePickerOpen, setIsDepartureDatePickerOpen] = useState<
+    boolean
+  >(false);
   const { handleSubmit, setError, errors, control } = useForm<NewBookingData>();
 
   const onSubmit: SubmitHandler<NewBookingData> = async (data) => {
@@ -136,38 +144,62 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
         defaultValue=""
       />
       <Controller
-        className={classes.field}
-        as={TextField}
-        variant="outlined"
-        label="Arrival Date"
         name="arrivalTime"
         control={control}
         rules={{ required: true }}
-        error={!!errors.arrivalTime}
-        helperText={
-          !!errors.arrivalTime
-            ? newBookingFieldsErrorsMapping.generalInvalidMessage
-            : ""
-        }
-        placeholder="dd/mm/yyyy"
         defaultValue=""
+        render={({ ref, onChange, value, ...props }) => (
+          <KeyboardDatePicker
+            className={classes.field}
+            autoOk
+            inputVariant="outlined"
+            variant="inline"
+            format="dd/MM/yyyy"
+            label="Arrival Date"
+            error={!!errors.arrivalTime}
+            helperText={
+              !!errors.arrivalTime
+                ? newBookingFieldsErrorsMapping.generalInvalidMessage
+                : ""
+            }
+            open={isArrivalDatePickerOpen}
+            onOpen={() => setIsArrivalDatePickerOpen(true)}
+            onClose={() => setIsArrivalDatePickerOpen(false)}
+            onClick={() => setIsArrivalDatePickerOpen(true)}
+            onChange={(date) => date && onChange(format(date, "dd/MM/yyyy"))}
+            value={value ? createNewDateFromString(value) : null}
+            {...props}
+          />
+        )}
       />
       <Controller
-        className={classes.field}
-        as={TextField}
-        variant="outlined"
-        label="Departure Date"
         name="departureTime"
         control={control}
         rules={{ required: true }}
-        error={!!errors.departureTime}
-        helperText={
-          !!errors.departureTime
-            ? newBookingFieldsErrorsMapping.generalInvalidMessage
-            : ""
-        }
-        placeholder="dd/mm/yyyy"
         defaultValue=""
+        render={({ ref, onChange, value, ...props }) => (
+          <KeyboardDatePicker
+            className={classes.field}
+            autoOk
+            inputVariant="outlined"
+            variant="inline"
+            format="dd/MM/yyyy"
+            label="Departure Date"
+            error={!!errors.departureTime}
+            helperText={
+              !!errors.departureTime
+                ? newBookingFieldsErrorsMapping.generalInvalidMessage
+                : ""
+            }
+            open={isDepartureDatePickerOpen}
+            onOpen={() => setIsDepartureDatePickerOpen(true)}
+            onClose={() => setIsDepartureDatePickerOpen(false)}
+            onClick={() => setIsDepartureDatePickerOpen(true)}
+            onChange={(date) => date && onChange(format(date, "dd/MM/yyyy"))}
+            value={value ? createNewDateFromString(value) : null}
+            {...props}
+          />
+        )}
       />
       <Button
         size="small"
