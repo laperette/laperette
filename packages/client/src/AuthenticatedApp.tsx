@@ -8,7 +8,7 @@ import {
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Link, Redirect, Route, Switch } from "react-router-dom";
 import { useAuth } from "./contexts/AuthContext";
 import { Dashboard } from "./pages/Dashboard";
 import { HouseSpace } from "./pages/HouseSpace";
@@ -43,7 +43,8 @@ const AuthenticatedApp = () => {
             color="inherit"
             aria-label="menu"
             className={classes.menuButton}
-            href="/dashboard"
+            component={Link}
+            to="/dashboard"
           >
             <HomeRoundedIcon />
           </IconButton>
