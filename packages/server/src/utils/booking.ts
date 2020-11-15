@@ -174,7 +174,7 @@ const validateComments = (
     return false;
   }
 
-  if (comments.length >= 200) {
+  if (comments.length >= 240) {
     return false;
   }
 

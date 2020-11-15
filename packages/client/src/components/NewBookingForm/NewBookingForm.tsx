@@ -1,3 +1,4 @@
+import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
   FormControl,
@@ -12,7 +13,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useBookings } from "../../hooks/useBookings";
 import { useHouses } from "../../hooks/useHouses";
 import { House, NewBookingData } from "../../types";
-import { newBookingFieldsErrorsMapping } from "../../utils/bookings";
+import { bookingSchema } from "../../utils/formValidation";
 
 interface Props {
   handleCloseDrawer: () => void;
@@ -41,34 +42,13 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
   const { houses } = useHouses();
   const { handleBookingCreation } = useBookings({ revalidateOnMount: false });
 
-  const { handleSubmit, setError, errors, control } = useForm<NewBookingData>();
+  const { handleSubmit, errors, control } = useForm<NewBookingData>({
+    resolver: joiResolver(bookingSchema),
+  });
 
   const onSubmit: SubmitHandler<NewBookingData> = async (data) => {
-    try {
-      await handleBookingCreation(data);
-      handleCloseDrawer();
-    } catch (error) {
-      setError("departureTime", {
-        type: "manual",
-        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
-      });
-      setError("arrivalTime", {
-        type: "manual",
-        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
-      });
-      setError("comments", {
-        type: "manual",
-        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
-      });
-      setError("companions", {
-        type: "manual",
-        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
-      });
-      setError("houseId", {
-        type: "manual",
-        message: newBookingFieldsErrorsMapping.generalInvalidMessage,
-      });
-    }
+    await handleBookingCreation(data);
+    handleCloseDrawer();
   };
 
   return (
@@ -112,13 +92,8 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
           label="House"
           name="houseId"
           control={control}
-          rules={{ required: true }}
           error={!!errors.houseId}
-          helperText={
-            !!errors.houseId
-              ? newBookingFieldsErrorsMapping.generalInvalidMessage
-              : ""
-          }
+          helperText={!!errors.houseId ? errors.houseId.message : ""}
           defaultValue=""
         />
         <Controller
@@ -129,12 +104,7 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
           name="companions"
           control={control}
           error={!!errors.companions}
-          rules={{ required: true }}
-          helperText={
-            !!errors.companions
-              ? newBookingFieldsErrorsMapping.generalInvalidMessage
-              : ""
-          }
+          helperText={!!errors.companions ? errors.companions.message : ""}
           defaultValue=""
         />
         <Controller
@@ -144,13 +114,8 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
           label="Comments"
           name="comments"
           control={control}
-          rules={{ required: true }}
           error={!!errors.comments}
-          helperText={
-            !!errors.comments
-              ? newBookingFieldsErrorsMapping.generalInvalidMessage
-              : ""
-          }
+          helperText={!!errors.comments ? errors.comments.message : ""}
           defaultValue=""
         />
         <Controller
@@ -160,13 +125,8 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
           label="Arrival Date"
           name="arrivalTime"
           control={control}
-          rules={{ required: true }}
           error={!!errors.arrivalTime}
-          helperText={
-            !!errors.arrivalTime
-              ? newBookingFieldsErrorsMapping.generalInvalidMessage
-              : ""
-          }
+          helperText={!!errors.arrivalTime ? errors.arrivalTime.message : ""}
           placeholder="dd/mm/yyyy"
           defaultValue=""
         />
@@ -177,12 +137,9 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
           label="Departure Date"
           name="departureTime"
           control={control}
-          rules={{ required: true }}
           error={!!errors.departureTime}
           helperText={
-            !!errors.departureTime
-              ? newBookingFieldsErrorsMapping.generalInvalidMessage
-              : ""
+            !!errors.departureTime ? errors.departureTime.message : ""
           }
           placeholder="dd/mm/yyyy"
           defaultValue=""
