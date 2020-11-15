@@ -16,7 +16,9 @@ export const login = async (ctx: Context) => {
 
     ctx.status = 200;
     ctx.message = "Successfully logged in";
-    ctx.cookies.set(config.cookies.session, sessionId);
+    ctx.cookies.set(config.cookies.session, sessionId, {
+      httpOnly: false,
+    });
     ctx.body = {
       account: {
         firstName: account.firstName,
