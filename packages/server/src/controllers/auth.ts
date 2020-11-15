@@ -17,7 +17,12 @@ export const login = async (ctx: Context) => {
     ctx.status = 200;
     ctx.message = "Successfully logged in";
     ctx.cookies.set(config.cookies.session, sessionId, {
-      httpOnly: false,
+      ...(process.env.NODE_ENV === "production"
+        ? {
+            sameSite: "none",
+            secure: true,
+          }
+        : {}),
     });
     ctx.body = {
       account: {
