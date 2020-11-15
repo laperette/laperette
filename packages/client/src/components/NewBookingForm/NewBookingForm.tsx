@@ -47,7 +47,9 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
   const [isDepartureDatePickerOpen, setIsDepartureDatePickerOpen] = useState<
     boolean
   >(false);
-  const { handleSubmit, setError, errors, control } = useForm<NewBookingData>();
+  const { handleSubmit, setError, errors, control, watch } = useForm<
+    NewBookingData
+  >();
 
   const onSubmit: SubmitHandler<NewBookingData> = async (data) => {
     try {
@@ -168,6 +170,8 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
             onClick={() => setIsArrivalDatePickerOpen(true)}
             onChange={(date) => date && onChange(format(date, "dd/MM/yyyy"))}
             value={value ? createNewDateFromString(value) : null}
+            inputRef={ref}
+            minDate={new Date()}
             {...props}
           />
         )}
@@ -197,6 +201,12 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
             onClick={() => setIsDepartureDatePickerOpen(true)}
             onChange={(date) => date && onChange(format(date, "dd/MM/yyyy"))}
             value={value ? createNewDateFromString(value) : null}
+            inputRef={ref}
+            minDate={
+              watch("arrivalTime")
+                ? createNewDateFromString(watch("arrivalTime"))
+                : new Date()
+            }
             {...props}
           />
         )}
