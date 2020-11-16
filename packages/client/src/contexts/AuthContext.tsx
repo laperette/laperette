@@ -36,7 +36,7 @@ export const AuthProvider = ({
   children: React.ReactNode;
   authClient: AuthClientType;
 }) => {
-  const { data: user, isValidating, mutate, error } = useCurrentAccount({
+  const { user, isValidating, mutate, error, revalidate } = useCurrentAccount({
     revalidateOnMount: true,
     shouldRetryOnError: false,
     revalidateOnFocus: false,
@@ -55,10 +55,10 @@ export const AuthProvider = ({
 
   const login = useCallback(
     async (credentials: Credentials) => {
-      const user = await authClient.login(credentials);
-      await mutate(user, true);
+      await authClient.login(credentials);
+      revalidate();
     },
-    [authClient, mutate],
+    [authClient, revalidate],
   );
 
   const value = useMemo(() => ({ user, logout, mutate, login, isValidating }), [
