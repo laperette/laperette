@@ -32,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
   },
   gridList: {
     width: 500,
-    height: 300,
   },
   icon: {
     color: "rgba(255, 255, 255, 0.54)",
