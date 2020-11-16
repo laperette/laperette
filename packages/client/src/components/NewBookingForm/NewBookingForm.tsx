@@ -6,14 +6,11 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { KeyboardDatePicker } from "@material-ui/pickers";
-import { format } from "date-fns";
 import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useBookings } from "../../hooks/useBookings";
 import { useHouses } from "../../hooks/useHouses";
 import { House, NewBookingData } from "../../types";
-import { createNewDateFromString } from "../../utils/calendar";
 import { bookingSchema } from "../../utils/formValidation";
 
 interface Props {
@@ -43,19 +40,19 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
   const { houses } = useHouses();
   const { handleBookingCreation } = useBookings({ revalidateOnMount: false });
 
-  const [isArrivalDatePickerOpen, setIsArrivalDatePickerOpen] = useState<
-    boolean
-  >(false);
-  const [isDepartureDatePickerOpen, setIsDepartureDatePickerOpen] = useState<
-    boolean
-  >(false);
-  const { handleSubmit, errors, control, watch } = useForm<NewBookingData>({
+  const [serverError, setServerError] = useState<boolean>(false);
+
+  const { handleSubmit, errors, control } = useForm<NewBookingData>({
     resolver: joiResolver(bookingSchema),
   });
 
   const onSubmit: SubmitHandler<NewBookingData> = async (data) => {
-    await handleBookingCreation(data);
-    handleCloseDrawer();
+    try {
+      await handleBookingCreation(data);
+      handleCloseDrawer();
+    } catch (error) {
+      setServerError(true);
+    }
   };
 
   return (
@@ -113,73 +110,50 @@ export const NewBookingForm = ({ handleCloseDrawer }: Props) => {
         defaultValue=""
       />
       <Controller
+        className={classes.field}
+        as={TextField}
+        variant="outlined"
+        label="Arrival Date"
         name="arrivalTime"
         control={control}
         rules={{ required: true }}
+        error={!!errors.arrivalTime}
+        helperText={!!errors.arrivalTime ? errors.arrivalTime.message : ""}
+        placeholder="dd/mm/yyyy"
         defaultValue=""
-        render={({ ref, onChange, value, ...props }) => (
-          <KeyboardDatePicker
-            className={classes.field}
-            autoOk
-            inputVariant="outlined"
-            variant="inline"
-            format="dd/MM/yyyy"
-            label="Arrival Date"
-            error={!!errors.arrivalTime}
-            helperText={!!errors.arrivalTime ? errors.arrivalTime.message : ""}
-            open={isArrivalDatePickerOpen}
-            onOpen={() => setIsArrivalDatePickerOpen(true)}
-            onClose={() => setIsArrivalDatePickerOpen(false)}
-            onClick={() => setIsArrivalDatePickerOpen(true)}
-            onChange={(date) => date && onChange(format(date, "dd/MM/yyyy"))}
-            value={value ? createNewDateFromString(value) : null}
-            inputRef={ref}
-            minDate={new Date()}
-            {...props}
-          />
-        )}
       />
       <Controller
+        className={classes.field}
+        as={TextField}
+        variant="outlined"
+        label="Departure Date"
         name="departureTime"
         control={control}
         rules={{ required: true }}
+        error={!!errors.departureTime}
+        helperText={!!errors.departureTime ? errors.departureTime.message : ""}
+        placeholder="dd/mm/yyyy"
         defaultValue=""
-        render={({ ref, onChange, value, ...props }) => (
-          <KeyboardDatePicker
-            className={classes.field}
-            autoOk
-            inputVariant="outlined"
-            variant="inline"
-            format="dd/MM/yyyy"
-            label="Departure Date"
-            error={!!errors.departureTime}
-            helperText={
-              !!errors.departureTime ? errors.departureTime.message : ""
-            }
-            open={isDepartureDatePickerOpen}
-            onOpen={() => setIsDepartureDatePickerOpen(true)}
-            onClose={() => setIsDepartureDatePickerOpen(false)}
-            onClick={() => setIsDepartureDatePickerOpen(true)}
-            onChange={(date) => date && onChange(format(date, "dd/MM/yyyy"))}
-            value={value ? createNewDateFromString(value) : null}
-            inputRef={ref}
-            minDate={
-              watch("arrivalTime")
-                ? createNewDateFromString(watch("arrivalTime"))
-                : new Date()
-            }
-            {...props}
-          />
-        )}
       />
-      <Button
-        size="small"
-        variant="outlined"
-        color="primary"
-        onClick={handleSubmit(onSubmit)}
-      >
-        Create
-      </Button>
+      {serverError ? (
+        <>
+          <Typography variant="subtitle1" align="center" color="error">
+            Sorry a problem happened
+          </Typography>
+          <Typography variant="subtitle1" align="center" color="error">
+            Please try again
+          </Typography>
+        </>
+      ) : (
+        <Button
+          size="small"
+          variant="outlined"
+          color="primary"
+          onClick={handleSubmit(onSubmit)}
+        >
+          Create
+        </Button>
+      )}
     </form>
   );
 };
