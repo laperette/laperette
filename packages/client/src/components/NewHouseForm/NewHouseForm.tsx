@@ -1,3 +1,4 @@
+import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
   FormControl,
@@ -9,7 +10,7 @@ import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useHouses } from "../../hooks/useHouses";
 import { NewHouseData } from "../../types";
-import { newHouseFieldsErrorsMapping } from "../../utils/houses";
+import { houseSchema } from "../../utils/formValidation";
 
 interface Props {
   handleCloseDrawer: () => void;
@@ -34,19 +35,14 @@ const useStyles = makeStyles(() => ({
 export const NewHouseForm = ({ handleCloseDrawer }: Props) => {
   const classes = useStyles();
 
-  const { handleSubmit, setError, errors, control } = useForm<NewHouseData>();
+  const { handleSubmit, errors, control } = useForm<NewHouseData>({
+    resolver: joiResolver(houseSchema),
+  });
   const { handleHouseCreation } = useHouses({ revalidateOnMount: false });
 
   const onSubmit: SubmitHandler<NewHouseData> = async (data) => {
-    try {
-      await handleHouseCreation(data);
-      handleCloseDrawer();
-    } catch (error) {
-      setError("name", {
-        type: "manual",
-        message: newHouseFieldsErrorsMapping.generalInvalidMessage,
-      });
-    }
+    await handleHouseCreation(data);
+    handleCloseDrawer();
   };
 
   return (
@@ -73,12 +69,7 @@ export const NewHouseForm = ({ handleCloseDrawer }: Props) => {
           name="name"
           control={control}
           error={!!errors.name}
-          rules={{ required: true }}
-          helperText={
-            !!errors.name
-              ? newHouseFieldsErrorsMapping["generalInvalidMessage"]
-              : ""
-          }
+          helperText={!!errors.name ? errors.name.message : ""}
         />
 
         <Button
