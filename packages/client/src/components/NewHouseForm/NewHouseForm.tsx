@@ -35,14 +35,18 @@ const useStyles = makeStyles(() => ({
 export const NewHouseForm = ({ handleCloseDrawer }: Props) => {
   const classes = useStyles();
 
-  const { handleSubmit, errors, control } = useForm<NewHouseData>({
+  const { handleSubmit, setError, errors, control } = useForm<NewHouseData>({
     resolver: joiResolver(houseSchema),
   });
   const { handleHouseCreation } = useHouses({ revalidateOnMount: false });
 
   const onSubmit: SubmitHandler<NewHouseData> = async (data) => {
-    await handleHouseCreation(data);
-    handleCloseDrawer();
+    try {
+      await handleHouseCreation(data);
+      handleCloseDrawer();
+    } catch (error) {
+      setError("name", { message: "A problem happened, please try again" });
+    }
   };
 
   return (
