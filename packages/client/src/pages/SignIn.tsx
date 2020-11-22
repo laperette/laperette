@@ -76,7 +76,6 @@ export const SignIn = () => {
         <Button
           type="submit"
           fullWidth
-          variant="contained"
           color="primary"
           className={classes.submit}
           loading={isValidating}
