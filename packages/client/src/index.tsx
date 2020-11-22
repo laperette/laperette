@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "normalize.css";
 import { App } from "./App";
+import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import { AppProviders } from "./contexts/AppProviders";
 import { AuthClient } from "./utils/authClient";
