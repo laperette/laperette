@@ -34,6 +34,15 @@ export const retrieveHousesByAccountId = (
     .where({ account_id: accountId });
 };
 
+export const retrieveAdminHousesByAccountId = (
+  accountId: string,
+): Promise<HouseFromDB[]> => {
+  return knex({ h: "houses" })
+    .select("h.house_id", "h.name")
+    .join({ hm: "house_memberships" }, "h.house_id", "hm.house_id")
+    .where({ account_id: accountId, is_admin: true });
+};
+
 export const retrieveHouseById = async (houseId: string) => {
   return knex("houses")
     .select("houses.house_id", "houses.name")

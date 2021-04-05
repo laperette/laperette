@@ -5,7 +5,7 @@ import {
   insertNewHouseMembership,
   retrieveHouseById,
   checkExistingMembership,
-  validateAdminStatus,
+  validateAdminStatus,, retrieveAdminHousesByAccountId
 } from "../db/houses";
 import { logger, sanitizeError } from "../logger";
 import {
@@ -111,6 +111,30 @@ export const getAccountHouse = async (ctx: Context) => {
     logger.error(errorMessage, {
       accountId: accountId,
       houseId: houseId,
+      error: sanitizeError(error),
+    });
+
+    ctx.status = 500;
+    ctx.message = errorMessage;
+  }
+};
+
+export const getAdminHouses = async (ctx: Context) => {
+  const { accountId } = ctx.state;
+
+  try {
+    const houses = await retrieveAdminHousesByAccountId(accountId);
+
+    const serializedHouses = houses.map(serializeHouseForClient);
+
+    ctx.status = 200;
+    ctx.body = { houses: serializedHouses };
+  } catch (error) {
+    const errorMessage =
+      "Error while retrieving all houses administered by the account";
+
+    logger.error(errorMessage, {
+      accountId: accountId,
       error: sanitizeError(error),
     });
 

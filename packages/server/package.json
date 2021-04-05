@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start-dev": "ts-node-dev ./src/index.ts",
-    "build": "tsc",
+    "build": "tsc --build tsconfig.json",
     "start": "node ./dist/src/index.js",
     "migrate:make": "knex migrate:make -x ts",
     "migrate": "knex migrate:latest",
